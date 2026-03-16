@@ -1,5 +1,6 @@
 package Client.network;
 
+@FunctionalInterface
 public interface NotificationCallback {
-    void onNotificationReceived(String message);
+    void onOrderConfirmed(String refCode, String total);
 }

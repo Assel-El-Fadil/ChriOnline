@@ -41,8 +41,17 @@ public class UDPListener implements Runnable {
     }
 
     private void handleMessage(String msg) {
-        if (callback != null) {
-            callback.onNotificationReceived(msg);
+        parseMessage(msg);
+    }
+
+    private void parseMessage(String msg) {
+        String[] parts = msg.split("\\|");
+        if (parts.length >= 3 && parts[0].equals("ORDER_CONFIRMED")) {
+            String refCode = parts[1];
+            String total = parts[2];
+            if (callback != null) {
+                callback.onOrderConfirmed(refCode, total);
+            }
         }
     }
 
