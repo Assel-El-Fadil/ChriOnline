@@ -18,5 +18,17 @@ public enum Command {
     ADMIN_DELETE_PRODUCT,
     ADMIN_LIST_ORDERS,
     ADMIN_UPDATE_STATUS,
-    ADMIN_LIST_USERS
+    ADMIN_LIST_USERS;
+
+    public static Command fromString(String commandToken) throws InvalidRequestException {
+        if (commandToken == null) {
+            throw new InvalidRequestException("Invalid Command");
+        }
+
+        try {
+            return Command.valueOf(commandToken.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRequestException("Invalid Command");
+        }
+    }
 }
