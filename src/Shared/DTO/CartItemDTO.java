@@ -8,22 +8,31 @@ public class CartItemDTO {
     private int cartId;
     public int productId;
     public int quantity;
+    public String productName;
+    public double unitPrice;
+    public double subtotal;
     private Date addedAt;
 
     public CartItemDTO() {}
 
-    public CartItemDTO(int id, int cartId, int productId, int quantity) {
+    public CartItemDTO(int id, int cartId, int productId, int quantity, String productName, double unitPrice, double subtotal) {
         this.id = id;
         this.cartId = cartId;
         this.productId   = productId;
         this.quantity    = quantity;
+        this.productName = productName;
+        this.unitPrice   = unitPrice;
+        this.subtotal    = subtotal;
     }
 
     public String toProtocolString() {
         return "id=" + id +
                 ",cartId=" + cartId +
                 ",productId=" + productId
-                + ",qty="      + quantity;
+                + ",qty="      + quantity
+                + ",name="     + productName
+                + ",unitPrice=" + unitPrice
+                + ",subtotal=" + subtotal;
     }
 
     public static CartItemDTO fromProtocolString(String s) {
@@ -45,6 +54,9 @@ public class CartItemDTO {
                 case "cartId": dto.cartId = Integer.parseInt(val); break;
                 case "productId": dto.productId   = Integer.parseInt(val);   break;
                 case "qty":       dto.quantity    = Integer.parseInt(val);   break;
+                case "name":      dto.productName = val;                     break;
+                case "unitPrice": dto.unitPrice   = Double.parseDouble(val); break;
+                case "subtotal":  dto.subtotal    = Double.parseDouble(val); break;
             }
         }
         return dto;
@@ -53,6 +65,7 @@ public class CartItemDTO {
     @Override
     public String toString() {
         return "CartItemDTO{id=" + id + ", cartId=" + cartId + ", productId=" + productId
-                + ", qty=" + quantity + "}";
+                + ", qty=" + quantity + ", productName='" + productName + '\''
+                + ", unitPrice=" + unitPrice + ", subtotal=" + subtotal + "}";
     }
 }

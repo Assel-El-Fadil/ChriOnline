@@ -7,13 +7,13 @@ public class ProductDTO {
     public String description;
     public double price;
     public int    stock;
-    public Category category;   // one of the ENUM values, e.g. "ELECTRONIQUES"
+    public String category;   // one of the ENUM values, e.g. "ELECTRONIQUES"
     public int active;     // 1 = visible, 0 = soft-deleted
 
     public ProductDTO() {}
 
     public ProductDTO(int id, String name, String description,
-                      double price, int stock, Category category, int active) {
+                      double price, int stock, String category, int active) {
         this.id          = id;
         this.name        = name;
         this.description = description;
@@ -51,7 +51,7 @@ public class ProductDTO {
             switch (key) {
                 case "id":     dto.id          = Integer.parseInt(val);    break;
                 case "name":   dto.name        = val;                      break;
-                case "cat":    dto.category    = Category.fromString(val); break;
+                case "cat":    dto.category    = val;                      break;
                 case "price":  dto.price       = Double.parseDouble(val);  break;
                 case "stock":  dto.stock       = Integer.parseInt(val);    break;
                 case "active": dto.active      = Integer.parseInt(val);    break;
