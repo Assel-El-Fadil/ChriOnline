@@ -41,4 +41,5 @@ public class ProductService {
     public boolean delete(int id) throws SQLException {
         return productDAO.delete(id);
     }
+
 }
