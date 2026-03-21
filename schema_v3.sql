@@ -3,9 +3,12 @@ USE chriOnline;
 
 CREATE TABLE users (
     id            INT          NOT NULL AUTO_INCREMENT,
+    first_name    VARCHAR(50)  NOT NULL,
+    last_name     VARCHAR(50)  NOT NULL,
     username      VARCHAR(50)  NOT NULL,
     password_hash VARCHAR(64)  NOT NULL,
     email         VARCHAR(150) NOT NULL,
+    address       VARCHAR(255),
     role          ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
     active        TINYINT(1)   NOT NULL DEFAULT 1,
     created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -181,16 +184,14 @@ CREATE TABLE order_items (
 -- ============================================================
 
 -- SHA-256("admin123")
-INSERT INTO users (username, password_hash, email, role) VALUES
-('admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
- 'admin@chrionline.ma', 'ADMIN');
+INSERT INTO users (first_name, last_name, username, password_hash, email, role) VALUES
+('Admin', 'ChriOnline', 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'admin@chrionline.ma', 'ADMIN');
+
 
 -- SHA-256("pass123")
-INSERT INTO users (username, password_hash, email, role) VALUES
-('alice', '9f8dfa5c7c3d898fa3cbfa75a82e3dfc1be32700fce9e0f8b0e46c8e7ae1c2e4',
- 'alice@test.ma', 'USER'),
-('bob',   '9f8dfa5c7c3d898fa3cbfa75a82e3dfc1be32700fce9e0f8b0e46c8e7ae1c2e4',
- 'bob@test.ma', 'USER');
+INSERT INTO users (first_name, last_name, username, password_hash, email, role) VALUES
+('Alice', 'Dupont', 'alice', '9f8dfa5c7c3d898fa3cbfa75a82e3dfc1be32700fce9e0f8b0e46c8e7ae1c2e4', 'alice@test.ma', 'USER'),
+('Bob',   'Martin', 'bob',   '9f8dfa5c7c3d898fa3cbfa75a82e3dfc1be32700fce9e0f8b0e46c8e7ae1c2e4', 'bob@test.ma',   'USER');
 
 INSERT INTO products (category, name, description, price, stock) VALUES
 ('ELECTRONIQUES',       'Smartphone Galaxy X12',  'Android 14, 6.7" AMOLED, 256GB',          3299.00, 15),
