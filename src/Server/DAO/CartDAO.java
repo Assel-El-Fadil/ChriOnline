@@ -20,6 +20,7 @@ public class CartDAO {
      * Creates a cart for the user if one doesn't already exist, then returns the cart id.
      * Safe to call on every login.
      */
+
     public int getOrCreateCartId(int userId) throws SQLException {
         String insertSql = "INSERT IGNORE INTO carts (user_id) VALUES (?)";
         String selectSql = "SELECT id FROM carts WHERE user_id = ?";
