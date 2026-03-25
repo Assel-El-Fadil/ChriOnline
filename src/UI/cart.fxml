@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Client.Controllers.CartController">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="My Cart"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <!-- Cart items table -->
+    <TableView fx:id="cartTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colName"      text="Product Name" prefWidth="220"/>
+            <TableColumn fx:id="colQty"       text="Qty"          prefWidth="60"/>
+            <TableColumn fx:id="colUnitPrice" text="Unit Price"   prefWidth="110"/>
+            <TableColumn fx:id="colSubtotal"  text="Subtotal"     prefWidth="110"/>
+        </columns>
+    </TableView>
+
+    <!-- Total row -->
+    <HBox alignment="CENTER_RIGHT" spacing="10">
+        <Label text="Total:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        <Label fx:id="totalLabel"
+               text="0.00 MAD"
+               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2a7ae2;"/>
+    </HBox>
+
+    <!-- Status / error label -->
+    <Label fx:id="statusLabel"
+           style="-fx-font-size: 12px;"
+           visible="false"
+           wrapText="true"/>
+
+    <!-- Action buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="removeButton"
+                text="Remove Selected"
+                onAction="#handleRemove"
+                disable="true"
+                style="-fx-cursor: hand;"/>
+        <Button fx:id="checkoutButton"
+                text="Proceed to Checkout"
+                onAction="#handleCheckout"
+                style="-fx-cursor: hand; -fx-font-weight: bold;"/>
+    </HBox>
+
+</VBox>
