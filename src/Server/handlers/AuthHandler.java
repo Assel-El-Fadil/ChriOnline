@@ -86,13 +86,14 @@ public class AuthHandler {
     // ──────────────────────────────────────────────────────────────
     private String handleLogin(String[] params, Socket clientSocket) {
 
+        System.out.println("Reached AuthHandler");
         if (params.length < 3) {
             return ResponseBuilder.error("Missing parameters");
         }
 
         String username = params[0].trim();
         String password = params[1];
-        int    udpPort;
+        int udpPort;
 
         try {
             udpPort = Integer.parseInt(params[2].trim());
@@ -110,13 +111,14 @@ public class AuthHandler {
             return ResponseBuilder.error("Server error");
         }
 
-        String token    = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString();
         String clientIP = clientSocket.getInetAddress().getHostAddress();
 
         SessionData sessionData = new SessionData(
                 token,
                 user.id,
                 user.role,
+                user.username,
                 clientIP,
                 udpPort
         );
@@ -127,6 +129,7 @@ public class AuthHandler {
                 + " | clientIP: " + clientIP
                 + " | udpPort: " + udpPort);
 
+        System.out.println("finished authHandler");
         return ResponseBuilder.ok(token + "|" + user.role);
     }
 

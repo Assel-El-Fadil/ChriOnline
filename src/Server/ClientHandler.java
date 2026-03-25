@@ -43,14 +43,14 @@ import java.nio.charset.StandardCharsets;
 public class ClientHandler implements Runnable {
 
     // ── Injected dependencies ─────────────────────────────────────
-    private final Socket         socket;
+    private final Socket socket;
     private final SessionManager sessionManager;
     private final UDPServer udpServer;
-    private final AuthHandler    authHandler;
+    private final AuthHandler authHandler;
     private final ProductHandler productHandler;
-    private final CartHandler    cartHandler;
-    private final OrderHandler   orderHandler;
-    private final AdminHandler   adminHandler;
+    private final CartHandler cartHandler;
+    private final OrderHandler orderHandler;
+    private final AdminHandler adminHandler;
 
     // ── Per-connection mutable state ──────────────────────────────
     // volatile: although only one thread reads/writes this, the shutdown
@@ -89,7 +89,7 @@ public class ClientHandler implements Runnable {
                 + ":" + socket.getPort();
 
         BufferedReader reader = null;
-        PrintWriter    writer = null;
+        PrintWriter writer = null;
 
         try {
             // ── Open streams ──────────────────────────────────────
@@ -144,7 +144,6 @@ public class ClientHandler implements Runnable {
             // This is normal — not a server bug. Log at info level, not error.
             System.out.println("[ClientHandler] Client disconnected abruptly: "
                     + clientAddress + " — " + e.getMessage());
-
         } finally {
             // ── Cleanup — always runs, even after an exception ────
             cleanup(reader, writer, clientAddress);
@@ -177,10 +176,11 @@ public class ClientHandler implements Runnable {
 
             // ── Authentication ────────────────────────────────────
             case REGISTER:
-                return authHandler.handleRegister(params);
+                return authHandler.handle(cmd, params, socket);
 
             case LOGIN: {
-                String response = authHandler.handleLogin(params, socket);
+                System.out.println("reached clientHandler");
+                String response = authHandler.handle(cmd, params, socket);
                 // On successful login, extract and track the session token
                 // so the finally block can remove it from SessionManager
                 // if the client disconnects without sending LOGOUT.
@@ -193,11 +193,12 @@ public class ClientHandler implements Runnable {
                         currentToken = parts[0];
                     }
                 }
+                System.out.println("Finished ClientHandler");
                 return response;
             }
 
             case LOGOUT: {
-                String response = authHandler.handleLogout(params, sessionManager);
+                String response = authHandler.handle(cmd, params, socket);
                 // Clear the token regardless of response — if the handler
                 // returned ERR (token was already gone), the session is
                 // already removed. Either way we should not remove it again.
@@ -207,13 +208,13 @@ public class ClientHandler implements Runnable {
 
             // ── Product browsing ──────────────────────────────────
             case GET_PRODUCTS:
-                return productHandler.handleGetProducts(params);
+                return productHandler.handle(cmd, params, currentToken);
 
             case GET_PRODUCT:
-                return productHandler.handleGetProduct(params);
+                return productHandler.handle(cmd, params, currentToken);
 
             case GET_CATEGORIES:
-                return productHandler.handleGetCategories();
+                return productHandler.handle(cmd, params, currentToken);
 
             // ── Cart ──────────────────────────────────────────────
             case CART_ADD:
@@ -230,10 +231,10 @@ public class ClientHandler implements Runnable {
 
             // ── Orders ────────────────────────────────────────────
             case CHECKOUT:
-                return orderHandler.handleCheckout(params);
+                return orderHandler.handle(cmd, params);
 
             case ORDER_HISTORY:
-                return orderHandler.handleHistory(params);
+                return orderHandler.handle(cmd, params);
 
             // ── Admin ─────────────────────────────────────────────
             case ADMIN_ADD_PRODUCT:

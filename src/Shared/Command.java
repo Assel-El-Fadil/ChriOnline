@@ -1,5 +1,7 @@
 package Shared;
 
+import Shared.RequestParser.InvalidRequestException;
+
 public enum Command {
     REGISTER,
     LOGIN,

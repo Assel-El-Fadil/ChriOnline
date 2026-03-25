@@ -1,7 +1,6 @@
 package Shared.DTO;
 
-import Shared.Command;
-import Shared.InvalidRequestException;
+import Shared.RequestParser.InvalidRequestException;
 
 public enum Category {
     SANTE,

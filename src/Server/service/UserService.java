@@ -68,6 +68,7 @@ public class UserService {
     // ────────────────────────────────────────────────────────────
 
     public UserDTO authenticate(String username, String password) {
+        System.out.println("reached UserService");
         AuthUser authUser = userDAO.findByUsernameForAuth(username);
 
         if (authUser == null) {
@@ -78,6 +79,7 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
+        System.out.println("finished UserService");
         // Build UserDTO — all new fields included, no hash exposed
         return new UserDTO(
                 authUser.id,
