@@ -167,9 +167,3 @@
     -fx-text-fill: #374151;
     -fx-alignment: center-left;
 }
-
-/* Product details — out of stock emphasis */
-.stock-out {
-    -fx-text-fill: #DC2626;
-    -fx-font-weight: bold;
-}
