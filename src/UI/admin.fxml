@@ -3,110 +3,146 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Client.Controllers.AdminController"
-            prefWidth="1000" prefHeight="680">
+            stylesheets="@admin_theme.css"
+            prefWidth="1100" prefHeight="750">
 
-    <!-- ── Top bar ── -->
+    <!-- ── Header matching the LuxeStore theme ── -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="12"
-              style="-fx-background-color: #1A3C5E; -fx-padding: 12 16;">
-            <Label text="ChriOnline — Admin Dashboard"
-                   style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;"/>
-        </HBox>
+        <VBox>
+            <!-- Top Nav Bar -->
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
+                <Label text="LuxeAdmin" styleClass="logo-text"/>
+                
+                <Region HBox.hgrow="ALWAYS" />
+                
+                <!-- Dummy Search Bar mimicking the design -->
+                <TextField promptText="Search for any product or user..." styleClass="search-bar" focusTraversable="false"/>
+                
+                <Region HBox.hgrow="ALWAYS" />
+                
+                <!-- Icons area (simulated with text/symbols for now) -->
+                <HBox spacing="15" alignment="CENTER">
+                    <Label text="📍" styleClass="icon-button"/>
+                    <Label text="🛒" styleClass="icon-button"/>
+                    <Label text="👤 Admin" styleClass="icon-button" style="-fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                </HBox>
+            </HBox>
+        </VBox>
     </top>
 
-    <!-- ── Tab pane ── -->
+    <!-- ── Main Content Area ── -->
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-padding: 8;">
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="tab-pane">
 
             <!-- ══ PRODUCTS TAB ══ -->
-            <Tab text="Products">
-                <VBox spacing="8">
-                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Tab text="All Products">
+                <VBox spacing="20" style="-fx-padding: 24;">
+                    
+                    <VBox styleClass="content-section" VBox.vgrow="ALWAYS" spacing="15">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Product Inventory" styleClass="section-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblProductsStatus" style="-fx-text-fill: #10B981; -fx-font-weight: bold;" />
+                        </HBox>
 
-                    <!-- Toolbar -->
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Button fx:id="btnAddProduct"     text="+ Add Product"  style="-fx-background-color: #1E6B3A; -fx-text-fill: white;"/>
-                        <Button fx:id="btnEditProduct"    text="Edit Selected"  style="-fx-background-color: #2E86C1; -fx-text-fill: white;"/>
-                        <Button fx:id="btnDeleteProduct"  text="Delete Selected" style="-fx-background-color: #922B21; -fx-text-fill: white;"/>
-                        <Button fx:id="btnRefreshProducts" text="↻ Refresh"/>
-                        <Label fx:id="lblProductsStatus" style="-fx-text-fill: #1E6B3A;" HBox.hgrow="ALWAYS"/>
-                    </HBox>
+                        <!-- Toolbar -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button fx:id="btnAddProduct"     text="+ Add Product"  styleClass="btn-primary"/>
+                            <Button fx:id="btnEditProduct"    text="Edit Selected"  styleClass="btn-secondary"/>
+                            <Button fx:id="btnDeleteProduct"  text="Delete"         styleClass="btn-danger"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnRefreshProducts" text="↻ Refresh List" styleClass="btn-secondary"/>
+                        </HBox>
 
-                    <!-- Table -->
-                    <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="colProductId"       text="ID"          prefWidth="50"/>
-                            <TableColumn fx:id="colProductName"     text="Name"        prefWidth="220"/>
-                            <TableColumn fx:id="colProductCategory" text="Category"    prefWidth="160"/>
-                            <TableColumn fx:id="colProductPrice"    text="Price"       prefWidth="110"/>
-                            <TableColumn fx:id="colProductStock"    text="Stock"       prefWidth="80"/>
-                        </columns>
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                        </columnResizePolicy>
-                    </TableView>
+                        <!-- Table -->
+                        <TableView fx:id="productsTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colProductId"       text="ID"          prefWidth="50"  style="-fx-alignment: center;"/>
+                                <TableColumn fx:id="colProductName"     text="Product Name" prefWidth="280"/>
+                                <TableColumn fx:id="colProductCategory" text="Category"    prefWidth="180"/>
+                                <TableColumn fx:id="colProductPrice"    text="Price"       prefWidth="120" style="-fx-font-weight: bold;"/>
+                                <TableColumn fx:id="colProductStock"    text="Stock Level" prefWidth="100" style="-fx-alignment: center;"/>
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
                 </VBox>
             </Tab>
 
             <!-- ══ ORDERS TAB ══ -->
-            <Tab text="Orders">
-                <VBox spacing="8">
-                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Tab text="Order Management">
+                <VBox spacing="20" style="-fx-padding: 24;">
+                    <VBox styleClass="content-section" VBox.vgrow="ALWAYS" spacing="15">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Recent Orders" styleClass="section-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblOrdersStatus" style="-fx-text-fill: #10B981; -fx-font-weight: bold;"/>
+                        </HBox>
 
-                    <!-- Toolbar -->
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Button fx:id="btnUpdateStatus"  text="Update Status" style="-fx-background-color: #B94000; -fx-text-fill: white;"/>
-                        <Button fx:id="btnRefreshOrders" text="↻ Refresh"/>
-                        <Label fx:id="lblOrdersStatus" style="-fx-text-fill: #1E6B3A;" HBox.hgrow="ALWAYS"/>
-                    </HBox>
+                        <!-- Toolbar -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button fx:id="btnUpdateStatus"  text="Update Status" styleClass="btn-primary"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnRefreshOrders" text="↻ Refresh List" styleClass="btn-secondary"/>
+                        </HBox>
 
-                    <!-- Table -->
-                    <TableView fx:id="ordersTable" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="colOrderId"     text="ID"        prefWidth="50"/>
-                            <TableColumn fx:id="colOrderRef"    text="Reference" prefWidth="110"/>
-                            <TableColumn fx:id="colOrderUserId" text="User ID"   prefWidth="70"/>
-                            <TableColumn fx:id="colOrderStatus" text="Status"    prefWidth="110"/>
-                            <TableColumn fx:id="colOrderTotal"  text="Total"     prefWidth="120"/>
-                            <TableColumn fx:id="colOrderDate"   text="Date"      prefWidth="170"/>
-                        </columns>
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                        </columnResizePolicy>
-                    </TableView>
+                        <!-- Table -->
+                        <TableView fx:id="ordersTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colOrderId"     text="ID"        prefWidth="50"  style="-fx-alignment: center;"/>
+                                <TableColumn fx:id="colOrderRef"    text="Reference" prefWidth="140" style="-fx-font-weight: bold;"/>
+                                <TableColumn fx:id="colOrderUserId" text="User ID"   prefWidth="80"  style="-fx-alignment: center;"/>
+                                <TableColumn fx:id="colOrderStatus" text="Status"    prefWidth="140"/>
+                                <TableColumn fx:id="colOrderTotal"  text="Total"     prefWidth="140" style="-fx-font-weight: bold;"/>
+                                <TableColumn fx:id="colOrderDate"   text="Date"      prefWidth="180"/>
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
                 </VBox>
             </Tab>
 
             <!-- ══ USERS TAB ══ -->
-            <Tab text="Users">
-                <VBox spacing="8">
-                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Tab text="Customer Directory">
+                <VBox spacing="20" style="-fx-padding: 24;">
+                    <VBox styleClass="content-section" VBox.vgrow="ALWAYS" spacing="15">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Registered Users" styleClass="section-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblUsersStatus" style="-fx-text-fill: #10B981; -fx-font-weight: bold;"/>
+                        </HBox>
 
-                    <!-- Toolbar -->
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Button fx:id="btnDeleteUser"    text="Delete Selected" style="-fx-background-color: #922B21; -fx-text-fill: white;"/>
-                        <Button fx:id="btnRefreshUsers"  text="↻ Refresh"/>
-                        <Label fx:id="lblUsersStatus" style="-fx-text-fill: #1E6B3A;" HBox.hgrow="ALWAYS"/>
-                    </HBox>
+                        <!-- Toolbar -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button fx:id="btnDeleteUser"    text="Deactivate / Delete" styleClass="btn-danger"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btnRefreshUsers"  text="↻ Refresh List" styleClass="btn-secondary"/>
+                        </HBox>
 
-                    <!-- Table -->
-                    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="colUserId"       text="ID"       prefWidth="50"/>
-                            <TableColumn fx:id="colUserUsername" text="Username" prefWidth="130"/>
-                            <TableColumn fx:id="colUserFullName" text="Full Name" prefWidth="160"/>
-                            <TableColumn fx:id="colUserEmail"    text="Email"    prefWidth="200"/>
-                            <TableColumn fx:id="colUserRole"     text="Role"     prefWidth="80"/>
-                            <TableColumn fx:id="colUserActive"   text="Status"   prefWidth="90"/>
-                        </columns>
-                        <columnResizePolicy>
-                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                        </columnResizePolicy>
-                    </TableView>
+                        <!-- Table -->
+                        <TableView fx:id="usersTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colUserId"       text="ID"       prefWidth="50"  style="-fx-alignment: center;"/>
+                                <TableColumn fx:id="colUserUsername" text="Username" prefWidth="150" style="-fx-font-weight: bold;"/>
+                                <TableColumn fx:id="colUserFullName" text="Full Name" prefWidth="180"/>
+                                <TableColumn fx:id="colUserEmail"    text="Email"    prefWidth="220"/>
+                                <TableColumn fx:id="colUserRole"     text="Role"     prefWidth="100"/>
+                                <TableColumn fx:id="colUserActive"   text="Status"   prefWidth="100" style="-fx-alignment: center;"/>
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
                 </VBox>
             </Tab>
 

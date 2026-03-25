@@ -1,0 +1,169 @@
+/* ======================================================================
+   Admin Theme - Inspired by modern e-commerce storefronts (LuxeStore)
+   ====================================================================== */
+
+.root {
+    -fx-background-color: #F8F9FA;
+    -fx-font-family: "Segoe UI", "Open Sans", Helvetica, Arial, sans-serif;
+}
+
+/* --- Top Header styling --- */
+.top-header {
+    -fx-background-color: white;
+    -fx-padding: 15 30 15 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.logo-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1E3A8A; /* Deep blue similar to LuxeStore */
+    -fx-font-family: "Georgia", serif;
+}
+
+.search-bar {
+    -fx-background-color: #F3F4F6;
+    -fx-background-radius: 20;
+    -fx-padding: 8 15 8 15;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-pref-width: 400px;
+}
+.search-bar:focused {
+    -fx-background-color: white;
+    -fx-border-color: #3B82F6;
+    -fx-border-radius: 20;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4B5563;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+.icon-button:hover {
+    -fx-text-fill: #1E3A8A;
+}
+
+/* --- TabPane styled as category links --- */
+.tab-pane {
+    -fx-tab-min-width: 100px;
+    -fx-tab-max-height: 40px;
+}
+.tab-pane .tab-header-area {
+    -fx-background-color: white;
+    -fx-padding: 0 20 0 20;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #E5E7EB;
+}
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+}
+.tab-pane .tab-label {
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+}
+.tab-pane .tab:selected {
+    -fx-background-color: #3B82F6;
+    -fx-background-radius: 15 15 0 0;
+}
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+.tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+/* --- Content Area --- */
+.content-section {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 10, 0, 0, 2);
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+    -fx-padding: 0 0 15 0;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    -fx-background-color: #3B82F6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.btn-primary:hover { -fx-background-color: #2563EB; }
+
+.btn-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: #374151;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.btn-secondary:hover { -fx-background-color: #F9FAFB; }
+
+.btn-danger {
+    -fx-background-color: #FEF2F2;
+    -fx-text-fill: #DC2626;
+    -fx-font-weight: bold;
+    -fx-border-color: #FCA5A5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.btn-danger:hover { -fx-background-color: #FEE2E2; }
+
+/* --- TableView Styling --- */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #E5E7EB;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 40px;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #6B7280;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-alignment: center-left;
+    -fx-padding: 0 10;
+}
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #F3F4F6;
+    -fx-cell-size: 45px;
+}
+.table-row-cell:odd {
+    -fx-background-color: #F9FAFB;
+}
+.table-row-cell:selected {
+    -fx-background-color: #EFF6FF;
+    -fx-text-fill: #1D4ED8;
+}
+.table-cell {
+    -fx-padding: 0 10;
+    -fx-font-size: 14px;
+    -fx-text-fill: #374151;
+    -fx-alignment: center-left;
+}
