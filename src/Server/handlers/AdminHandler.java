@@ -7,6 +7,7 @@ import Server.service.UserService;
 import Shared.*;
 import Shared.DTO.*;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,14 +73,14 @@ public class AdminHandler {
                     "ADMIN_ADD_PRODUCT requires: name|category|price|stock[|description]");
         }
 
-        String name        = params[1].trim();
-        String category    = params[2].trim();
-        String priceStr    = params[3].trim();
-        String stockStr    = params[4].trim();
+        String name = params[1].trim();
+        String category = params[2].trim();
+        String priceStr = params[3].trim();
+        String stockStr = params[4].trim();
         String description = params.length > 5 ? params[5].trim() : null;
 
         double price;
-        int    stock;
+        int stock;
         try {
             price = Double.parseDouble(priceStr);
             stock = Integer.parseInt(stockStr);
@@ -88,7 +89,8 @@ public class AdminHandler {
         }
 
         try {
-            int newId = productService.createProduct(name, category, description, price, stock);
+            ProductDTO productDTO = new ProductDTO(name, category, description, price, stock);
+            int newId = productService.create();
             return ResponseBuilder.ok(String.valueOf(newId));
 
         } catch (ProductService.ValidationException e) {
@@ -127,7 +129,7 @@ public class AdminHandler {
         }
 
         try {
-            productService.updateProduct(productId, field, value);
+            productService.update(productId, field, value);
             return ResponseBuilder.ok();
 
         } catch (ProductService.ProductNotFoundException e) {
@@ -135,6 +137,8 @@ public class AdminHandler {
         } catch (ProductService.ValidationException e) {
             return ResponseBuilder.error(e.getMessage());
         } catch (ProductService.InvalidFieldException e) {
+            return ResponseBuilder.error(e.getMessage());
+        } catch (java.sql.SQLException e){
             return ResponseBuilder.error(e.getMessage());
         }
     }
@@ -165,7 +169,7 @@ public class AdminHandler {
         }
 
         try {
-            productService.deleteProduct(productId);
+            productService.delete(productId);
             return ResponseBuilder.ok();
 
         } catch (ProductService.ProductNotFoundException e) {
@@ -173,6 +177,8 @@ public class AdminHandler {
         } catch (ProductService.ProductInActiveCartException e) {
             return ResponseBuilder.error(
                     "Cannot delete — this product is in one or more active carts");
+        } catch (SQLException e) {
+            return ResponseBuilder.error(e.getMessage());
         }
     }
 
