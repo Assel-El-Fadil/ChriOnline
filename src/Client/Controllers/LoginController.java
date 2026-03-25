@@ -171,4 +171,21 @@ public class LoginController {
         errorLabel.setVisible(false);
         errorLabel.setText("");
     }
+
+    // Note: add this method to LoginController to support success message from RegisterController
+// public void showSuccessMessage(String message) {
+//     errorLabel.setStyle("-fx-text-fill: green; -fx-font-size: 12px;");
+//     errorLabel.setText(message);
+//     errorLabel.setVisible(true);
+//
+    // ──────────────────────────────────────────────────────────────
+    // Called by RegisterController after successful registration
+    // Shows a green success message on the login screen
+    // ──────────────────────────────────────────────────────────────
+    public void showSuccessMessage(String message) {
+        errorLabel.setStyle("-fx-text-fill: green; -fx-font-size: 12px;");
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+    }
 }
+
