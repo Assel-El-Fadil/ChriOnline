@@ -1,155 +1,195 @@
 package Server.handlers;
 
+import Server.SessionManager;
 import Server.service.Cart;
 import Server.service.CartService;
 import Server.service.ProductService;
-import Shared.Command;
-import Shared.DTO.CartItemDTO;
 import Shared.DTO.ProductDTO;
 import Shared.ResponseBuilder;
+import Shared.SessionData;
 
 import java.util.stream.Collectors;
-
-// Temporary interface until SessionManager is provided by M3's AuthHandler
-interface SessionManager {
-    Session getSession(String token);
-
-    interface Session {
-        int getUserId();
-    }
-}
 
 public class CartHandler {
 
     private final CartService cartService;
     private final ProductService productService;
+    private final SessionManager sessionManager;
 
-    public CartHandler(CartService cartService, ProductService productService) {
+    public CartHandler(CartService cartService,
+                        ProductService productService,
+                        SessionManager sessionManager) {
         this.cartService = cartService;
         this.productService = productService;
+        this.sessionManager = sessionManager;
     }
 
-    public String handle(Command cmd, String[] params, String token, SessionManager sessions) {
+    private SessionData requireSession(String token) {
+        if (token == null || token.isBlank()) return null;
+        return sessionManager.getSession(token);
+    }
+
+    // params: token|productId|qty
+    public String handleAdd(String[] params) {
         try {
-            // All cases: check session
-            SessionManager.Session session = sessions.getSession(token);
+            if (params == null || params.length < 3) {
+                return ResponseBuilder.error("CART_ADD requires: token|productId|qty");
+            }
+
+            String token = params[0];
+            SessionData session = requireSession(token);
             if (session == null) {
                 return ResponseBuilder.error("Not logged in");
             }
             int userId = session.getUserId();
 
-            switch (cmd) {
-                case CART_ADD:
-                    return handleCartAdd(params, token, userId);
-                case CART_REMOVE:
-                    return handleCartRemove(params, token, userId);
-                case CART_VIEW:
-                    return handleCartView(token);
-                case CART_CLEAR:
-                    return handleCartClear(token, userId);
-                default:
-                    return ResponseBuilder.error("Unknown cart command");
+            int productId;
+            try {
+                productId = Integer.parseInt(params[1].trim());
+            } catch (NumberFormatException e) {
+                return ResponseBuilder.error("Invalid product ID");
             }
+
+            int qty;
+            try {
+                qty = Integer.parseInt(params[2].trim());
+                if (qty <= 0) {
+                    return ResponseBuilder.error("Invalid quantity");
+                }
+            } catch (NumberFormatException e) {
+                return ResponseBuilder.error("Invalid quantity");
+            }
+
+            // Stock check
+            ProductDTO product;
+            try {
+                product = productService.getById(productId);
+            } catch (Exception e) {
+                return ResponseBuilder.error("Product lookup failed");
+            }
+
+            if (product == null) {
+                return ResponseBuilder.error("Product not found");
+            }
+
+            Cart cart = cartService.getOrCreateCart(token);
+            int currentQty = cart.getQuantityFor(productId);
+
+            if (product.stock < qty + currentQty) {
+                return ResponseBuilder.error("Not enough stock");
+            }
+
+            // Proceed
+            cartService.addItem(token, userId, productId, qty);
+            // Re-fetch the cart after addItem for total calculation
+            double total = cartService.getOrCreateCart(token)
+                    .calculateTotal(productService);
+            return ResponseBuilder.ok(String.valueOf(total));
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseBuilder.error(e.getMessage());
         }
     }
 
-    private String handleCartAdd(String[] params, String token, int userId) throws Exception {
-        int productId;
+    // params: token|productId
+    public String handleRemove(String[] params) {
         try {
-            productId = Integer.parseInt(params[1]);
-        } catch (NumberFormatException e) {
-            return ResponseBuilder.error("Invalid product ID");
-        }
-
-        int qty;
-        try {
-            qty = Integer.parseInt(params[2]);
-            if (qty <= 0) {
-                return ResponseBuilder.error("Invalid quantity");
+            if (params == null || params.length < 2) {
+                return ResponseBuilder.error("CART_REMOVE requires: token|productId");
             }
-        } catch (NumberFormatException e) {
-            return ResponseBuilder.error("Invalid quantity");
-        }
 
-        // Stock check
-        ProductDTO product;
-        try {
-            product = productService.getById(productId);
-        } catch (Exception e) {
-            return ResponseBuilder.error("Product lookup failed");
-        }
-        
-        if (product == null) {
-            return ResponseBuilder.error("Product not found");
-        }
+            String token = params[0];
+            SessionData session = requireSession(token);
+            if (session == null) {
+                return ResponseBuilder.error("Not logged in");
+            }
+            int userId = session.getUserId();
 
-        Cart cart = cartService.getOrCreateCart(token);
-        int currentQty = cart.getQuantityFor(productId);
-
-        if (product.stock < qty + currentQty) {
-            return ResponseBuilder.error("Not enough stock");
-        }
-
-        // Proceed
-        cartService.addItem(token, userId, productId, qty);
-        double total = cart.calculateTotal(productService);
-
-        return ResponseBuilder.ok(String.valueOf(total));
-    }
-
-    private String handleCartRemove(String[] params, String token, int userId) throws Exception {
-        int productId;
-        try {
-            productId = Integer.parseInt(params[1]);
-        } catch (NumberFormatException e) {
-            return ResponseBuilder.error("Invalid product ID");
-        }
-
-        cartService.removeItem(token, userId, productId);
-        Cart cart = cartService.getOrCreateCart(token);
-        double newTotal = cart.calculateTotal(productService);
-
-        return ResponseBuilder.ok(String.valueOf(newTotal));
-    }
-
-    private String handleCartView(String token) throws Exception {
-        Cart cart = cartService.getOrCreateCart(token);
-
-        if (cart.getItems().isEmpty()) {
-            return ResponseBuilder.ok("");
-        }
-
-        String payload = cart.getItems().entrySet().stream().map(entry -> {
-            int productId = entry.getKey();
-            int qty = entry.getValue();
-
+            int productId;
             try {
-                ProductDTO product = productService.getById(productId);
-                if (product != null) {
-                    CartItemDTO dto = new CartItemDTO(
-                            0, // cartItemId not strictly needed for transport view
-                            0, // cartId not strictly needed here
-                            productId,
-                            qty,
-                            product.name,
-                            product.price,
-                            product.price * qty);
-                    return dto.toProtocolString();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                productId = Integer.parseInt(params[1].trim());
+            } catch (NumberFormatException e) {
+                return ResponseBuilder.error("Invalid product ID");
             }
-            return "";
-        }).filter(s -> !s.isEmpty()).collect(Collectors.joining(";"));
 
-        return ResponseBuilder.ok(payload);
+            cartService.removeItem(token, userId, productId);
+            Cart cart = cartService.getOrCreateCart(token);
+            double newTotal = cart.calculateTotal(productService);
+            return ResponseBuilder.ok(String.valueOf(newTotal));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error(e.getMessage());
+        }
     }
 
-    private String handleCartClear(String token, int userId) throws Exception {
-        cartService.clearCart(token, userId);
-        return ResponseBuilder.ok("");
+    // params: token
+    public String handleView(String[] params) {
+        try {
+            if (params == null || params.length < 1) {
+                return ResponseBuilder.error("CART_VIEW requires: token");
+            }
+
+            String token = params[0];
+            SessionData session = requireSession(token);
+            if (session == null) {
+                return ResponseBuilder.error("Not logged in");
+            }
+
+            Cart cart = cartService.getOrCreateCart(token);
+
+            if (cart.getItems().isEmpty()) {
+                return ResponseBuilder.ok("");
+            }
+
+            String payload = cart.getItems().entrySet().stream().map(entry -> {
+                int productId = entry.getKey();
+                int qty = entry.getValue();
+
+                try {
+                    ProductDTO product = productService.getById(productId);
+                    if (product != null) {
+                        // Protocol string for the view must omit `id` and `cartId`
+                        // (so the client doesn't receive serialized `0` values).
+                        return "productId=" + productId
+                                + ",qty=" + qty
+                                + ",name=" + product.name
+                                + ",unitPrice=" + product.price
+                                + ",subtotal=" + (product.price * qty);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return "";
+            }).filter(s -> !s.isEmpty()).collect(Collectors.joining(";"));
+
+            return ResponseBuilder.ok(payload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error(e.getMessage());
+        }
+    }
+
+    // params: token
+    public String handleClear(String[] params) {
+        try {
+            if (params == null || params.length < 1) {
+                return ResponseBuilder.error("CART_CLEAR requires: token");
+            }
+
+            String token = params[0];
+            SessionData session = requireSession(token);
+            if (session == null) {
+                return ResponseBuilder.error("Not logged in");
+            }
+            int userId = session.getUserId();
+
+            cartService.clearCart(token, userId);
+            return ResponseBuilder.ok("");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBuilder.error(e.getMessage());
+        }
     }
 }
