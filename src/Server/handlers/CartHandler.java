@@ -1,8 +1,8 @@
 package Server.handlers;
 
-import Server.DAO.ProductDAO;
 import Server.service.Cart;
 import Server.service.CartService;
+import Server.service.ProductService;
 import Shared.Command;
 import Shared.DTO.CartItemDTO;
 import Shared.DTO.ProductDTO;
@@ -22,11 +22,11 @@ interface SessionManager {
 public class CartHandler {
 
     private final CartService cartService;
-    private final ProductDAO productDAO;
+    private final ProductService productService;
 
-    public CartHandler(CartService cartService, ProductDAO productDAO) {
+    public CartHandler(CartService cartService, ProductService productService) {
         this.cartService = cartService;
-        this.productDAO = productDAO;
+        this.productService = productService;
     }
 
     public String handle(Command cmd, String[] params, String token, SessionManager sessions) {
@@ -75,7 +75,13 @@ public class CartHandler {
         }
 
         // Stock check
-        ProductDTO product = productDAO.findById(productId);
+        ProductDTO product;
+        try {
+            product = productService.getById(productId);
+        } catch (Exception e) {
+            return ResponseBuilder.error("Product lookup failed");
+        }
+        
         if (product == null) {
             return ResponseBuilder.error("Product not found");
         }
@@ -89,7 +95,7 @@ public class CartHandler {
 
         // Proceed
         cartService.addItem(token, userId, productId, qty);
-        double total = cart.calculateTotal(productDAO);
+        double total = cart.calculateTotal(productService);
 
         return ResponseBuilder.ok(String.valueOf(total));
     }
@@ -104,7 +110,7 @@ public class CartHandler {
 
         cartService.removeItem(token, userId, productId);
         Cart cart = cartService.getOrCreateCart(token);
-        double newTotal = cart.calculateTotal(productDAO);
+        double newTotal = cart.calculateTotal(productService);
 
         return ResponseBuilder.ok(String.valueOf(newTotal));
     }
@@ -121,7 +127,7 @@ public class CartHandler {
             int qty = entry.getValue();
 
             try {
-                ProductDTO product = productDAO.findById(productId);
+                ProductDTO product = productService.getById(productId);
                 if (product != null) {
                     CartItemDTO dto = new CartItemDTO(
                             0, // cartItemId not strictly needed for transport view

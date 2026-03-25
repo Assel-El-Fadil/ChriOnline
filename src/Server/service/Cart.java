@@ -1,9 +1,7 @@
 package Server.service;
 
-import Server.DAO.ProductDAO;
 import Shared.DTO.ProductDTO;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,16 +30,16 @@ public class Cart {
         return items.getOrDefault(productId, 0);
     }
 
-    public double calculateTotal(ProductDAO dao) {
+    public double calculateTotal(ProductService productService) {
         double total = 0.0;
         try {
             for (Map.Entry<Integer, Integer> entry : items.entrySet()) {
-                ProductDTO product = dao.findById(entry.getKey());
+                ProductDTO product = productService.getById(entry.getKey());
                 if (product != null) {
                     total += (product.price * entry.getValue());
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0.0;
         }
