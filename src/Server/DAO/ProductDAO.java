@@ -11,7 +11,7 @@ public class ProductDAO {
      * Returns every active product ordered by category then name.
      */
     public List<ProductDTO> findAll() throws SQLException {
-        String sql = "SELECT id, category, name, description, price, stock "
+        String sql = "SELECT id, category, name, description, price, stock, image_path "
                    + "FROM products WHERE active = 1 ORDER BY category, name";
 
         List<ProductDTO> list = new ArrayList<>();
@@ -34,7 +34,7 @@ public class ProductDAO {
      * Returns active products that belong to the given category ENUM value (e.g. "ELECTRONIQUES").
      */
     public List<ProductDTO> findByCategory(String category) throws SQLException {
-        String sql = "SELECT id, category, name, description, price, stock "
+        String sql = "SELECT id, category, name, description, price, stock, image_path "
                    + "FROM products WHERE active = 1 AND category = ? "
                    + "ORDER BY category, name";
 
@@ -61,7 +61,7 @@ public class ProductDAO {
      * Used by CartHandler for stock checks.
      */
     public ProductDTO findById(int id) throws SQLException {
-        String sql = "SELECT id, category, name, description, price, stock "
+        String sql = "SELECT id, category, name, description, price, stock, image_path "
                    + "FROM products WHERE id = ? AND active = 1";
 
         Connection conn = ConnectionPool.getConnection();
@@ -84,8 +84,8 @@ public class ProductDAO {
      * Inserts a new product and returns its generated id.
      */
     public int create(ProductDTO p) throws SQLException {
-        String sql = "INSERT INTO products (category, name, description, price, stock) "
-                   + "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (category, name, description, price, stock, image_path) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
 
         Connection conn = ConnectionPool.getConnection();
         try {
@@ -95,6 +95,11 @@ public class ProductDAO {
                 ps.setString(3, p.description);
                 ps.setDouble(4, p.price);
                 ps.setInt(5, p.stock);
+                if (p.imagePath == null || p.imagePath.isBlank()) {
+                    ps.setNull(6, Types.VARCHAR);
+                } else {
+                    ps.setString(6, p.imagePath);
+                }
                 ps.executeUpdate();
 
                 try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -167,7 +172,8 @@ public class ProductDAO {
                 rs.getDouble("price"),
                 rs.getInt("stock"),
                 rs.getString("category"),   // comes back as a plain String from MySQL ENUM
-                1                            // active = 1 (we only query active rows)
+                1,                           // active = 1 (we only query active rows)
+                rs.getString("image_path")
         );
     }
 }

@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -30,6 +32,7 @@ public class ProductDetailsController {
     @FXML private Spinner<Integer> quantitySpinner;
     @FXML private Button  addToCartButton;
     @FXML private Button  btnBackCatalog;
+    @FXML private ImageView imgProduct;
 
     private ProductDTO  currentProduct;
     private SocketClient socketClient;
@@ -76,6 +79,12 @@ public class ProductDetailsController {
             quantitySpinner.setValueFactory(
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(1, product.stock, 1));
             addToCartButton.setDisable(false);
+        }
+
+        if (product.imagePath != null && !product.imagePath.isBlank()) {
+            imgProduct.setImage(new Image("file:" + product.imagePath));
+        } else {
+            imgProduct.setImage(null);
         }
 
         hideCartStatus();
