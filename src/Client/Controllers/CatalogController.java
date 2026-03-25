@@ -15,7 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -24,40 +23,44 @@ import java.util.stream.Collectors;
 
 public class CatalogController {
 
-    @FXML private ComboBox<String> categoryComboBox;
-    @FXML private Button showAllButton;
-    @FXML private Button refreshButton;
-    @FXML private TableView<ProductDTO> productTable;
-    @FXML private TableColumn<ProductDTO, String> colName;
-    @FXML private TableColumn<ProductDTO, String> colCategory;
-    @FXML private TableColumn<ProductDTO, String> colPrice;
-    @FXML private TableColumn<ProductDTO, String> colStock;
-    @FXML private Button viewDetailsButton;
-    @FXML private Button addToCartButton;
-    @FXML private Label statusLabel;
+    @FXML
+    private ComboBox<String> categoryComboBox;
+    @FXML
+    private Button showAllButton;
+    @FXML
+    private Button refreshButton;
+    @FXML
+    private TableView<ProductDTO> productTable;
+    @FXML
+    private TableColumn<ProductDTO, String> colName;
+    @FXML
+    private TableColumn<ProductDTO, String> colCategory;
+    @FXML
+    private TableColumn<ProductDTO, String> colPrice;
+    @FXML
+    private TableColumn<ProductDTO, String> colStock;
+    @FXML
+    private Button viewDetailsButton;
+    @FXML
+    private Button addToCartButton;
+    @FXML
+    private Label statusLabel;
 
     private SocketClient socketClient;
 
     @FXML
     public void initialize() {
-        // Init socket
-        socketClient = new SocketClient("localhost", 8081);
-        try {
-            socketClient.connect();
-        } catch (IOException e) {
-            showStatus("Could not connect to server.", true);
-        }
-
         // HGrow for status label to push buttons right
         HBox.setHgrow(statusLabel, Priority.ALWAYS);
 
         // Setup columns
         colName.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().name));
         colCategory.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().category));
-        
+
         // Price formatting
-        colPrice.setCellValueFactory(data -> new SimpleStringProperty(String.format("%.2f MAD", data.getValue().price)));
-        
+        colPrice.setCellValueFactory(
+                data -> new SimpleStringProperty(String.format("%.2f MAD", data.getValue().price)));
+
         // Stock formatting with colored text for 0
         colStock.setCellValueFactory(data -> {
             int stock = data.getValue().stock;
@@ -66,7 +69,7 @@ public class CatalogController {
             }
             return new SimpleStringProperty(String.valueOf(stock));
         });
-        
+
         colStock.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -103,7 +106,11 @@ public class CatalogController {
             }
         });
 
-        // Load initial data
+        // Load initial data is now deferred until the socket client is set
+    }
+
+    public void setSocketClient(SocketClient socketClient) {
+        this.socketClient = socketClient;
         loadCategories();
         loadProducts(null);
     }
@@ -112,7 +119,8 @@ public class CatalogController {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                if (!socketClient.isConnected()) socketClient.reconnect();
+                if (!socketClient.isConnected())
+                    socketClient.reconnect();
                 return socketClient.sendCommand("GET_CATEGORIES|");
             }
         };
@@ -136,7 +144,8 @@ public class CatalogController {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                if (!socketClient.isConnected()) socketClient.reconnect();
+                if (!socketClient.isConnected())
+                    socketClient.reconnect();
                 String cmd = "GET_PRODUCTS|";
                 if (filterCategory != null && !"Show All".equals(filterCategory)) {
                     cmd += filterCategory;
@@ -183,7 +192,8 @@ public class CatalogController {
     @FXML
     private void handleAddToCart(ActionEvent event) {
         ProductDTO selected = productTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         if (selected.stock == 0) {
             showStatus("Product out of stock", true);
@@ -207,8 +217,9 @@ public class CatalogController {
                 Task<String> task = new Task<>() {
                     @Override
                     protected String call() throws Exception {
-                        if (!socketClient.isConnected()) socketClient.reconnect();
-                        String token = AppState.getToken() != null ? AppState.getToken() : "DUMMY_TOKEN";
+                        if (!socketClient.isConnected())
+                            socketClient.reconnect();
+                        String token = AppState.getToken();
                         return socketClient.sendCommand("CART_ADD|" + token + "|" + selected.id + "|" + qty);
                     }
                 };
@@ -218,7 +229,7 @@ public class CatalogController {
                     if (ResponseBuilder.isOk(response)) {
                         String newTotal = ResponseBuilder.extractPayload(response);
                         showStatus("Added! Cart total: " + newTotal + " MAD", false);
-                        
+
                         // Optionally refresh products to update stock locally
                         handleRefresh(null);
                     } else {
