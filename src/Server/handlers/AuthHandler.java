@@ -1,30 +1,27 @@
 
 package Server.handlers;
 
-import Server.DAO.UserDAO;
-import Server.SessionData;
+import Server.service.UserService;
+import Shared.SessionData;
 import Server.SessionManager;
 import Shared.Command;
 import Shared.DTO.UserDTO;
 import Shared.ResponseBuilder;
 
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 public class AuthHandler {
 
     // ─── Dependencies injected via constructor ─────────────────────
-    private final UserDAO        userDAO;
+    private final UserService     userService;
     private final SessionManager sessionManager;
 
     // ──────────────────────────────────────────────────────────────
-    // Constructor — takes UserDAO and SessionManager
+    // Constructor — takes UserService and SessionManager
     // ──────────────────────────────────────────────────────────────
-    public AuthHandler(UserDAO userDAO, SessionManager sessionManager) {
-        this.userDAO        = userDAO;
+    public AuthHandler(UserService userService, SessionManager sessionManager) {
+        this.userService     = userService;
         this.sessionManager = sessionManager;
     }
 
@@ -65,21 +62,18 @@ public class AuthHandler {
             return ResponseBuilder.error("Invalid email address");
         }
 
-        String passwordHash = hashPassword(password);
-        if (passwordHash == null) {
-            return ResponseBuilder.error("Server error during registration");
-        }
-
         try {
-            int userId = userDAO.createUser(username, passwordHash, email);
+            int userId = userService.register("", "", username, password, email);
             System.out.println("[AuthHandler] REGISTER success — user: " + username + " id: " + userId);
             return ResponseBuilder.ok(String.valueOf(userId));
 
+        } catch (UserService.ValidationException e) {
+            return ResponseBuilder.error(e.getMessage());
+        } catch (UserService.DuplicateUsernameException e) {
+            return ResponseBuilder.error("Username already taken");
+        } catch (UserService.DuplicateEmailException e) {
+            return ResponseBuilder.error("Email already registered");
         } catch (Exception e) {
-            String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
-            if (msg.contains("duplicate") || msg.contains("unique")) {
-                return ResponseBuilder.error("Username already taken");
-            }
             System.err.println("[AuthHandler] REGISTER error: " + e.getMessage());
             return ResponseBuilder.error("Registration failed");
         }
@@ -108,27 +102,12 @@ public class AuthHandler {
 
         UserDTO user;
         try {
-            user = userDAO.findByUsername(username);
-        } catch (Exception e) {
-            System.err.println("[AuthHandler] LOGIN DB error: " + e.getMessage());
-            return ResponseBuilder.error("Server error");
-        }
-
-        if (user == null) {
+            user = userService.authenticate(username, password);
+        } catch (UserService.InvalidCredentialsException e) {
             return ResponseBuilder.error("Invalid username or password");
-        }
-
-        String inputHash = hashPassword(password);
-        String storedHash;
-        try {
-            storedHash = userDAO.getPasswordHash(username);
         } catch (Exception e) {
-            System.err.println("[AuthHandler] LOGIN hash fetch error: " + e.getMessage());
+            System.err.println("[AuthHandler] LOGIN error: " + e.getMessage());
             return ResponseBuilder.error("Server error");
-        }
-
-        if (inputHash == null || !inputHash.equals(storedHash)) {
-            return ResponseBuilder.error("Invalid username or password");
         }
 
         String token    = UUID.randomUUID().toString();
@@ -165,21 +144,4 @@ public class AuthHandler {
         return ResponseBuilder.ok();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // SHA-256 — converts password → 64-char hex string (one-way)
-    // ──────────────────────────────────────────────────────────────
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("[AuthHandler] SHA-256 not available: " + e.getMessage());
-            return null;
-        }
-    }
 }

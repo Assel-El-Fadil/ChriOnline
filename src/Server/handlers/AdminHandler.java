@@ -90,12 +90,10 @@ public class AdminHandler {
 
         try {
             ProductDTO productDTO = new ProductDTO(name, category, description, price, stock);
-            int newId = productService.create();
+            int newId = productService.create(productDTO);
             return ResponseBuilder.ok(String.valueOf(newId));
 
-        } catch (ProductService.ValidationException e) {
-            return ResponseBuilder.error(e.getMessage());
-        } catch (ProductService.InvalidCategoryException e) {
+        } catch (ProductService.ValidationException | ProductService.InvalidCategoryException | SQLException e) {
             return ResponseBuilder.error(e.getMessage());
         }
     }
