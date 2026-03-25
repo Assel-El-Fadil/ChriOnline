@@ -7,16 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
-
-    private static final String DB_URL  = "jdbc:mysql://localhost:3306/chriOnline";
-    private static final String DB_USER = "root";
-    private static final String DB_PASS = "";   // change if needed
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-    }
-
-
     /**
      * Returns every active product ordered by category then name.
      */
@@ -26,12 +16,16 @@ public class ProductDAO {
 
         List<ProductDTO> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs));
+        Connection conn = ConnectionPool.getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
         return list;
     }
@@ -46,14 +40,18 @@ public class ProductDAO {
 
         List<ProductDTO> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, category);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapRow(rs));
+        Connection conn = ConnectionPool.getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, category);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(mapRow(rs));
+                    }
                 }
             }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
         return list;
     }
@@ -66,14 +64,18 @@ public class ProductDAO {
         String sql = "SELECT id, category, name, description, price, stock "
                    + "FROM products WHERE id = ? AND active = 1";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapRow(rs);
+        Connection conn = ConnectionPool.getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return mapRow(rs);
+                    }
                 }
             }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
         return null;
     }
@@ -85,20 +87,24 @@ public class ProductDAO {
         String sql = "INSERT INTO products (category, name, description, price, stock) "
                    + "VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, p.category);
-            ps.setString(2, p.name);
-            ps.setString(3, p.description);
-            ps.setDouble(4, p.price);
-            ps.setInt(5, p.stock);
-            ps.executeUpdate();
+        Connection conn = ConnectionPool.getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, p.category);
+                ps.setString(2, p.name);
+                ps.setString(3, p.description);
+                ps.setDouble(4, p.price);
+                ps.setInt(5, p.stock);
+                ps.executeUpdate();
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) {
-                    return keys.getInt(1);
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        return keys.getInt(1);
+                    }
                 }
             }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
         throw new SQLException("Insert succeeded but no generated key was returned");
     }
@@ -114,11 +120,15 @@ public class ProductDAO {
         // Only allow known column names to prevent SQL injection
         String sql = "UPDATE products SET " + field + " = ? WHERE id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setObject(1, value);
-            ps.setInt(2, id);
-            return ps.executeUpdate() == 1;
+        Connection conn = ConnectionPool.getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setObject(1, value);
+                ps.setInt(2, id);
+                return ps.executeUpdate() == 1;
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
     }
 
@@ -132,10 +142,14 @@ public class ProductDAO {
     public boolean delete(int id) throws SQLException {
         String sql = "UPDATE products SET active = 0 WHERE id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() == 1;
+        Connection conn = ConnectionPool.getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                return ps.executeUpdate() == 1;
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
     }
 
