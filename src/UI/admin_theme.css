@@ -173,3 +173,46 @@
     -fx-text-fill: #DC2626;
     -fx-font-weight: bold;
 }
+
+/* --- Catalog / Cart shared page chrome --- */
+.page-subtitle {
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 13px;
+}
+
+.toolbar-label {
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.catalog-status {
+    -fx-font-size: 13px;
+    -fx-text-fill: #374151;
+}
+
+/* Category ComboBox — soft card look */
+.combo-luxe {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 8;
+    -fx-padding: 4 8;
+}
+
+/* Cart summary */
+.cart-total-caption {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-text-fill: #111827;
+}
+
+.cart-total-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563EB;
+}
+
+.cart-status-message {
+    -fx-font-size: 13px;
+}

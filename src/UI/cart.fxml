@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Client.Controllers.CartController"
+            stylesheets="@admin_theme.css"
+            styleClass="root"
+            prefWidth="1100"
+            prefHeight="750">
+
+    <!-- Same store header as catalog / admin -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
+                <Label text="LuxeStore" styleClass="logo-text"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <TextField promptText="Search for any product or brand..."
+                           styleClass="search-bar"
+                           focusTraversable="false"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Label text="📍" styleClass="icon-button"/>
+                    <Label text="🛒" styleClass="icon-button"/>
+                    <Label text="Cart"
+                           styleClass="icon-button"
+                           style="-fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="20" style="-fx-padding: 24;">
+            <VBox styleClass="content-section" VBox.vgrow="ALWAYS" spacing="15">
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Shopping Cart" styleClass="section-title" style="-fx-padding: 0;"/>
+                        <Label text="Review your items before checkout"
+                               styleClass="page-subtitle"/>
+                    </VBox>
+                </HBox>
+
+                <TableView fx:id="cartTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+                    <columns>
+                        <TableColumn fx:id="colName" text="Product Name" prefWidth="280"/>
+                        <TableColumn fx:id="colQty" text="Qty" prefWidth="80"/>
+                        <TableColumn fx:id="colUnitPrice" text="Unit Price" prefWidth="150"/>
+                        <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="150"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+
+                <HBox alignment="CENTER_RIGHT" spacing="16">
+                    <Label text="Total:" styleClass="cart-total-caption"/>
+                    <Label fx:id="totalLabel"
+                           text="0.00 MAD"
+                           styleClass="cart-total-value"/>
+                </HBox>
+
+                <Label fx:id="statusLabel"
+                       styleClass="cart-status-message"
+                       visible="false"
+                       wrapText="true"
+                       maxWidth="Infinity"/>
+
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="removeButton"
+                            text="Remove Selected"
+                            onAction="#handleRemove"
+                            disable="true"
+                            styleClass="btn-danger"/>
+                    <Button fx:id="checkoutButton"
+                            text="Proceed to Checkout"
+                            onAction="#handleCheckout"
+                            styleClass="btn-primary"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
