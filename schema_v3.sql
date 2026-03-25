@@ -38,6 +38,7 @@ CREATE TABLE products (
     description TEXT,
     price       DECIMAL(10,2) NOT NULL,
     stock       INT           NOT NULL DEFAULT 0,
+    image_path  VARCHAR(255)  DEFAULT NULL,
     active      TINYINT(1)    NOT NULL DEFAULT 1,
     created_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
