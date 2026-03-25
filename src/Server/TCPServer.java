@@ -120,7 +120,7 @@ public class Server {
         // ── 5. Handlers ───────────────────────────────────────────
         this.authHandler    = new AuthHandler(userService, sessionManager);
         this.productHandler = new ProductHandler(productService);
-        this.cartHandler    = new CartHandler(cartService, sessionManager);
+        this.cartHandler    = new CartHandler(cartService, productService, sessionManager);
         this.orderHandler   = new OrderHandler(orderService, sessionManager, udpServer);
         this.adminHandler   = new AdminHandler(userService, productService,
                 orderService, sessionManager);
