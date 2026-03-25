@@ -3,12 +3,12 @@ package Shared;
 public final class SessionData {
 
     private final String token;
-    private final int    userId;
+    private final int userId;
     private final String role;
     private final String username;
     private final String clientIP;
-    private final int    clientUdpPort;
-    private final long   createdAt;
+    private final int clientUdpPort;
+    private final long createdAt;
 
     // ────────────────────────────────────────────────────────────
     //  Constructor

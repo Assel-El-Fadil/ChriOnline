@@ -26,4 +26,8 @@ public class RequestParser {
 
         return new ParsedRequest(command, params);
     }
+
+    public static class InvalidRequestException extends RuntimeException {
+        public InvalidRequestException(String message) { super(message); }
+    }
 }

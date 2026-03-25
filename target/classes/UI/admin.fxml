@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Client.Controllers.AdminController"
+            prefWidth="1000" prefHeight="680">
+
+    <!-- ── Top bar ── -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12"
+              style="-fx-background-color: #1A3C5E; -fx-padding: 12 16;">
+            <Label text="ChriOnline — Admin Dashboard"
+                   style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <!-- ── Tab pane ── -->
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-padding: 8;">
+
+            <!-- ══ PRODUCTS TAB ══ -->
+            <Tab text="Products">
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Toolbar -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button fx:id="btnAddProduct"     text="+ Add Product"  style="-fx-background-color: #1E6B3A; -fx-text-fill: white;"/>
+                        <Button fx:id="btnEditProduct"    text="Edit Selected"  style="-fx-background-color: #2E86C1; -fx-text-fill: white;"/>
+                        <Button fx:id="btnDeleteProduct"  text="Delete Selected" style="-fx-background-color: #922B21; -fx-text-fill: white;"/>
+                        <Button fx:id="btnRefreshProducts" text="↻ Refresh"/>
+                        <Label fx:id="lblProductsStatus" style="-fx-text-fill: #1E6B3A;" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Table -->
+                    <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colProductId"       text="ID"          prefWidth="50"/>
+                            <TableColumn fx:id="colProductName"     text="Name"        prefWidth="220"/>
+                            <TableColumn fx:id="colProductCategory" text="Category"    prefWidth="160"/>
+                            <TableColumn fx:id="colProductPrice"    text="Price"       prefWidth="110"/>
+                            <TableColumn fx:id="colProductStock"    text="Stock"       prefWidth="80"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- ══ ORDERS TAB ══ -->
+            <Tab text="Orders">
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Toolbar -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button fx:id="btnUpdateStatus"  text="Update Status" style="-fx-background-color: #B94000; -fx-text-fill: white;"/>
+                        <Button fx:id="btnRefreshOrders" text="↻ Refresh"/>
+                        <Label fx:id="lblOrdersStatus" style="-fx-text-fill: #1E6B3A;" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Table -->
+                    <TableView fx:id="ordersTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colOrderId"     text="ID"        prefWidth="50"/>
+                            <TableColumn fx:id="colOrderRef"    text="Reference" prefWidth="110"/>
+                            <TableColumn fx:id="colOrderUserId" text="User ID"   prefWidth="70"/>
+                            <TableColumn fx:id="colOrderStatus" text="Status"    prefWidth="110"/>
+                            <TableColumn fx:id="colOrderTotal"  text="Total"     prefWidth="120"/>
+                            <TableColumn fx:id="colOrderDate"   text="Date"      prefWidth="170"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- ══ USERS TAB ══ -->
+            <Tab text="Users">
+                <VBox spacing="8">
+                    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+                    <!-- Toolbar -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button fx:id="btnDeleteUser"    text="Delete Selected" style="-fx-background-color: #922B21; -fx-text-fill: white;"/>
+                        <Button fx:id="btnRefreshUsers"  text="↻ Refresh"/>
+                        <Label fx:id="lblUsersStatus" style="-fx-text-fill: #1E6B3A;" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <!-- Table -->
+                    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colUserId"       text="ID"       prefWidth="50"/>
+                            <TableColumn fx:id="colUserUsername" text="Username" prefWidth="130"/>
+                            <TableColumn fx:id="colUserFullName" text="Full Name" prefWidth="160"/>
+                            <TableColumn fx:id="colUserEmail"    text="Email"    prefWidth="200"/>
+                            <TableColumn fx:id="colUserRole"     text="Role"     prefWidth="80"/>
+                            <TableColumn fx:id="colUserActive"   text="Status"   prefWidth="90"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+</BorderPane>

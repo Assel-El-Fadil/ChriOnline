@@ -49,9 +49,9 @@ public class OrderHandler {
     // ──────────────────────────────────────────────────────────────
     public String handle(Command cmd, String[] params) {
         switch (cmd) {
-            case CHECKOUT:      return handleCheckout(params);
+            case CHECKOUT: return handleCheckout(params);
             case ORDER_HISTORY: return handleOrderHistory(params);
-            default:            return ResponseBuilder.error("Unknown order command");
+            default: return ResponseBuilder.error("Unknown order command");
         }
     }
 
@@ -99,7 +99,7 @@ public class OrderHandler {
         }
 
         // ── Step 3 : Validate payment ─────────────────────────────
-        PaymentResult pr = PaymentService.validate(cardNum, holder, expiry, cvv);
+        PaymentResult pr = paymentService.validate(cardNum, holder, expiry, cvv);
         if (!pr.isSuccess()) {
             return ResponseBuilder.error(pr.getMessage());
         }
