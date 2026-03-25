@@ -16,6 +16,7 @@
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Client.Controllers.ProductDetailsController"
       stylesheets="@admin_theme.css"
       spacing="20"
       styleClass="root"
@@ -30,7 +31,8 @@
     <HBox alignment="CENTER_LEFT" spacing="12">
         <Button fx:id="btnBackCatalog"
                 text="← Back to Catalog"
-                styleClass="btn-secondary"/>
+                styleClass="btn-secondary"
+                onAction="#handleBackToCatalog"/>
         <Region HBox.hgrow="ALWAYS"/>
     </HBox>
 
@@ -54,16 +56,16 @@
 
             <!-- Right: details -->
             <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="12" fillWidth="true">
-                <Label fx:id="lblProductName" text="Product name" styleClass="section-title"
+                <Label fx:id="lblName" text="Product name" styleClass="section-title"
                        wrapText="true"/>
-                <Label fx:id="lblProductCategory" text="Category"
+                <Label fx:id="lblCategory" text="Category"
                        style="-fx-text-fill: #6B7280; -fx-font-size: 14px;" wrapText="true"/>
-                <Label fx:id="lblProductDescription" text="Description"
+                <Label fx:id="lblDescription" text="Description"
                        wrapText="true"
                        style="-fx-text-fill: #374151; -fx-font-size: 14px;"/>
-                <Label fx:id="lblProductPrice" text="0.00 MAD"
+                <Label fx:id="lblPrice" text="0.00 MAD"
                        style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                <Label fx:id="lblProductStock" text="Stock: —"
+                <Label fx:id="lblStock" text="Stock: —"
                        style="-fx-font-size: 14px; -fx-text-fill: #374151;"/>
             </VBox>
         </GridPane>
@@ -72,14 +74,16 @@
     <!-- Bottom: quantity + add -->
     <HBox spacing="16" alignment="CENTER_LEFT" style="-fx-padding: 4 0 0 0;">
         <Label text="Quantity:" style="-fx-font-weight: 600; -fx-text-fill: #374151;"/>
-        <Spinner fx:id="spinnerQuantity" editable="true" prefWidth="120">
+        <Spinner fx:id="quantitySpinner" editable="true" prefWidth="120">
             <valueFactory>
                 <IntegerSpinnerValueFactory min="1" max="9999" initialValue="1"/>
             </valueFactory>
         </Spinner>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="btnAddToCart"
+        <Label fx:id="cartStatusLabel" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+               wrapText="true" style="-fx-font-size: 13px;"/>
+        <Button fx:id="addToCartButton"
                 text="Add to Cart"
-                styleClass="btn-primary"/>
+                styleClass="btn-primary"
+                onAction="#handleAddToCart"/>
     </HBox>
 </VBox>
