@@ -19,7 +19,7 @@
     </padding>
 
     <!-- Title -->
-    <Label text="ChriOnline — Register"
+    <Label text="ChriOnline"
            style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
     <!-- First name / Last name side by side -->
