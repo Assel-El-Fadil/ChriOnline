@@ -1,8 +1,8 @@
-package chri.service;
+package Server.service;
 
-import chri.dao.UserDAO;
-import chri.dao.UserDAO.AuthUser;
-import chri.shared.UserDTO;
+import Server.DAO.UserDAO;
+import Server.DAO.UserDAO.AuthUser;
+import Shared.DTO.UserDTO;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -12,12 +12,21 @@ import java.util.regex.Pattern;
 
 public class UserService {
 
-    private static final int    USERNAME_MIN   = 3;
-    private static final int    USERNAME_MAX   = 50;
-    private static final int    PASSWORD_MIN   = 6;
-    private static final int    EMAIL_MAX      = 150;
-    private static final Pattern USERNAME_PATTERN =
-            Pattern.compile("^[a-zA-Z0-9_]+$");
+    // ── Validation constants ─────────────────────────────────────
+    private static final int     USERNAME_MIN     = 3;
+    private static final int     USERNAME_MAX     = 50;
+    private static final int     PASSWORD_MIN     = 6;
+    private static final int     NAME_MAX         = 50;
+    private static final int     EMAIL_MAX        = 150;
+    private static final int     ADDRESS_MAX      = 255;
+
+    // Alphanumeric + underscore — no spaces
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
+
+    // Letters, spaces, hyphens, apostrophes — covers most real names
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[\\p{L} '\\-]+$");
+
+    // Basic email structure — something@something.something
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
@@ -27,8 +36,15 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public int register(String username, String password, String email) {
+    // ────────────────────────────────────────────────────────────
+    //  Registration
+    // ────────────────────────────────────────────────────────────
 
+    public int register(String firstName, String lastName,
+                        String username, String password, String email) {
+
+        validateFirstName(firstName);
+        validateLastName(lastName);
         validateUsername(username);
         validatePassword(password);
         validateEmail(email);
@@ -36,7 +52,9 @@ public class UserService {
         String passwordHash = hashPassword(password);
 
         try {
-            return userDAO.createUser(username, passwordHash, email);
+            // address is null at registration — user sets it later
+            return userDAO.createUser(
+                    firstName, lastName, username, passwordHash, email, null);
 
         } catch (UserDAO.DuplicateUsernameException e) {
             throw new DuplicateUsernameException(e.getMessage());
@@ -45,6 +63,10 @@ public class UserService {
         }
     }
 
+    // ────────────────────────────────────────────────────────────
+    //  Authentication
+    // ────────────────────────────────────────────────────────────
+
     public UserDTO authenticate(String username, String password) {
         AuthUser authUser = userDAO.findByUsernameForAuth(username);
 
@@ -52,20 +74,26 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        String incomingHash = hashPassword(password);
-
-        if (!incomingHash.equals(authUser.passwordHash)) {
+        if (!hashPassword(password).equals(authUser.passwordHash)) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
+        // Build UserDTO — all new fields included, no hash exposed
         return new UserDTO(
                 authUser.id,
                 authUser.username,
+                authUser.firstName,
+                authUser.lastName,
                 authUser.email,
+                authUser.address,   // may be null — UserDTO handles it
                 authUser.role,
                 authUser.active
         );
     }
+
+    // ────────────────────────────────────────────────────────────
+    //  Lookup
+    // ────────────────────────────────────────────────────────────
 
     public UserDTO findById(int userId) {
         UserDTO user = userDAO.findById(userId);
@@ -78,6 +106,10 @@ public class UserService {
     public List<UserDTO> findAll() {
         return userDAO.findAll();
     }
+
+    // ────────────────────────────────────────────────────────────
+    //  Deletion
+    // ────────────────────────────────────────────────────────────
 
     public void delete(int userId) {
         UserDTO user = userDAO.findById(userId);
@@ -92,6 +124,10 @@ public class UserService {
         }
     }
 
+    // ────────────────────────────────────────────────────────────
+    //  Password hashing
+    // ────────────────────────────────────────────────────────────
+
     public String hashPassword(String plainTextPassword) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -105,7 +141,40 @@ public class UserService {
             return hex.toString();
 
         } catch (NoSuchAlgorithmException e) {
+            // SHA-256 is guaranteed in every JVM — never happens
             throw new RuntimeException("SHA-256 algorithm not available", e);
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    //  Validation helpers
+    // ────────────────────────────────────────────────────────────
+
+    private void validateFirstName(String firstName) {
+        if (firstName == null || firstName.isBlank()) {
+            throw new ValidationException("First name cannot be empty");
+        }
+        if (firstName.length() > NAME_MAX) {
+            throw new ValidationException(
+                    "First name cannot exceed " + NAME_MAX + " characters");
+        }
+        if (!NAME_PATTERN.matcher(firstName).matches()) {
+            throw new ValidationException(
+                    "First name contains invalid characters");
+        }
+    }
+
+    private void validateLastName(String lastName) {
+        if (lastName == null || lastName.isBlank()) {
+            throw new ValidationException("Last name cannot be empty");
+        }
+        if (lastName.length() > NAME_MAX) {
+            throw new ValidationException(
+                    "Last name cannot exceed " + NAME_MAX + " characters");
+        }
+        if (!NAME_PATTERN.matcher(lastName).matches()) {
+            throw new ValidationException(
+                    "Last name contains invalid characters");
         }
     }
 
@@ -147,9 +216,21 @@ public class UserService {
         }
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new ValidationException(
-                    "Email format is invalid — expected format: user@domain.com");
+                    "Email format is invalid — expected: user@domain.com");
         }
     }
+
+    public void validateAddress(String address) {
+        if (address == null || address.isBlank()) return; // optional field
+        if (address.length() > ADDRESS_MAX) {
+            throw new ValidationException(
+                    "Address cannot exceed " + ADDRESS_MAX + " characters");
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    //  Typed exceptions
+    // ────────────────────────────────────────────────────────────
 
     public static class ValidationException extends RuntimeException {
         public ValidationException(String message) { super(message); }

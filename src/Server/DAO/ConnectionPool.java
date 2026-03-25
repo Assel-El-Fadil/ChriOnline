@@ -1,4 +1,4 @@
-package chri.dao;
+package Server.DAO;
 
 import java.io.IOException;
 import java.io.InputStream;

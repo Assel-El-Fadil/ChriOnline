@@ -1,6 +1,6 @@
-package chri.dao;
+package Server.DAO;
 
-import chri.shared.UserDTO;
+import Shared.DTO.UserDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,27 +8,45 @@ import java.util.List;
 
 public class UserDAO {
 
-    public static class AuthUser {
-        public final int    id;
-        public final String username;
-        public final String email;
-        public final String role;
-        public final int    active;
-        public final String passwordHash;   // only field not in UserDTO
+    // ────────────────────────────────────────────────────────────
+    //  Inner class — carries password hash for AuthHandler only
+    // ────────────────────────────────────────────────────────────
 
-        public AuthUser(int id, String username, String email,
-                        String role, int active, String passwordHash) {
+    public static class AuthUser {
+        public final int id;
+        public final String username;
+        public final String firstName;
+        public final String lastName;
+        public final String email;
+        public final String address;
+        public final String role;
+        public final int active;
+        public final String passwordHash;
+
+        public AuthUser(int id, String username, String firstName, String lastName,
+                        String email, String address, String role,
+                        int active, String passwordHash) {
             this.id           = id;
             this.username     = username;
+            this.firstName    = firstName;
+            this.lastName     = lastName;
             this.email        = email;
+            this.address      = address;
             this.role         = role;
             this.active       = active;
             this.passwordHash = passwordHash;
         }
     }
 
-    public int createUser(String username, String passwordHash, String email) {
-        final String sql = "INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)";
+    // ────────────────────────────────────────────────────────────
+    //  Write operations
+    // ────────────────────────────────────────────────────────────
+
+    public int createUser(String firstName, String lastName, String username,
+                          String passwordHash, String email, String address) {
+
+        final String sql = "INSERT INTO users (first_name, last_name, username, password_hash, email, address) "
+                        + "VALUES (?, ?, ?, ?, ?, ?)";
 
         Connection conn = null;
         try {
@@ -36,9 +54,18 @@ public class UserDAO {
 
             PreparedStatement ps = conn.prepareStatement(
                     sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, username);
-            ps.setString(2, passwordHash);
-            ps.setString(3, email);
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ps.setString(3, username);
+            ps.setString(4, passwordHash);
+            ps.setString(5, email);
+
+            // address is nullable — use setNull when not provided
+            if (address == null || address.isBlank()) {
+                ps.setNull(6, Types.VARCHAR);
+            } else {
+                ps.setString(6, address);
+            }
 
             ps.executeUpdate();
 
@@ -77,7 +104,6 @@ public class UserDAO {
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
-
             return ps.executeUpdate() == 1;
 
         } catch (SQLException e) {
@@ -97,7 +123,6 @@ public class UserDAO {
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
-
             return ps.executeUpdate() == 1;
 
         } catch (SQLException e) {
@@ -108,9 +133,14 @@ public class UserDAO {
         }
     }
 
+    // ────────────────────────────────────────────────────────────
+    //  Read operations
+    // ────────────────────────────────────────────────────────────
+
     public AuthUser findByUsernameForAuth(String username) {
         final String sql =
-                "SELECT id, username, email, role, active, password_hash "
+                "SELECT id, first_name, last_name, username, email, address, "
+                        + "       role, active, password_hash "
                         + "FROM users "
                         + "WHERE username = ? AND active = 1";
 
@@ -126,13 +156,16 @@ public class UserDAO {
                 return new AuthUser(
                         rs.getInt("id"),
                         rs.getString("username"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
                         rs.getString("email"),
+                        rs.getString("address"),    // may be null — ResultSet returns null fine
                         rs.getString("role"),
                         rs.getInt("active"),
                         rs.getString("password_hash")
                 );
             }
-            return null;   // user not found or deactivated
+            return null;
 
         } catch (SQLException e) {
             throw new DAOException("findByUsernameForAuth failed: " + e.getMessage(), e);
@@ -143,7 +176,7 @@ public class UserDAO {
 
     public UserDTO findById(int userId) {
         final String sql =
-                "SELECT id, username, email, role, active "
+                "SELECT id, first_name, last_name, username, email, address, role, active "
                         + "FROM users "
                         + "WHERE id = ?";
 
@@ -170,7 +203,7 @@ public class UserDAO {
 
     public List<UserDTO> findAll() {
         final String sql =
-                "SELECT id, username, email, role, active "
+                "SELECT id, first_name, last_name, username, email, address, role, active "
                         + "FROM users "
                         + "ORDER BY created_at DESC";
 
@@ -195,8 +228,7 @@ public class UserDAO {
     }
 
     public boolean hasOrders(int userId) {
-        final String sql =
-                "SELECT COUNT(*) FROM orders WHERE user_id = ?";
+        final String sql = "SELECT COUNT(*) FROM orders WHERE user_id = ?";
 
         Connection conn = null;
         try {
@@ -219,15 +251,26 @@ public class UserDAO {
         }
     }
 
+    // ────────────────────────────────────────────────────────────
+    //  Private helpers
+    // ────────────────────────────────────────────────────────────
+
     private UserDTO mapToDTO(ResultSet rs) throws SQLException {
         return new UserDTO(
                 rs.getInt("id"),
                 rs.getString("username"),
+                rs.getString("first_name"),
+                rs.getString("last_name"),
                 rs.getString("email"),
+                rs.getString("address"),   // null if not set — UserDTO.address is nullable
                 rs.getString("role"),
                 rs.getInt("active")
         );
     }
+
+    // ────────────────────────────────────────────────────────────
+    //  DAO-layer exceptions
+    // ────────────────────────────────────────────────────────────
 
     public static class DAOException extends RuntimeException {
         public DAOException(String message) { super(message); }
