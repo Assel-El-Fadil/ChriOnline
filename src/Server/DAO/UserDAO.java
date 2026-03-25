@@ -138,7 +138,6 @@ public class UserDAO {
     // ────────────────────────────────────────────────────────────
 
     public AuthUser findByUsernameForAuth(String username) {
-        System.out.println("reached UserDAO");
         final String sql =
                 "SELECT id, first_name, last_name, username, email, address, "
                         + "       role, active, password_hash "
@@ -166,7 +165,6 @@ public class UserDAO {
                         rs.getString("password_hash")
                 );
             }
-            System.out.println("finished UserDAO");
             return null;
         } catch (SQLException e) {
             throw new DAOException("findByUsernameForAuth failed: " + e.getMessage(), e);

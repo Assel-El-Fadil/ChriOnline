@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="14"
-      prefWidth="380" prefHeight="320"
+      prefWidth="380" prefHeight="450"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="Client.Controllers.RegisterController">
@@ -21,6 +21,18 @@
     <!-- Title -->
     <Label text="ChriOnline — Register"
            style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- First name / Last name side by side -->
+    <HBox spacing="10">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="First Name"/>
+            <TextField fx:id="firstNameField" promptText="First name"/>
+        </VBox>
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="Last Name"/>
+            <TextField fx:id="lastNameField" promptText="Last name"/>
+        </VBox>
+    </HBox>
 
     <!-- Username field -->
     <VBox spacing="4">

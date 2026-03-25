@@ -39,19 +39,27 @@ public class AuthHandler {
 
     // ──────────────────────────────────────────────────────────────
     // REGISTER
-    // params: 0=username, 1=password, 2=email
+    // params: 0=firstName, 1=lastName, 2=username, 3=password, 4=email
     // returns: OK|userId  or  ERR|message
     // ──────────────────────────────────────────────────────────────
     private String handleRegister(String[] params) {
 
-        if (params.length < 3) {
+        if (params.length < 5) {
             return ResponseBuilder.error("Missing parameters");
         }
 
-        String username = params[0].trim();
-        String password = params[1];
-        String email    = params[2].trim();
+        String firstName = params[0].trim();
+        String lastName  = params[1].trim();
+        String username  = params[2].trim();
+        String password  = params[3];
+        String email     = params[4].trim();
 
+        if (firstName.isEmpty()) {
+            return ResponseBuilder.error("First name cannot be empty");
+        }
+        if (lastName.isEmpty()) {
+            return ResponseBuilder.error("Last name cannot be empty");
+        }
         if (username.isEmpty()) {
             return ResponseBuilder.error("Username cannot be empty");
         }
@@ -63,7 +71,7 @@ public class AuthHandler {
         }
 
         try {
-            int userId = userService.register("", "", username, password, email);
+            int userId = userService.register(firstName, lastName, username, password, email);
             System.out.println("[AuthHandler] REGISTER success — user: " + username + " id: " + userId);
             return ResponseBuilder.ok(String.valueOf(userId));
 
@@ -86,7 +94,6 @@ public class AuthHandler {
     // ──────────────────────────────────────────────────────────────
     private String handleLogin(String[] params, Socket clientSocket) {
 
-        System.out.println("Reached AuthHandler");
         if (params.length < 3) {
             return ResponseBuilder.error("Missing parameters");
         }
@@ -129,7 +136,6 @@ public class AuthHandler {
                 + " | clientIP: " + clientIP
                 + " | udpPort: " + udpPort);
 
-        System.out.println("finished authHandler");
         return ResponseBuilder.ok(token + "|" + user.role);
     }
 
