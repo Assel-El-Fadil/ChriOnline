@@ -152,6 +152,9 @@ public class LoginController {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                CatalogController catalogController = loader.getController();
+                catalogController.setSocketClient(socketClient);
+                catalogController.setPrimaryStage(primaryStage);
                 primaryStage.setScene(new Scene(root, 900, 600));
             });
 

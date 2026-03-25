@@ -11,10 +11,15 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +52,7 @@ public class CatalogController {
     private Label statusLabel;
 
     private SocketClient socketClient;
+    private Stage        primaryStage;
 
     @FXML
     public void initialize() {
@@ -113,6 +119,10 @@ public class CatalogController {
         this.socketClient = socketClient;
         loadCategories();
         loadProducts(null);
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 
     private void loadCategories() {
@@ -248,12 +258,22 @@ public class CatalogController {
     @FXML
     private void handleViewDetails(ActionEvent event) {
         ProductDTO selected = productTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Product Details");
-            alert.setHeaderText(selected.name);
-            alert.setContentText(selected.description);
-            alert.showAndWait();
+        if (selected == null) return;
+        if (socketClient == null || primaryStage == null) return;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/productDetails.fxml"));
+            Parent root = loader.load();
+            ProductDetailsController detailsController = loader.getController();
+            detailsController.setSocketClient(socketClient);
+            detailsController.setPrimaryStage(primaryStage);
+            detailsController.initData(selected);
+
+            primaryStage.setTitle("ChriOnline — " + selected.name);
+            primaryStage.setScene(new Scene(root, 900, 640));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Could not open product details.", true);
         }
     }
 

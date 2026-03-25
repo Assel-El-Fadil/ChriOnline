@@ -23,6 +23,10 @@ public class ProductDTO {
         this.active      = active;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String toProtocolString() {
         String safeDesc = (description == null ? "" : description.replace(",", " "));
         return "id="       + id
