@@ -67,8 +67,4 @@ public class CartService {
     public boolean hasCart(String token) {
         return carts.containsKey(token);
     }
-
-    public int getGlobalProductCount(int productId) throws SQLException {
-        return cartDAO.getTotalQuantity(productId);
-    }
 }
