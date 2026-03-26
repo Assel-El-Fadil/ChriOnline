@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class CheckoutController {
 
     // ── Injected by parent controller ─────────────────────────────
     private SocketClient            socketClient;
+    private Stage primaryStage;
     private List<CartItemDTO>       cartItems;   // passed from CartController
     private Runnable                onSuccess;   // callback → switch to Order History tab
     private Runnable                onBack;      // callback → switch back to Cart tab
@@ -42,6 +44,10 @@ public class CheckoutController {
     // ──────────────────────────────────────────────────────────────
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 
     /** Pre-load cart items from CartController so we can show the summary. */

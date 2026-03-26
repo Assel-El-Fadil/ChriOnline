@@ -65,6 +65,12 @@ public final class ProductImageHelper {
                 return new Image(file.toURI().toString());
             }
 
+            // Final fallback 2: check inside src/Client
+            File fileSrcClient = new File("src/Client" + path);
+            if (fileSrcClient.exists() && fileSrcClient.isFile()) {
+                return new Image(fileSrcClient.toURI().toString());
+            }
+
             System.err.println("[ProductImageHelper] Could not find resource: " + path);
             return null;
         } catch (Exception e) {
