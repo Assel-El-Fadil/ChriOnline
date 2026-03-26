@@ -170,12 +170,7 @@ public class CatalogController {
         imageView.setSmooth(true);
         imageView.setImage(ProductImageHelper.loadLocalImage(p.imagePath));
 
-        Label badge = createCatalogBadge(p);
-        StackPane badgeWrap = new StackPane(badge);
-        StackPane.setAlignment(badgeWrap, Pos.TOP_LEFT);
-        StackPane.setMargin(badgeWrap, new Insets(10, 0, 0, 10));
-
-        imageStack.getChildren().addAll(imageBg, imageView, badgeWrap);
+        imageStack.getChildren().addAll(imageBg, imageView);
         StackPane.setAlignment(imageView, Pos.CENTER);
 
         Label subtitle = new Label(truncateDescription(p.description, 52));
@@ -207,45 +202,28 @@ public class CatalogController {
         HBox priceRow = new HBox(10, price, grow, addBtn);
         priceRow.setAlignment(Pos.CENTER_LEFT);
 
-        Button detailsBtn = new Button("View details");
+        Button detailsBtn = new Button("Product details");
         detailsBtn.getStyleClass().add("catalog-card-details-btn");
         detailsBtn.setMaxWidth(Double.MAX_VALUE);
         detailsBtn.setOnAction(ev -> openProductDetails(p));
 
-        VBox body = new VBox(8, subtitle, name, rating, priceRow, detailsBtn);
+        VBox body = new VBox(8, subtitle, name, priceRow, detailsBtn);
         body.setPadding(new Insets(12, 10, 14, 10));
 
         card.getChildren().addAll(imageStack, body);
-        return card;
-    }
+        card.setCursor(javafx.scene.Cursor.HAND);
+        card.setOnMouseClicked(ev -> {
+            System.out.println("[CatalogController] Card clicked for: " + p.name);
+            openProductDetails(p);
+        });
+        
+        // Prevent button clicks from double-triggering or conflicting if needed
+        detailsBtn.setOnAction(ev -> {
+            ev.consume();
+            openProductDetails(p);
+        });
 
-    private static Label createCatalogBadge(ProductDTO p) {
-        Label l = new Label();
-        l.getStyleClass().add("catalog-card-badge");
-        if (p.stock == 0) {
-            l.setText("Unavailable");
-            l.getStyleClass().add("catalog-badge-unavailable");
-            return l;
-        }
-        switch (Math.abs(p.id) % 4) {
-            case 0:
-                l.setText("Best Seller");
-                l.getStyleClass().add("catalog-badge-success");
-                break;
-            case 1:
-                l.setText("Top Rated");
-                l.getStyleClass().add("catalog-badge-teal");
-                break;
-            case 2:
-                l.setText("Sale");
-                l.getStyleClass().add("catalog-badge-sale");
-                break;
-            default:
-                l.setText("New");
-                l.getStyleClass().add("catalog-badge-new");
-                break;
-        }
-        return l;
+        return card;
     }
 
     private static String truncateDescription(String desc, int maxChars) {
@@ -360,22 +338,42 @@ public class CatalogController {
     }
 
     private void openProductDetails(ProductDTO selected) {
-        if (socketClient == null || primaryStage == null) {
+        System.out.println("[CatalogController] Attempting to open details for: " + selected.name);
+        
+        // Fallback: If injected primaryStage is null, try to get it from the grid
+        Stage targetStage = primaryStage;
+        if (targetStage == null && productGrid.getScene() != null) {
+            targetStage = (Stage) productGrid.getScene().getWindow();
+        }
+
+        if (socketClient == null || targetStage == null) {
+            String msg = "Navigation error: " + (socketClient == null ? "socketClient " : "") + (targetStage == null ? "targetStage " : "") + "is null!";
+            System.err.println("[CatalogController] " + msg);
+            showStatus(msg, true);
             return;
         }
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/productDetails.fxml"));
+            String fxmlPath = "/UI/productDetails.fxml";
+            var fxmlResource = getClass().getResource(fxmlPath);
+            if (fxmlResource == null) {
+                showStatus("FXML not found: " + fxmlPath, true);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlResource);
             Parent root = loader.load();
             ProductDetailsController detailsController = loader.getController();
             detailsController.setSocketClient(socketClient);
-            detailsController.setPrimaryStage(primaryStage);
+            detailsController.setPrimaryStage(targetStage);
             detailsController.initData(selected);
 
-            primaryStage.setTitle("ChriOnline — " + selected.name);
-            primaryStage.setScene(new Scene(root, 1100, 750));
-        } catch (IOException e) {
+            targetStage.setTitle("ChriOnline — " + selected.name);
+            targetStage.setScene(new Scene(root, 1100, 750));
+            System.out.println("[CatalogController] Navigation successful.");
+        } catch (Exception e) {
             e.printStackTrace();
-            showStatus("Could not open product details.", true);
+            showStatus("Error opening details: " + e.getMessage(), true);
         }
     }
 
@@ -384,6 +382,9 @@ public class CatalogController {
             if (statusLabel != null) {
                 statusLabel.setText(message);
                 statusLabel.setTextFill(isError ? Color.RED : Color.GREEN);
+                statusLabel.setVisible(true);
+                statusLabel.setManaged(true);
+                System.out.println("[CatalogController Status] " + (isError ? "ERROR: " : "INFO: ") + message);
             }
         });
     }
