@@ -296,6 +296,37 @@ public class ProfileController {
         }
     }
 
+    @FXML
+    private void handleLogout() {
+        if (socketClient != null && socketClient.isConnected()) {
+            Task<Void> task = new Task<>() {
+                @Override
+                protected Void call() {
+                    socketClient.sendCommand("LOGOUT|" + AppState.getToken());
+                    return null;
+                }
+            };
+            new Thread(task).start();
+        }
+        
+        AppState.clear();
+        
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            Parent root = loader.load();
+            Client.Controllers.LoginController lc = loader.getController();
+            lc.setSocketClient(socketClient);
+            lc.setUdpPort(8085);
+            lc.setPrimaryStage(primaryStage);
+
+            primaryStage.setTitle("ChriOnline");
+            primaryStage.setScene(new Scene(root, 400, 300));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Failed to load login screen.", true);
+        }
+    }
+
     // ────────────────────────────────────────────────────────────
     //  UI Helpers
     // ────────────────────────────────────────────────────────────

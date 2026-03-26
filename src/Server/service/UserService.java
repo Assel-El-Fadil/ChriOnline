@@ -153,17 +153,31 @@ public class UserService {
     //  Deletion
     // ────────────────────────────────────────────────────────────
 
-    public void delete(int userId) {
+    public void deactivate(int userId) {
         UserDTO user = userDAO.findById(userId);
         if (user == null) {
             throw new UserNotFoundException("No user found with id=" + userId);
         }
+        userDAO.softDelete(userId);
+    }
 
-        if (userDAO.hasOrders(userId)) {
-            userDAO.softDelete(userId);
-        } else {
-            userDAO.hardDelete(userId);
+    public void activate(int userId) {
+        UserDTO user = userDAO.findById(userId);
+        if (user == null) {
+            throw new UserNotFoundException("No user found with id=" + userId);
         }
+        userDAO.reactivate(userId);
+    }
+
+    public void hardDelete(int userId) {
+        UserDTO user = userDAO.findById(userId);
+        if (user == null) {
+            throw new UserNotFoundException("No user found with id=" + userId);
+        }
+        if (userDAO.hasOrders(userId)) {
+            throw new IllegalStateException("Cannot hard delete a user with orders. Deactivate instead.");
+        }
+        userDAO.hardDelete(userId);
     }
 
     // ────────────────────────────────────────────────────────────

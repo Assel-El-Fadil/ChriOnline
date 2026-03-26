@@ -27,9 +27,8 @@
                 
                 <!-- Icons area (simulated with text/symbols for now) -->
                 <HBox spacing="15" alignment="CENTER">
-                    <Label text="📍" styleClass="icon-button"/>
-                    <Label text="🛒" styleClass="icon-button"/>
                     <Label text="👤 Admin" styleClass="icon-button" style="-fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <Button text="Logout" onAction="#handleLogout" styleClass="btn-danger" focusTraversable="false" />
                 </HBox>
             </HBox>
         </VBox>
@@ -123,7 +122,9 @@
 
                         <!-- Toolbar -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Button fx:id="btnDeleteUser"    text="Deactivate / Delete" styleClass="btn-danger"/>
+                            <Button fx:id="btnDeactivateUser" text="Deactivate" styleClass="btn-warning"/>
+                            <Button fx:id="btnActivateUser" text="Activate" styleClass="btn-success" visible="false" managed="false"/>
+                            <Button fx:id="btnDeleteUser"    text="Delete (Hard)" styleClass="btn-danger"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button fx:id="btnRefreshUsers"  text="↻ Refresh List" styleClass="btn-secondary"/>
                         </HBox>

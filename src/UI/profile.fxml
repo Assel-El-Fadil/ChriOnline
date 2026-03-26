@@ -29,6 +29,8 @@
                 <HBox spacing="12" alignment="CENTER_RIGHT">
                     <Button text="← Back to Catalog" onAction="#handleBack"
                             styleClass="btn-secondary" focusTraversable="false"/>
+                    <Button text="Logout" onAction="#handleLogout"
+                            styleClass="btn-danger" focusTraversable="false"/>
                 </HBox>
             </HBox>
         </VBox>

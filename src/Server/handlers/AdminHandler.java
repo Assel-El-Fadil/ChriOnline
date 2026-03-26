@@ -287,22 +287,16 @@ public class AdminHandler {
     }
 
     /**
-     * ADMIN_DELETE_USER|token|userId
-     *
-     * Calls UserService.delete() which automatically chooses
-     * soft-delete (has orders) or hard-delete (no orders).
-     * An admin cannot delete themselves — this guard prevents
-     * accidentally locking out all admin access.
-     *
-     * Response: OK|
+     * ADMIN_HARD_DELETE_USER|token|userId
+     * Hard-deletes a user. Fails if the user has orders.
      */
-    public String handleDeleteUser(String[] params) {
+    public String handleHardDeleteUser(String[] params) {
         SessionData admin = requireAdmin(params[0]);
         if (admin == null) {
             return ResponseBuilder.error("Unauthorized");
         }
         if (params.length < 2) {
-            return ResponseBuilder.error("ADMIN_DELETE_USER requires: userId");
+            return ResponseBuilder.error("ADMIN_HARD_DELETE_USER requires: userId");
         }
 
         int targetUserId;
@@ -312,15 +306,77 @@ public class AdminHandler {
             return ResponseBuilder.error("User id must be an integer");
         }
 
-        // Prevent self-deletion — an admin cannot delete their own account
         if (targetUserId == admin.getUserId()) {
             return ResponseBuilder.error("You cannot delete your own admin account");
         }
 
         try {
-            userService.delete(targetUserId);
+            userService.hardDelete(targetUserId);
             return ResponseBuilder.ok();
+        } catch (UserService.UserNotFoundException | IllegalStateException e) {
+            return ResponseBuilder.error(e.getMessage());
+        }
+    }
 
+    /**
+     * ADMIN_DEACTIVATE_USER|token|userId
+     * Soft-deletes (deactivates) a user.
+     */
+    public String handleDeactivateUser(String[] params) {
+        SessionData admin = requireAdmin(params[0]);
+        if (admin == null) {
+            return ResponseBuilder.error("Unauthorized");
+        }
+        if (params.length < 2) {
+            return ResponseBuilder.error("ADMIN_DEACTIVATE_USER requires: userId");
+        }
+
+        int targetUserId;
+        try {
+            targetUserId = Integer.parseInt(params[1].trim());
+        } catch (NumberFormatException e) {
+            return ResponseBuilder.error("User id must be an integer");
+        }
+
+        if (targetUserId == admin.getUserId()) {
+            return ResponseBuilder.error("You cannot deactivate your own admin account");
+        }
+
+        try {
+            userService.deactivate(targetUserId);
+            return ResponseBuilder.ok();
+        } catch (UserService.UserNotFoundException e) {
+            return ResponseBuilder.error(e.getMessage());
+        }
+    }
+
+    /**
+     * ADMIN_ACTIVATE_USER|token|userId
+     * Activates a user that was logically deactivated.
+     */
+    public String handleActivateUser(String[] params) {
+        SessionData admin = requireAdmin(params[0]);
+        if (admin == null) {
+            return ResponseBuilder.error("Unauthorized");
+        }
+        if (params.length < 2) {
+            return ResponseBuilder.error("ADMIN_ACTIVATE_USER requires: userId");
+        }
+
+        int targetUserId;
+        try {
+            targetUserId = Integer.parseInt(params[1].trim());
+        } catch (NumberFormatException e) {
+            return ResponseBuilder.error("User id must be an integer");
+        }
+
+        if (targetUserId == admin.getUserId()) {
+            return ResponseBuilder.error("You cannot activate yourself");
+        }
+
+        try {
+            userService.activate(targetUserId);
+            return ResponseBuilder.ok();
         } catch (UserService.UserNotFoundException e) {
             return ResponseBuilder.error(e.getMessage());
         }

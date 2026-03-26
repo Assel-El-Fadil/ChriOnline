@@ -21,7 +21,10 @@ public enum Command {
     ADMIN_LIST_ORDERS,
     ADMIN_UPDATE_STATUS,
     ADMIN_LIST_USERS,
-    ADMIN_DELETE_USER,
+    ADMIN_DELETE_USER, // Kept for backwards compatibility if needed
+    ADMIN_DEACTIVATE_USER,
+    ADMIN_ACTIVATE_USER,
+    ADMIN_HARD_DELETE_USER,
     GET_PROFILE,
     EDIT_PROFILE;
 

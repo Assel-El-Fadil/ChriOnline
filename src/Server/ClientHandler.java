@@ -257,7 +257,14 @@ public class ClientHandler implements Runnable {
                 return adminHandler.handleListUsers(params);
 
             case ADMIN_DELETE_USER:
-                return adminHandler.handleDeleteUser(params);
+            case ADMIN_HARD_DELETE_USER:
+                return adminHandler.handleHardDeleteUser(params);
+
+            case ADMIN_DEACTIVATE_USER:
+                return adminHandler.handleDeactivateUser(params);
+
+            case ADMIN_ACTIVATE_USER:
+                return adminHandler.handleActivateUser(params);
 
             // ── User Profile ───────────────────────────────────────
             case GET_PROFILE:
