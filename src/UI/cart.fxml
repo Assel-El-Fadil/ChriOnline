@@ -22,7 +22,10 @@
     <top>
         <VBox>
             <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
-                <Label text="LuxeStore" styleClass="logo-text"/>
+                <Button text="← Catalog"
+                        styleClass="btn-secondary"
+                        onAction="#handleBackToCatalog"/>
+                <Label text="ChriOnline" styleClass="logo-text"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
@@ -32,10 +35,10 @@
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <HBox spacing="15" alignment="CENTER_RIGHT">
+                <HBox spacing="12" alignment="CENTER_RIGHT">
                     <Label text="📍" styleClass="icon-button"/>
                     <Label text="🛒" styleClass="icon-button"/>
-                    <Label text="Cart"
+                    <Label text="Your cart"
                            styleClass="icon-button"
                            style="-fx-font-weight: bold; -fx-text-fill: #111827;"/>
                 </HBox>
