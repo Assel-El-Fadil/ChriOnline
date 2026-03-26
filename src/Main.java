@@ -78,7 +78,7 @@ public class Main extends Application implements NotificationCallback {
             loginController.setUdpPort(UDP_PORT);
             loginController.setPrimaryStage(primaryStage);
 
-            primaryStage.setScene(new Scene(root, 400, 300));
+            primaryStage.setScene(new Scene(root, 550, 500));
             primaryStage.setTitle("ChriOnline");
             primaryStage.show();
 
