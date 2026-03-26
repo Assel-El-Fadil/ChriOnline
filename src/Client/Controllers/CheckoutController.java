@@ -53,6 +53,15 @@ public class CheckoutController {
     /** Pre-load cart items from CartController so we can show the summary. */
     public void setCartItems(List<CartItemDTO> items) {
         this.cartItems = items;
+
+        // Populate order summary if cart items were pre-loaded
+        if (cartItems != null && !cartItems.isEmpty()) {
+            ObservableList<CartItemDTO> list = FXCollections.observableArrayList(cartItems);
+            summaryTable.setItems(list);
+
+            double total = cartItems.stream().mapToDouble(i -> i.subtotal).sum();
+            totalLabel.setText(String.format("%.2f MAD", total));
+        }
     }
 
     /** Called after a successful checkout to switch to the Order History tab. */
@@ -94,15 +103,6 @@ public class CheckoutController {
                 setText(empty || v == null ? null : String.format("%.2f MAD", v.doubleValue()));
             }
         });
-
-        // Populate order summary if cart items were pre-loaded
-        if (cartItems != null && !cartItems.isEmpty()) {
-            ObservableList<CartItemDTO> list = FXCollections.observableArrayList(cartItems);
-            summaryTable.setItems(list);
-
-            double total = cartItems.stream().mapToDouble(i -> i.subtotal).sum();
-            totalLabel.setText(String.format("%.2f MAD", total));
-        }
     }
 
     // ──────────────────────────────────────────────────────────────

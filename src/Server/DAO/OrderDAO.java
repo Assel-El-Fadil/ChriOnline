@@ -52,14 +52,15 @@ public class OrderDAO {
                              int qty, double unitPrice) throws SQLException {
 
         final String sql =
-                "INSERT INTO order_items (order_id, product_id, quantity, unit_price) " +
-                        "VALUES (?, ?, ?, ?)";
+                "INSERT INTO order_items (order_id, product_id, quantity, unit_price, subtotal) " +
+                        "VALUES (?, ?, ?, ?, ?)";
 
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, orderId);
         ps.setInt(2, productId);
         ps.setInt(3, qty);
         ps.setDouble(4, unitPrice);
+        ps.setDouble(5, qty * unitPrice);
         ps.executeUpdate();
     }
 

@@ -77,7 +77,19 @@ public class OrderStatusProgressController {
                 String payload = ResponseBuilder.extractPayload(response);
                 OrderDTO order = OrderDTO.fromProtocolString(payload);
                 updateUI(order);
+            } else {
+                Platform.runLater(() -> {
+                    lblStatusText.setText("Error: " + ResponseBuilder.extractError(response));
+                    lblStatusText.setTextFill(Color.RED);
+                });
             }
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                lblStatusText.setText("Network error. Please try again.");
+                lblStatusText.setTextFill(Color.RED);
+            });
         });
 
         new Thread(task).start();
