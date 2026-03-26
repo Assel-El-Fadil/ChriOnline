@@ -72,9 +72,10 @@ public class CartHandler {
                 return ResponseBuilder.error("Product not found");
             }
 
-            int globalInCarts = cartService.getGlobalProductCount(productId);
+            Cart cart = cartService.getOrCreateCart(token);
+            int currentQty = cart.getQuantityFor(productId);
 
-            if (product.stock < qty + globalInCarts) {
+            if (product.stock < qty + currentQty) {
                 return ResponseBuilder.error("Not enough stock");
             }
 
