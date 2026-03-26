@@ -2,6 +2,7 @@ package Client.Controllers;
 
 import Client.network.SocketClient;
 import Client.session.AppState;
+import Client.util.ProductImageHelper;
 import Shared.DTO.ProductDTO;
 import Shared.ResponseBuilder;
 import javafx.application.Platform;
@@ -14,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -81,11 +81,7 @@ public class ProductDetailsController {
             addToCartButton.setDisable(false);
         }
 
-        if (product.imagePath != null && !product.imagePath.isBlank()) {
-            imgProduct.setImage(new Image("file:" + product.imagePath));
-        } else {
-            imgProduct.setImage(null);
-        }
+        imgProduct.setImage(ProductImageHelper.loadLocalImage(product.imagePath));
 
         hideCartStatus();
     }
@@ -100,7 +96,7 @@ public class ProductDetailsController {
             catalogController.setSocketClient(socketClient);
             catalogController.setPrimaryStage(primaryStage);
             primaryStage.setTitle("ChriOnline");
-            primaryStage.setScene(new Scene(root, 900, 600));
+            primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
             e.printStackTrace();
             showCartStatus("Could not return to catalog.", true);

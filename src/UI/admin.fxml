@@ -11,12 +11,12 @@
             stylesheets="@admin_theme.css"
             prefWidth="1100" prefHeight="750">
 
-    <!-- ── Header matching the LuxeStore theme ── -->
+    <!-- ── Header (ChriOnline admin) ── -->
     <top>
         <VBox>
             <!-- Top Nav Bar -->
             <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
-                <Label text="LuxeAdmin" styleClass="logo-text"/>
+                <Label text="ChriOnline Admin" styleClass="logo-text"/>
                 
                 <Region HBox.hgrow="ALWAYS" />
                 

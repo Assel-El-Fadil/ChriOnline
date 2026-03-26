@@ -11,7 +11,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class CartController {
 
@@ -28,6 +34,7 @@ public class CartController {
 
     // ── Injected by parent controller ─────────────────────────────
     private SocketClient socketClient;
+    private Stage        primaryStage;
 
     // ── Internal state ────────────────────────────────────────────
     private final ObservableList<CartItemDTO> cartItems = FXCollections.observableArrayList();
@@ -37,6 +44,30 @@ public class CartController {
     // ──────────────────────────────────────────────────────────────
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
+        loadCart();
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    @FXML
+    private void handleBackToCatalog() {
+        if (socketClient == null || primaryStage == null) {
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/catalog.fxml"));
+            Parent root = loader.load();
+            CatalogController catalogController = loader.getController();
+            catalogController.setSocketClient(socketClient);
+            catalogController.setPrimaryStage(primaryStage);
+            primaryStage.setTitle("ChriOnline");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Could not return to catalog.");
+        }
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -83,9 +114,6 @@ public class CartController {
 
         // ── Bind table to observable list ──────────────────────────
         cartTable.setItems(cartItems);
-
-        // ── Load cart data from server ─────────────────────────────
-        loadCart();
     }
 
     // ──────────────────────────────────────────────────────────────

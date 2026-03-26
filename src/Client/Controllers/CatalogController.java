@@ -2,22 +2,29 @@ package Client.Controllers;
 
 import Client.network.SocketClient;
 import Client.session.AppState;
+import Client.util.ProductImageHelper;
 import Shared.DTO.ProductDTO;
 import Shared.ResponseBuilder;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -28,80 +35,23 @@ import java.util.stream.Collectors;
 
 public class CatalogController {
 
-    @FXML
-    private ComboBox<String> categoryComboBox;
-    @FXML
-    private Button showAllButton;
-    @FXML
-    private Button refreshButton;
-    @FXML
-    private TableView<ProductDTO> productTable;
-    @FXML
-    private TableColumn<ProductDTO, String> colName;
-    @FXML
-    private TableColumn<ProductDTO, String> colCategory;
-    @FXML
-    private TableColumn<ProductDTO, String> colPrice;
-    @FXML
-    private TableColumn<ProductDTO, String> colStock;
-    @FXML
-    private Button viewDetailsButton;
-    @FXML
-    private Button addToCartButton;
-    @FXML
-    private Label statusLabel;
+    @FXML private ComboBox<String> categoryComboBox;
+    @FXML private Button              showAllButton;
+    @FXML private Button              refreshButton;
+    @FXML private ScrollPane          productScroll;
+    @FXML private FlowPane            productGrid;
+    @FXML private Label               statusLabel;
+    @FXML private Label               lblProductCount;
 
     private SocketClient socketClient;
     private Stage        primaryStage;
 
     @FXML
     public void initialize() {
-        // HGrow for status label to push buttons right
         HBox.setHgrow(statusLabel, Priority.ALWAYS);
+        productGrid.prefWrapLengthProperty().bind(
+                productScroll.widthProperty().subtract(48));
 
-        // Setup columns
-        colName.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().name));
-        colCategory.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().category));
-
-        // Price formatting
-        colPrice.setCellValueFactory(
-                data -> new SimpleStringProperty(String.format("%.2f MAD", data.getValue().price)));
-
-        // Stock formatting with colored text for 0
-        colStock.setCellValueFactory(data -> {
-            int stock = data.getValue().stock;
-            if (stock == 0) {
-                return new SimpleStringProperty("Out of stock");
-            }
-            return new SimpleStringProperty(String.valueOf(stock));
-        });
-
-        colStock.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(item);
-                    if ("Out of stock".equals(item)) {
-                        setTextFill(Color.RED);
-                    } else {
-                        setTextFill(Color.BLACK);
-                    }
-                }
-            }
-        });
-
-        // Setup table selection listener
-        productTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            boolean hasSelection = newSelection != null;
-            addToCartButton.setDisable(!hasSelection);
-            viewDetailsButton.setDisable(!hasSelection);
-        });
-
-        // Setup category filter listener
         categoryComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 if ("Show All".equals(newVal)) {
@@ -111,8 +61,6 @@ public class CatalogController {
                 }
             }
         });
-
-        // Load initial data is now deferred until the socket client is set
     }
 
     public void setSocketClient(SocketClient socketClient) {
@@ -129,8 +77,9 @@ public class CatalogController {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                if (!socketClient.isConnected())
+                if (!socketClient.isConnected()) {
                     socketClient.reconnect();
+                }
                 return socketClient.sendCommand("GET_CATEGORIES|");
             }
         };
@@ -154,8 +103,9 @@ public class CatalogController {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                if (!socketClient.isConnected())
+                if (!socketClient.isConnected()) {
                     socketClient.reconnect();
+                }
                 String cmd = "GET_PRODUCTS|";
                 if (filterCategory != null && !"Show All".equals(filterCategory)) {
                     cmd += filterCategory;
@@ -179,13 +129,134 @@ public class CatalogController {
                         }
                     }
                 }
-                productTable.setItems(products);
+                lblProductCount.setText(products.size() + " products found");
+                rebuildProductGrid(products);
             } else {
                 showStatus(ResponseBuilder.extractError(response), true);
             }
         });
 
         new Thread(task).start();
+    }
+
+    private void rebuildProductGrid(ObservableList<ProductDTO> products) {
+        productGrid.getChildren().clear();
+        for (ProductDTO p : products) {
+            productGrid.getChildren().add(createProductCard(p));
+        }
+    }
+
+    private VBox createProductCard(ProductDTO p) {
+        VBox card = new VBox(0);
+        card.getStyleClass().add("catalog-product-card");
+        card.setMaxWidth(260);
+        card.setPrefWidth(260);
+        card.setFillWidth(true);
+
+        StackPane imageStack = new StackPane();
+        imageStack.setPadding(new Insets(0));
+        imageStack.setMinHeight(172);
+        imageStack.setPrefHeight(172);
+        imageStack.getStyleClass().add("catalog-card-image-stack");
+
+        Region imageBg = new Region();
+        imageBg.getStyleClass().add("catalog-card-image-bg");
+        imageBg.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(216);
+        imageView.setFitHeight(148);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setImage(ProductImageHelper.loadLocalImage(p.imagePath));
+
+        Label badge = createCatalogBadge(p);
+        StackPane badgeWrap = new StackPane(badge);
+        StackPane.setAlignment(badgeWrap, Pos.TOP_LEFT);
+        StackPane.setMargin(badgeWrap, new Insets(10, 0, 0, 10));
+
+        imageStack.getChildren().addAll(imageBg, imageView, badgeWrap);
+        StackPane.setAlignment(imageView, Pos.CENTER);
+
+        Label subtitle = new Label(truncateDescription(p.description, 52));
+        subtitle.getStyleClass().add("catalog-card-subtitle");
+        subtitle.setWrapText(true);
+        subtitle.setMaxWidth(236);
+
+        Label name = new Label(p.name);
+        name.getStyleClass().add("catalog-card-name");
+        name.setWrapText(true);
+        name.setMaxWidth(236);
+
+        int reviewCount = 200 + Math.abs(p.id * 47) % 9800;
+        double ratingStars = 4.0 + (Math.abs(p.id) % 10) / 10.0;
+        Label rating = new Label(String.format("★ %.1f  (%d reviews)", ratingStars, reviewCount));
+        rating.getStyleClass().add("catalog-card-rating");
+
+        Label price = new Label(String.format("%.2f MAD", p.price));
+        price.getStyleClass().add("catalog-card-price");
+
+        Button addBtn = new Button("+");
+        addBtn.getStyleClass().add("catalog-card-add-btn");
+        addBtn.setMinSize(40, 40);
+        addBtn.setPrefSize(40, 40);
+        addBtn.setOnAction(ev -> promptAddToCart(p));
+
+        Region grow = new Region();
+        HBox.setHgrow(grow, Priority.ALWAYS);
+        HBox priceRow = new HBox(10, price, grow, addBtn);
+        priceRow.setAlignment(Pos.CENTER_LEFT);
+
+        Button detailsBtn = new Button("View details");
+        detailsBtn.getStyleClass().add("catalog-card-details-btn");
+        detailsBtn.setMaxWidth(Double.MAX_VALUE);
+        detailsBtn.setOnAction(ev -> openProductDetails(p));
+
+        VBox body = new VBox(8, subtitle, name, rating, priceRow, detailsBtn);
+        body.setPadding(new Insets(12, 10, 14, 10));
+
+        card.getChildren().addAll(imageStack, body);
+        return card;
+    }
+
+    private static Label createCatalogBadge(ProductDTO p) {
+        Label l = new Label();
+        l.getStyleClass().add("catalog-card-badge");
+        if (p.stock == 0) {
+            l.setText("Unavailable");
+            l.getStyleClass().add("catalog-badge-unavailable");
+            return l;
+        }
+        switch (Math.abs(p.id) % 4) {
+            case 0:
+                l.setText("Best Seller");
+                l.getStyleClass().add("catalog-badge-success");
+                break;
+            case 1:
+                l.setText("Top Rated");
+                l.getStyleClass().add("catalog-badge-teal");
+                break;
+            case 2:
+                l.setText("Sale");
+                l.getStyleClass().add("catalog-badge-sale");
+                break;
+            default:
+                l.setText("New");
+                l.getStyleClass().add("catalog-badge-new");
+                break;
+        }
+        return l;
+    }
+
+    private static String truncateDescription(String desc, int maxChars) {
+        if (desc == null || desc.isBlank()) {
+            return " ";
+        }
+        String t = desc.trim().replaceAll("\\s+", " ");
+        if (t.length() <= maxChars) {
+            return t;
+        }
+        return t.substring(0, maxChars - 1) + "…";
     }
 
     @FXML
@@ -200,11 +271,25 @@ public class CatalogController {
     }
 
     @FXML
-    private void handleAddToCart(ActionEvent event) {
-        ProductDTO selected = productTable.getSelectionModel().getSelectedItem();
-        if (selected == null)
+    private void handleOpenCart() {
+        if (socketClient == null || primaryStage == null) {
             return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/cart.fxml"));
+            Parent root = loader.load();
+            CartController cartController = loader.getController();
+            cartController.setSocketClient(socketClient);
+            cartController.setPrimaryStage(primaryStage);
+            primaryStage.setTitle("ChriOnline — Cart");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Could not open cart.", true);
+        }
+    }
 
+    private void promptAddToCart(ProductDTO selected) {
         if (selected.stock == 0) {
             showStatus("Product out of stock", true);
             return;
@@ -227,20 +312,20 @@ public class CatalogController {
                 Task<String> task = new Task<>() {
                     @Override
                     protected String call() throws Exception {
-                        if (!socketClient.isConnected())
+                        if (!socketClient.isConnected()) {
                             socketClient.reconnect();
+                        }
                         String token = AppState.getToken();
-                        return socketClient.sendCommand("CART_ADD|" + token + "|" + selected.id + "|" + qty);
+                        return socketClient.sendCommand(
+                                "CART_ADD|" + token + "|" + selected.id + "|" + qty);
                     }
                 };
 
-                task.setOnSucceeded(e -> {
+                task.setOnSucceeded(ev -> {
                     String response = task.getValue();
                     if (ResponseBuilder.isOk(response)) {
                         String newTotal = ResponseBuilder.extractPayload(response);
                         showStatus("Added! Cart total: " + newTotal + " MAD", false);
-
-                        // Optionally refresh products to update stock locally
                         handleRefresh(null);
                     } else {
                         showStatus(ResponseBuilder.extractError(response), true);
@@ -249,18 +334,16 @@ public class CatalogController {
 
                 new Thread(task).start();
 
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ex) {
                 showStatus("Invalid quantity input", true);
             }
         });
     }
 
-    @FXML
-    private void handleViewDetails(ActionEvent event) {
-        ProductDTO selected = productTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        if (socketClient == null || primaryStage == null) return;
-
+    private void openProductDetails(ProductDTO selected) {
+        if (socketClient == null || primaryStage == null) {
+            return;
+        }
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/productDetails.fxml"));
             Parent root = loader.load();
@@ -270,7 +353,7 @@ public class CatalogController {
             detailsController.initData(selected);
 
             primaryStage.setTitle("ChriOnline — " + selected.name);
-            primaryStage.setScene(new Scene(root, 900, 640));
+            primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
             e.printStackTrace();
             showStatus("Could not open product details.", true);
@@ -285,4 +368,5 @@ public class CatalogController {
             }
         });
     }
+
 }

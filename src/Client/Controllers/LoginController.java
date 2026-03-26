@@ -155,7 +155,7 @@ public class LoginController {
                 CatalogController catalogController = loader.getController();
                 catalogController.setSocketClient(socketClient);
                 catalogController.setPrimaryStage(primaryStage);
-                primaryStage.setScene(new Scene(root, 900, 600));
+                primaryStage.setScene(new Scene(root, 1100, 750));
             });
 
         } catch (Exception e) {
