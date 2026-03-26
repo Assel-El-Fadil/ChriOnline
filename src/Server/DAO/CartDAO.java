@@ -151,4 +151,26 @@ public class CartDAO {
             ConnectionPool.returnConnection(conn);
         }
     }
+
+    /**
+     * Returns the sum of quantities for a product across all carts in the system.
+     * This is used to enforce global stock limits.
+     */
+    public int getTotalQuantity(int productId) throws SQLException {
+        String sql = "SELECT SUM(quantity) FROM cart_items WHERE product_id = ?";
+        Connection conn = getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, productId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+        return 0;
+    }
 }
