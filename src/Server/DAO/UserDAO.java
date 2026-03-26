@@ -5,6 +5,7 @@ import Shared.DTO.UserDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class UserDAO {
 
@@ -19,19 +20,21 @@ public class UserDAO {
         public final String lastName;
         public final String email;
         public final String address;
+        public final String profilePhoto;
         public final String role;
         public final int active;
         public final String passwordHash;
 
         public AuthUser(int id, String username, String firstName, String lastName,
-                        String email, String address, String role,
-                        int active, String passwordHash) {
+                        String email, String address, String profilePhoto,
+                        String role, int active, String passwordHash) {
             this.id           = id;
             this.username     = username;
             this.firstName    = firstName;
             this.lastName     = lastName;
             this.email        = email;
             this.address      = address;
+            this.profilePhoto = profilePhoto;
             this.role         = role;
             this.active       = active;
             this.passwordHash = passwordHash;
@@ -134,13 +137,67 @@ public class UserDAO {
     }
 
     // ────────────────────────────────────────────────────────────
+    //  Update operations
+    // ────────────────────────────────────────────────────────────
+
+    /**
+     * Whitelist of columns that may be updated via the generic updateProfile method.
+     * This prevents SQL injection through the field name parameter.
+     */
+    private static final Set<String> UPDATABLE_COLUMNS = Set.of(
+            "first_name", "last_name", "email", "address", "profile_photo"
+    );
+
+    /**
+     * Updates a single column for a given user.
+     * The column name is validated against a whitelist before being used in SQL.
+     *
+     * @return true if exactly one row was updated
+     */
+    public boolean updateProfile(int userId, String column, String value) {
+        if (!UPDATABLE_COLUMNS.contains(column)) {
+            throw new DAOException("Column '" + column + "' is not updatable");
+        }
+
+        // Column name is safe (from whitelist), so string concatenation is OK here
+        final String sql = "UPDATE users SET " + column + " = ? WHERE id = ? AND active = 1";
+
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getConnection();
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if (value == null || value.isBlank()) {
+                ps.setNull(1, Types.VARCHAR);
+            } else {
+                ps.setString(1, value);
+            }
+            ps.setInt(2, userId);
+            return ps.executeUpdate() == 1;
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            String msg = e.getMessage().toLowerCase();
+            if (msg.contains("email")) {
+                throw new DuplicateEmailException("Email already registered");
+            }
+            throw new DAOException("updateProfile constraint violation: " + e.getMessage(), e);
+
+        } catch (SQLException e) {
+            throw new DAOException("updateProfile failed for userId=" + userId
+                    + ", column=" + column + ": " + e.getMessage(), e);
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────
     //  Read operations
     // ────────────────────────────────────────────────────────────
 
     public AuthUser findByUsernameForAuth(String username) {
         final String sql =
                 "SELECT id, first_name, last_name, username, email, address, "
-                        + "       role, active, password_hash "
+                        + "       profile_photo, role, active, password_hash "
                         + "FROM users "
                         + "WHERE username = ? AND active = 1";
 
@@ -159,7 +216,8 @@ public class UserDAO {
                         rs.getString("first_name"),
                         rs.getString("last_name"),
                         rs.getString("email"),
-                        rs.getString("address"),    // may be null — ResultSet returns null fine
+                        rs.getString("address"),
+                        rs.getString("profile_photo"),
                         rs.getString("role"),
                         rs.getInt("active"),
                         rs.getString("password_hash")
@@ -175,7 +233,7 @@ public class UserDAO {
 
     public UserDTO findById(int userId) {
         final String sql =
-                "SELECT id, first_name, last_name, username, email, address, role, active "
+                "SELECT id, first_name, last_name, username, email, address, profile_photo, role, active "
                         + "FROM users "
                         + "WHERE id = ?";
 
@@ -202,7 +260,7 @@ public class UserDAO {
 
     public List<UserDTO> findAll() {
         final String sql =
-                "SELECT id, first_name, last_name, username, email, address, role, active "
+                "SELECT id, first_name, last_name, username, email, address, profile_photo, role, active "
                         + "FROM users "
                         + "ORDER BY created_at DESC";
 
@@ -261,7 +319,8 @@ public class UserDAO {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("email"),
-                rs.getString("address"),   // null if not set — UserDTO.address is nullable
+                rs.getString("address"),
+                rs.getString("profile_photo"),
                 rs.getString("role"),
                 rs.getInt("active")
         );

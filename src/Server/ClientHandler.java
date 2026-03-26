@@ -51,6 +51,7 @@ public class ClientHandler implements Runnable {
     private final CartHandler cartHandler;
     private final OrderHandler orderHandler;
     private final AdminHandler adminHandler;
+    private final UserHandler userHandler;
 
     // ── Per-connection mutable state ──────────────────────────────
     // volatile: although only one thread reads/writes this, the shutdown
@@ -68,7 +69,8 @@ public class ClientHandler implements Runnable {
             ProductHandler productHandler,
             CartHandler cartHandler,
             OrderHandler orderHandler,
-            AdminHandler adminHandler) {
+            AdminHandler adminHandler,
+            UserHandler userHandler) {
         this.socket = socket;
         this.sessionManager = sessionManager;
         this.udpServer = udpServer;
@@ -77,6 +79,7 @@ public class ClientHandler implements Runnable {
         this.cartHandler = cartHandler;
         this.orderHandler = orderHandler;
         this.adminHandler = adminHandler;
+        this.userHandler = userHandler;
     }
 
     // ────────────────────────────────────────────────────────────
@@ -255,6 +258,13 @@ public class ClientHandler implements Runnable {
 
             case ADMIN_DELETE_USER:
                 return adminHandler.handleDeleteUser(params);
+
+            // ── User Profile ───────────────────────────────────────
+            case GET_PROFILE:
+                return userHandler.handleGetProfile(params);
+
+            case EDIT_PROFILE:
+                return userHandler.handleEditProfile(params);
 
             default:
                 return ResponseBuilder.error("Command not implemented: " + cmd);

@@ -42,6 +42,11 @@
                     <Label text="Cart"
                            styleClass="icon-button"
                            style="-fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <Region prefWidth="8"/>
+                    <Button text="👤 Profile"
+                            styleClass="btn-secondary"
+                            onAction="#handleOpenProfile"
+                            focusTraversable="false"/>
                 </HBox>
             </HBox>
         </VBox>
