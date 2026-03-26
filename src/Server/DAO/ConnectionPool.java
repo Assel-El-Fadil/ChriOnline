@@ -19,8 +19,6 @@ public class ConnectionPool {
         initializePool();
     }
 
-    private ConnectionPool() {}
-
     private static void initializePool() {
         for (int i = 0; i < POOL_SIZE; i++) {
             try {

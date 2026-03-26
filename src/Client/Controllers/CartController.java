@@ -215,8 +215,57 @@ public class CartController {
             showError("Your cart is empty.");
             return;
         }
-        // TODO (M3-17): switch to Checkout tab / load checkout.fxml
-        System.out.println("[CartController] Proceeding to checkout...");
+
+        if (socketClient == null || primaryStage == null) {
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/checkout.fxml"));
+            Parent root = loader.load();
+
+            CheckoutController checkoutController = loader.getController();
+            checkoutController.setSocketClient(socketClient);
+            checkoutController.setPrimaryStage(primaryStage);
+            checkoutController.setCartItems(cartItems);
+
+            // Set navigation callbacks
+            checkoutController.setOnBack(() -> handleBackToCatalog()); // Or back to cart? 
+            // Actually, handleBackToCatalog returns to catalog. 
+            // Let's make it return to Cart.
+            checkoutController.setOnBack(() -> {
+                try {
+                    FXMLLoader cartLoader = new FXMLLoader(getClass().getResource("/UI/cart.fxml"));
+                    Parent cartRoot = cartLoader.load();
+                    CartController cc = cartLoader.getController();
+                    cc.setSocketClient(socketClient);
+                    cc.setPrimaryStage(primaryStage);
+                    primaryStage.setScene(new Scene(cartRoot, 1100, 750));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            checkoutController.setOnSuccess(() -> {
+                try {
+                    FXMLLoader historyLoader = new FXMLLoader(getClass().getResource("/UI/orderHistory.fxml"));
+                    Parent historyRoot = historyLoader.load();
+                    OrderHistoryController ohc = historyLoader.getController();
+                    ohc.setSocketClient(socketClient);
+                    ohc.setPrimaryStage(primaryStage);
+                    primaryStage.setTitle("ChriOnline — Order History");
+                    primaryStage.setScene(new Scene(historyRoot, 1100, 750));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            primaryStage.setTitle("ChriOnline — Checkout");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Could not open checkout page.");
+        }
     }
 
     // ──────────────────────────────────────────────────────────────

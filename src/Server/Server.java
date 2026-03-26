@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * TCP server entry point and accept loop.
  *
  * Responsibilities:
- *   - Bind ServerSocket on TCP_PORT (5000)
+ *   - Bind ServerSocket on TCP_PORT (8084)
  *   - Maintain a fixed ExecutorService thread pool (20 threads)
  *   - Construct and wire the full dependency graph once at startup:
  *       ConnectionPool → DAOs → Services → Handlers
@@ -42,36 +42,37 @@ import java.util.concurrent.TimeUnit;
 public class Server {
 
     // ── Network configuration ─────────────────────────────────────
-    private static final int TCP_PORT         = 8084;
+    private static final int TCP_PORT = 8084;
     private static final int THREAD_POOL_SIZE = 20;
 
     // ── Core server infrastructure ────────────────────────────────
-    private final ServerSocket   serverSocket;
+    private final ServerSocket serverSocket;
     private final ExecutorService pool;
 
     // ── Server-wide singletons (shared across all ClientHandlers) ─
-    private final SessionManager  sessionManager;
+    private final SessionManager sessionManager;
     private final UDPServer udpServer;
 
     // ── DAOs ──────────────────────────────────────────────────────
-    private final UserDAO    userDAO;
+    private final UserDAO userDAO;
     private final ProductDAO productDAO;
-    private final CartDAO    cartDAO;
-    private final OrderDAO   orderDAO;
+    private final CartDAO cartDAO;
+    private final OrderDAO orderDAO;
 
     // ── Services ──────────────────────────────────────────────────
-    private final UserService    userService;
+    private final UserService userService;
     private final ProductService productService;
-    private final CartService    cartService;
-    private final OrderService   orderService;
+    private final CartService cartService;
+    private final OrderService orderService;
     private final PaymentService paymentService;
 
     // ── Handlers ──────────────────────────────────────────────────
-    private final AuthHandler    authHandler;
+    private final AuthHandler authHandler;
     private final ProductHandler productHandler;
-    private final CartHandler    cartHandler;
-    private final OrderHandler   orderHandler;
-    private final AdminHandler   adminHandler;
+    private final CartHandler cartHandler;
+    private final OrderHandler orderHandler;
+    private final AdminHandler adminHandler;
+    private final UserHandler userHandler;
 
     // ────────────────────────────────────────────────────────────
     //  Constructor — builds the full dependency graph
@@ -121,12 +122,13 @@ public class Server {
         this.paymentService = new PaymentService();
 
         // ── 5. Handlers ───────────────────────────────────────────
-        this.authHandler    = new AuthHandler(userService, sessionManager);
+        this.authHandler    = new AuthHandler(userService, cartService, sessionManager);
         this.productHandler = new ProductHandler(productService);
         this.cartHandler    = new CartHandler(cartService, productService, sessionManager);
         this.orderHandler   = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService);
         this.adminHandler   = new AdminHandler(userService, productService,
                 orderService, sessionManager);
+        this.userHandler    = new UserHandler(userService, sessionManager);
 
         System.out.println("[Server] All dependencies wired — ready to accept connections.");
     }
@@ -169,7 +171,8 @@ public class Server {
                         productHandler,
                         cartHandler,
                         orderHandler,
-                        adminHandler
+                        adminHandler,
+                        userHandler
                 );
 
                 pool.submit(handler);

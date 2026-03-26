@@ -1,6 +1,7 @@
 
 package Server.handlers;
 
+import Server.service.CartService;
 import Server.service.UserService;
 import Shared.SessionData;
 import Server.SessionManager;
@@ -15,13 +16,15 @@ public class AuthHandler {
 
     // ─── Dependencies injected via constructor ─────────────────────
     private final UserService     userService;
+    private final CartService     cartService;
     private final SessionManager sessionManager;
 
     // ──────────────────────────────────────────────────────────────
     // Constructor — takes UserService and SessionManager
     // ──────────────────────────────────────────────────────────────
-    public AuthHandler(UserService userService, SessionManager sessionManager) {
+    public AuthHandler(UserService userService, CartService cartService, SessionManager sessionManager) {
         this.userService     = userService;
+        this.cartService     = cartService;
         this.sessionManager = sessionManager;
     }
 
@@ -130,6 +133,13 @@ public class AuthHandler {
                 udpPort
         );
         sessionManager.addSession(token, sessionData);
+
+        // [Fix] Load cart from DB into memory session upon login
+        try {
+            cartService.loadFromDB(token, user.id);
+        } catch (Exception e) {
+            System.err.println("[AuthHandler] Could not load cart for user " + user.id + ": " + e.getMessage());
+        }
 
         System.out.println("[AuthHandler] LOGIN success — user: " + username
                 + " | role: " + user.role

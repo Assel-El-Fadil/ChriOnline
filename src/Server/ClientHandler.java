@@ -51,6 +51,7 @@ public class ClientHandler implements Runnable {
     private final CartHandler cartHandler;
     private final OrderHandler orderHandler;
     private final AdminHandler adminHandler;
+    private final UserHandler userHandler;
 
     // ── Per-connection mutable state ──────────────────────────────
     // volatile: although only one thread reads/writes this, the shutdown
@@ -68,7 +69,8 @@ public class ClientHandler implements Runnable {
             ProductHandler productHandler,
             CartHandler cartHandler,
             OrderHandler orderHandler,
-            AdminHandler adminHandler) {
+            AdminHandler adminHandler,
+            UserHandler userHandler) {
         this.socket = socket;
         this.sessionManager = sessionManager;
         this.udpServer = udpServer;
@@ -77,6 +79,7 @@ public class ClientHandler implements Runnable {
         this.cartHandler = cartHandler;
         this.orderHandler = orderHandler;
         this.adminHandler = adminHandler;
+        this.userHandler = userHandler;
     }
 
     // ────────────────────────────────────────────────────────────
@@ -254,7 +257,21 @@ public class ClientHandler implements Runnable {
                 return adminHandler.handleListUsers(params);
 
             case ADMIN_DELETE_USER:
-                return adminHandler.handleDeleteUser(params);
+            case ADMIN_HARD_DELETE_USER:
+                return adminHandler.handleHardDeleteUser(params);
+
+            case ADMIN_DEACTIVATE_USER:
+                return adminHandler.handleDeactivateUser(params);
+
+            case ADMIN_ACTIVATE_USER:
+                return adminHandler.handleActivateUser(params);
+
+            // ── User Profile ───────────────────────────────────────
+            case GET_PROFILE:
+                return userHandler.handleGetProfile(params);
+
+            case EDIT_PROFILE:
+                return userHandler.handleEditProfile(params);
 
             default:
                 return ResponseBuilder.error("Command not implemented: " + cmd);
@@ -286,11 +303,13 @@ public class ClientHandler implements Runnable {
             PrintWriter writer,
             String clientAddress) {
 
-        // Step 1 — Invalidate session
+        // Step 1 — Invalidate session (REMOVED: allow sessions to persist across reconnections)
+        /*
         if (currentToken != null) {
             sessionManager.removeSession(currentToken);
             currentToken = null;
         }
+        */
 
         // Step 2 — Close writer (has its own internal flush)
         if (writer != null) {

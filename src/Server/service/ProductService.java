@@ -115,6 +115,11 @@ public class ProductService {
                     throw new InvalidFieldException("Description must be a string");
                 }
                 break;
+            case "imagepath":
+                if (value != null && !(value instanceof String)) {
+                    throw new InvalidFieldException("Image path must be a string");
+                }
+                break;
             default:
                 throw new InvalidFieldException("Invalid field: " + field);
         }

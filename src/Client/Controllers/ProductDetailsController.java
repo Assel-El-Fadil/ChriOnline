@@ -27,7 +27,6 @@ public class ProductDetailsController {
     @FXML private Label   lblCategory;
     @FXML private Label   lblDescription;
     @FXML private Label   lblPrice;
-    @FXML private Label   lblStock;
     @FXML private Label   cartStatusLabel;
     @FXML private Spinner<Integer> quantitySpinner;
     @FXML private Button  addToCartButton;
@@ -66,16 +65,10 @@ public class ProductDetailsController {
                 ? product.description : "—");
         lblPrice.setText(String.format("%.2f MAD", product.price));
 
-        lblStock.getStyleClass().removeAll("stock-out", "toolbar-label");
-
         if (product.stock == 0) {
-            lblStock.setText("Out of stock");
-            lblStock.getStyleClass().add("stock-out");
             addToCartButton.setDisable(true);
             quantitySpinner.setDisable(true);
         } else {
-            lblStock.setText("In Stock: " + product.stock);
-            lblStock.getStyleClass().add("toolbar-label");
             quantitySpinner.setDisable(false);
             quantitySpinner.setValueFactory(
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(1, product.stock, 1));
