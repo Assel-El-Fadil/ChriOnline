@@ -11,41 +11,92 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.SocketException;
+import java.util.Optional;
+import java.util.Properties;
+import javafx.scene.control.TextInputDialog;
 
 public class Main extends Application implements NotificationCallback {
 
     // ─── Constants ────────────────────────────────────────────────
-    private static final String SERVER_HOST = "127.0.0.1";
+    private static String SERVER_HOST = "127.0.0.1";
     private static final int    SERVER_PORT  = 8084;    // TCP port
     private static final int    UDP_PORT     = 8085;    // UDP listen port
+    private static final String CONFIG_FILE = "server_config.properties";
 
-    // ─── Shared instances ─────────────────────────────────────────
+    // ─── Shared instances ───────────────────────────────────────── (no changes)
     private SocketClient socketClient;
     private UDPListener  udpListener;
     private Thread       udpThread;
     private LoginController loginController;
 
     // ──────────────────────────────────────────────────────────────
-    @Override
-    public void start(Stage primaryStage) {
+    private void loadConfig() {
+        Properties props = new Properties();
+        try (FileInputStream in = new FileInputStream(CONFIG_FILE)) {
+            props.load(in);
+            SERVER_HOST = props.getProperty("server.host", "127.0.0.1");
+            System.out.println("[Main] Loaded server host from config: " + SERVER_HOST);
+        } catch (IOException e) {
+            System.out.println("[Main] No config file found, using default: " + SERVER_HOST);
+            saveConfig();
+        }
+    }
 
-        // ── Step 1 : Create and connect the TCP client ────────────
+    private void saveConfig() {
+        Properties props = new Properties();
+        props.setProperty("server.host", SERVER_HOST);
+        try (FileOutputStream out = new FileOutputStream(CONFIG_FILE)) {
+            props.store(out, "ChriOnline Server Configuration");
+        } catch (IOException e) {
+            System.err.println("[Main] Could not save config file: " + e.getMessage());
+        }
+    }
+
+    private boolean tryConnect() {
         socketClient = new SocketClient(SERVER_HOST, SERVER_PORT);
-
         try {
             socketClient.connect();
             System.out.println("[Main] Connected to server " + SERVER_HOST + ":" + SERVER_PORT);
+            return true;
         } catch (Exception e) {
-            System.err.println("[Main] Cannot connect to server: " + e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Connection Error");
-            alert.setHeaderText("Cannot connect to server");
-            alert.setContentText("Make sure the server is running on "
-                    + SERVER_HOST + ":" + SERVER_PORT);
-            alert.showAndWait();
-            Platform.exit();
-            return;
+            System.err.println("[Main] Connection failed to " + SERVER_HOST);
+            return false;
+        }
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        loadConfig();
+
+        // ── Step 1 : Create and connect the TCP client ────────────
+        if (!tryConnect()) {
+            // If default/saved host fails, ask user for IP
+            TextInputDialog dialog = new TextInputDialog(SERVER_HOST);
+            dialog.setTitle("Server Connection");
+            dialog.setHeaderText("Cannot connect to server at " + SERVER_HOST);
+            dialog.setContentText("Please enter the Server IP address (LAN):");
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                SERVER_HOST = result.get().trim();
+                if (!tryConnect()) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Connection Error");
+                    alert.setHeaderText("Still cannot connect");
+                    alert.setContentText("Could not connect to: " + SERVER_HOST);
+                    alert.showAndWait();
+                    Platform.exit();
+                    return;
+                }
+                saveConfig(); // Save successful IP
+            } else {
+                Platform.exit();
+                return;
+            }
         }
 
         // ── Step 2 : Start UDPListener as a daemon thread ─────────
