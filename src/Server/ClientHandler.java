@@ -296,11 +296,13 @@ public class ClientHandler implements Runnable {
             PrintWriter writer,
             String clientAddress) {
 
-        // Step 1 — Invalidate session
+        // Step 1 — Invalidate session (REMOVED: allow sessions to persist across reconnections)
+        /*
         if (currentToken != null) {
             sessionManager.removeSession(currentToken);
             currentToken = null;
         }
+        */
 
         // Step 2 — Close writer (has its own internal flush)
         if (writer != null) {

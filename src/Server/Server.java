@@ -122,7 +122,7 @@ public class Server {
         this.paymentService = new PaymentService();
 
         // ── 5. Handlers ───────────────────────────────────────────
-        this.authHandler    = new AuthHandler(userService, sessionManager);
+        this.authHandler    = new AuthHandler(userService, cartService, sessionManager);
         this.productHandler = new ProductHandler(productService);
         this.cartHandler    = new CartHandler(cartService, productService, sessionManager);
         this.orderHandler   = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService);
