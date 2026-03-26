@@ -34,15 +34,20 @@ public class CheckoutController {
 
     // ── Injected by parent controller ─────────────────────────────
     private SocketClient            socketClient;
+    private Stage primaryStage;
     private List<CartItemDTO>       cartItems;   // passed from CartController
     private Runnable                onSuccess;   // callback → switch to Order History tab
-    private Stage                   primaryStage;
+    private Runnable                onBack;      // callback → switch back to Cart tab
 
     // ──────────────────────────────────────────────────────────────
     // Setters
     // ──────────────────────────────────────────────────────────────
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 
     /** Pre-load cart items from CartController so we can show the summary. */
@@ -55,8 +60,9 @@ public class CheckoutController {
         this.onSuccess = onSuccess;
     }
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    /** Called when the user wants to go back to the cart. */
+    public void setOnBack(Runnable onBack) {
+        this.onBack = onBack;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -189,6 +195,13 @@ public class CheckoutController {
         });
 
         new Thread(task).start();
+    }
+
+    @FXML
+    private void handleBackToCart() {
+        if (onBack != null) {
+            onBack.run();
+        }
     }
 
     // ──────────────────────────────────────────────────────────────

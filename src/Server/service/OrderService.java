@@ -101,7 +101,7 @@ public class OrderService {
         Connection conn = null;
         try {
             conn = ConnectionPool.getConnection();
-            String sql = "SELECT id, reference_code, user_id, status, total_amount, payment_method, created_at " +
+            String sql = "SELECT id, payment_ref, user_id, status, total_amount, payment_method, created_at " +
                         "FROM orders WHERE id = ?";
             
             var ps = conn.prepareStatement(sql);
@@ -111,7 +111,7 @@ public class OrderService {
             if (rs.next()) {
                 return new OrderDTO(
                     rs.getInt("id"),
-                    rs.getString("reference_code"),
+                    rs.getString("payment_ref"),
                     rs.getInt("user_id"),
                     rs.getString("status"),
                     rs.getDouble("total_amount"),

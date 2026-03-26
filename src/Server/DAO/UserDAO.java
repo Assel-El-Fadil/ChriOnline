@@ -117,6 +117,25 @@ public class UserDAO {
         }
     }
 
+    public boolean reactivate(int userId) {
+        final String sql = "UPDATE users SET active = 1 WHERE id = ?";
+
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getConnection();
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            return ps.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            throw new DAOException("reactivate failed for userId=" + userId
+                    + ": " + e.getMessage(), e);
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+    }
+
     public boolean hardDelete(int userId) {
         final String sql = "DELETE FROM users WHERE id = ?";
 

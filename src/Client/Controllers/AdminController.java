@@ -12,10 +12,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +62,8 @@ public class AdminController {
     @FXML private TableColumn<UserDTO, String> colUserEmail;
     @FXML private TableColumn<UserDTO, String> colUserRole;
     @FXML private TableColumn<UserDTO, String> colUserActive;
+    @FXML private Button btnDeactivateUser;
+    @FXML private Button btnActivateUser;
     @FXML private Button btnDeleteUser;
     @FXML private Button btnRefreshUsers;
     @FXML private Label lblUsersStatus;
@@ -80,6 +87,10 @@ public class AdminController {
 
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
+        // Load all three tabs immediately after socketClient is injected
+        loadProducts();
+        loadOrders();
+        loadUsers();
     }
 
     // ────────────────────────────────────────────────────────────
@@ -92,11 +103,6 @@ public class AdminController {
         setupOrdersTable();
         setupUsersTable();
         wireButtons();
-
-        // Load all three tabs immediately on open
-        loadProducts();
-        loadOrders();
-        loadUsers();
     }
 
     // ────────────────────────────────────────────────────────────
@@ -204,6 +210,8 @@ public class AdminController {
 
         btnUpdateStatus.setOnAction(e -> showUpdateStatusDialog());
 
+        btnDeactivateUser.setOnAction(e -> handleDeactivateUser());
+        btnActivateUser.setOnAction(e -> handleActivateUser());
         btnDeleteUser.setOnAction(e -> handleDeleteUser());
 
         // Enable Edit/Delete product only when a row is selected
@@ -216,9 +224,28 @@ public class AdminController {
         btnUpdateStatus.disableProperty().bind(
                 ordersTable.getSelectionModel().selectedItemProperty().isNull());
 
-        // Enable Delete User only when a user is selected
+        // Enable Delete/Deactivate/Activate User only when a user is selected
+        btnDeactivateUser.disableProperty().bind(
+                usersTable.getSelectionModel().selectedItemProperty().isNull());
+        btnActivateUser.disableProperty().bind(
+                usersTable.getSelectionModel().selectedItemProperty().isNull());
         btnDeleteUser.disableProperty().bind(
                 usersTable.getSelectionModel().selectedItemProperty().isNull());
+
+        usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                if (newVal.active == 0) {
+                    btnDeactivateUser.setVisible(false);  btnDeactivateUser.setManaged(false);
+                    btnActivateUser.setVisible(true);     btnActivateUser.setManaged(true);
+                } else {
+                    btnDeactivateUser.setVisible(true);   btnDeactivateUser.setManaged(true);
+                    btnActivateUser.setVisible(false);    btnActivateUser.setManaged(false);
+                }
+            } else {
+                btnDeactivateUser.setVisible(true);   btnDeactivateUser.setManaged(true);
+                btnActivateUser.setVisible(false);    btnActivateUser.setManaged(false);
+            }
+        });
     }
 
     // ────────────────────────────────────────────────────────────
@@ -359,55 +386,122 @@ public class AdminController {
         ProductDTO selected = productsTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
-        // Let the admin pick which field to edit
-        List<String> editableFields = List.of("name", "category", "price", "stock", "description");
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Edit Product");
+        dialog.setHeaderText("Edit details for: " + selected.name);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        ChoiceDialog<String> fieldDialog = new ChoiceDialog<>("name", editableFields);
-        fieldDialog.setTitle("Edit Product");
-        fieldDialog.setHeaderText("Product: " + selected.name);
-        fieldDialog.setContentText("Select field to edit:");
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
 
-        Optional<String> fieldResult = fieldDialog.showAndWait();
-        if (fieldResult.isEmpty()) return;
+        TextField    tfName        = new TextField(selected.name);
+        ComboBox<String> cbCategory = new ComboBox<>(FXCollections.observableArrayList(CATEGORIES));
+        if (CATEGORIES.contains(selected.category)) cbCategory.setValue(selected.category);
+        else cbCategory.getSelectionModel().selectFirst();
+        
+        TextField    tfPrice       = new TextField(String.valueOf(selected.price));
+        TextField    tfStock       = new TextField(String.valueOf(selected.stock));
+        TextArea     taDescription = new TextArea(selected.description != null ? selected.description : "");
+        taDescription.setPrefRowCount(3);
+        taDescription.setWrapText(true);
 
-        String field = fieldResult.get();
+        Button btnPhoto = new Button("Change Photo...");
+        Label lblPhotoPath = new Label(selected.imagePath != null ? selected.imagePath : "No photo");
+        final String[] selectedPhotoPath = {selected.imagePath};
 
-        // For category, show a ComboBox; for others, a plain text field
-        String newValue;
-        if ("category".equals(field)) {
-            ChoiceDialog<String> catDialog = new ChoiceDialog<>(selected.category, CATEGORIES);
-            catDialog.setTitle("Edit Category");
-            catDialog.setHeaderText("Select new category");
-            Optional<String> catResult = catDialog.showAndWait();
-            if (catResult.isEmpty()) return;
-            newValue = catResult.get();
-        } else {
-            String currentValue = switch (field) {
-                case "name"        -> selected.name;
-                case "price"       -> String.valueOf(selected.price);
-                case "stock"       -> String.valueOf(selected.stock);
-                case "description" -> selected.description != null ? selected.description : "";
-                default            -> "";
-            };
+        btnPhoto.setOnAction(ev -> {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Select Product Photo");
+            fileChooser.getExtensionFilters().addAll(
+                    new javafx.stage.FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
+            java.io.File selectedFile = fileChooser.showOpenDialog(null);
+            if (selectedFile != null) {
+                try {
+                    java.io.File destDir = new java.io.File("src/Client/assets/images/products");
+                    if (!destDir.exists()) destDir.mkdirs();
+                    String ext = "";
+                    String n = selectedFile.getName();
+                    int i = n.lastIndexOf('.');
+                    if (i > 0) ext = n.substring(i);
+                    String destName = "prod_" + System.currentTimeMillis() + ext;
+                    java.io.File destFile = new java.io.File(destDir, destName);
+                    java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    selectedPhotoPath[0] = "assets/images/products/" + destName;
+                    lblPhotoPath.setText(destName);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    showError("Error copying photo locally");
+                }
+            }
+        });
 
-            TextInputDialog valueDialog = new TextInputDialog(currentValue);
-            valueDialog.setTitle("Edit " + field);
-            valueDialog.setHeaderText("Product: " + selected.name);
-            valueDialog.setContentText("New value for " + field + ":");
+        javafx.scene.layout.HBox photoBox = new javafx.scene.layout.HBox(10, btnPhoto, lblPhotoPath);
+        photoBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-            Optional<String> valueResult = valueDialog.showAndWait();
-            if (valueResult.isEmpty() || valueResult.get().isBlank()) return;
-            newValue = valueResult.get().trim();
+        grid.add(new Label("Name:"),        0, 0); grid.add(tfName,        1, 0);
+        grid.add(new Label("Category:"),    0, 1); grid.add(cbCategory,    1, 1);
+        grid.add(new Label("Price (MAD):"), 0, 2); grid.add(tfPrice,       1, 2);
+        grid.add(new Label("Stock:"),       0, 3); grid.add(tfStock,       1, 3);
+        grid.add(new Label("Description:"), 0, 4); grid.add(taDescription, 1, 4);
+        grid.add(new Label("Photo:"),       0, 5); grid.add(photoBox,      1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+
+        java.util.Map<String, String> changes = new java.util.LinkedHashMap<>();
+        
+        String newName = tfName.getText().trim();
+        String newCat = cbCategory.getValue();
+        String newPrice = tfPrice.getText().trim();
+        String newStock = tfStock.getText().trim();
+        String newDesc = taDescription.getText().trim();
+        String newPhoto = selectedPhotoPath[0];
+
+        if (!newName.equals(selected.name)) changes.put("name", newName);
+        if (!newCat.equals(selected.category)) changes.put("category", newCat);
+        if (!newPrice.equals(String.valueOf(selected.price))) changes.put("price", newPrice);
+        if (!newStock.equals(String.valueOf(selected.stock))) changes.put("stock", newStock);
+        if (!newDesc.equals(selected.description != null ? selected.description : "")) changes.put("description", newDesc);
+        if (newPhoto != null && !newPhoto.equals(selected.imagePath)) changes.put("imagePath", newPhoto);
+
+        if (changes.isEmpty()) {
+            setStatus(lblProductsStatus, "No changes to save", false);
+            return;
         }
 
-        // ADMIN_EDIT_PRODUCT|token|productId|field|value
-        String command = "ADMIN_EDIT_PRODUCT|" + AppState.getToken()
-                + "|" + selected.id
-                + "|" + field
-                + "|" + newValue;
+        setStatus(lblProductsStatus, "Saving...", false);
 
-        runAdminCommand(command, lblProductsStatus,
-                "Product updated successfully", this::loadProducts);
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() {
+                for (java.util.Map.Entry<String, String> entry : changes.entrySet()) {
+                    String cmd = "ADMIN_EDIT_PRODUCT|" + AppState.getToken()
+                            + "|" + selected.id
+                            + "|" + entry.getKey()
+                            + "|" + entry.getValue();
+                    String response = socketClient.sendCommand(cmd);
+                    if (!ResponseBuilder.isOk(response)) return response;
+                }
+                return "OK";
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            String response = task.getValue();
+            if ("OK".equals(response) || ResponseBuilder.isOk(response)) {
+                setStatus(lblProductsStatus, "Product updated successfully", false);
+                loadProducts();
+            } else {
+                setStatus(lblProductsStatus, ResponseBuilder.extractError(response), true);
+            }
+        });
+        task.setOnFailed(e -> setStatus(lblProductsStatus, "Network error during edit", true));
+        new Thread(task).start();
     }
 
     private void handleDeleteProduct() {
@@ -514,6 +608,7 @@ public class AdminController {
                 if (!payload.isBlank()) {
                     Arrays.stream(payload.split(";"))
                             .map(UserDTO::fromProtocolString)
+                            .filter(u -> !"ADMIN".equals(u.role))
                             .forEach(userList::add);
                 }
                 setStatus(lblUsersStatus,
@@ -542,20 +637,71 @@ public class AdminController {
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Delete User");
-        confirm.setHeaderText("Delete user \"" + selected.username + "\"?");
+        confirm.setHeaderText("Delete user \"" + selected.username + "\" permanently?");
         confirm.setContentText(
-                "Users with order history will be deactivated, not removed.\n"
-                        + "Users with no orders will be permanently deleted.");
+                "This action cannot be undone.\n"
+                        + "This will fail if the user has any order history.");
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isEmpty() || result.get() != ButtonType.OK) return;
 
-        // ADMIN_DELETE_USER|token|userId
-        String command = "ADMIN_DELETE_USER|" + AppState.getToken()
+        // ADMIN_HARD_DELETE_USER|token|userId
+        String command = "ADMIN_HARD_DELETE_USER|" + AppState.getToken()
                 + "|" + selected.id;
 
         runAdminCommand(command, lblUsersStatus,
                 "User deleted successfully", this::loadUsers);
+    }
+
+    private void handleDeactivateUser() {
+        UserDTO selected = usersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        // Prevent deactivating the currently logged-in admin
+        if (selected.username.equals(AppState.getUsername())) {
+            showError("You cannot deactivate your own account.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Deactivate User");
+        confirm.setHeaderText("Deactivate user \"" + selected.username + "\"?");
+        confirm.setContentText("This will prevent the user from logging in.");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+
+        // ADMIN_DEACTIVATE_USER|token|userId
+        String command = "ADMIN_DEACTIVATE_USER|" + AppState.getToken()
+                + "|" + selected.id;
+
+        runAdminCommand(command, lblUsersStatus,
+                "User deactivated successfully", this::loadUsers);
+    }
+
+    private void handleActivateUser() {
+        UserDTO selected = usersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        if (selected.username.equals(AppState.getUsername())) {
+            showError("You cannot activate your own account from here.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Activate User");
+        confirm.setHeaderText("Activate user \"" + selected.username + "\"?");
+        confirm.setContentText("This will restore the user's ability to log in.");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+
+        // ADMIN_ACTIVATE_USER|token|userId
+        String command = "ADMIN_ACTIVATE_USER|" + AppState.getToken()
+                + "|" + selected.id;
+
+        runAdminCommand(command, lblUsersStatus,
+                "User activated successfully", this::loadUsers);
     }
 
     // ────────────────────────────────────────────────────────────
@@ -591,10 +737,41 @@ public class AdminController {
     private void setStatus(Label label, String message, boolean isError) {
         Platform.runLater(() -> {
             label.setText(message);
-            label.setStyle(isError
-                    ? "-fx-text-fill: #922B21; -fx-font-weight: bold;"
-                    : "-fx-text-fill: #1E6B3A;");
+            label.setStyle(isError ? "-fx-text-fill: #DC2626; -fx-font-weight: bold;"
+                    : "-fx-text-fill: #10B981; -fx-font-weight: bold;");
         });
+    }
+
+    @FXML
+    private void handleLogout() {
+        if (socketClient != null && socketClient.isConnected()) {
+            Task<Void> task = new Task<>() {
+                @Override
+                protected Void call() {
+                    socketClient.sendCommand("LOGOUT|" + AppState.getToken());
+                    return null;
+                }
+            };
+            new Thread(task).start();
+        }
+
+        AppState.clear();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            Parent root = loader.load();
+            Client.Controllers.LoginController lc = loader.getController();
+            lc.setSocketClient(socketClient);
+            lc.setUdpPort(8085);
+            Stage stage = (Stage) btnRefreshUsers.getScene().getWindow();
+            lc.setPrimaryStage(stage);
+
+            stage.setTitle("ChriOnline");
+            stage.setScene(new Scene(root, 400, 300));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Failed to load login screen.");
+        }
     }
 
     private void showError(String message) {

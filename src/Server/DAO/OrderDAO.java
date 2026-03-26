@@ -19,20 +19,20 @@ public class OrderDAO {
      * Inserts a new order row and returns the generated id.
      * Called first inside the checkout transaction.
      *
-     * INSERT INTO orders (user_id, total_amount, payment_method, status, reference_code)
+     * INSERT INTO orders (user_id, total_amount, payment_method, status, payment_ref)
      */
     public int createOrder(Connection conn, int userId, double total,
-                           String paymentMethod, String referenceCode) throws SQLException {
+                           String paymentMethod, String payment_ref) throws SQLException {
 
         final String sql =
-                "INSERT INTO orders (user_id, total_amount, payment_method, status, reference_code) " +
+                "INSERT INTO orders (user_id, total_amount, payment_method, status, payment_ref) " +
                         "VALUES (?, ?, ?, 'PENDING', ?)";
 
         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, userId);
         ps.setDouble(2, total);
         ps.setString(3, paymentMethod);
-        ps.setString(4, referenceCode);
+        ps.setString(4, payment_ref);
         ps.executeUpdate();
 
         ResultSet keys = ps.getGeneratedKeys();
@@ -122,7 +122,7 @@ public class OrderDAO {
      */
     public List<OrderDTO> findByUser(int userId) {
         final String sql =
-                "SELECT id, reference_code, user_id, status, total_amount, payment_method, created_at " +
+                "SELECT id, payment_ref, user_id, status, total_amount, payment_method, created_at " +
                         "FROM orders " +
                         "WHERE user_id = ? " +
                         "ORDER BY created_at DESC";
@@ -154,7 +154,7 @@ public class OrderDAO {
      */
     public List<OrderDTO> findAll() {
         final String sql =
-                "SELECT id, reference_code, user_id, status, total_amount, payment_method, created_at " +
+                "SELECT id, payment_ref, user_id, status, total_amount, payment_method, created_at " +
                         "FROM orders " +
                         "ORDER BY created_at DESC";
 
@@ -184,7 +184,7 @@ public class OrderDAO {
     private OrderDTO mapRow(ResultSet rs) throws SQLException {
         return new OrderDTO(
                 rs.getInt("id"),
-                rs.getString("reference_code"),
+                rs.getString("payment_ref"),
                 rs.getInt("user_id"),
                 rs.getString("status"),
                 rs.getDouble("total_amount"),

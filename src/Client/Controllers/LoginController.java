@@ -15,7 +15,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+
 
 public class LoginController {
 
@@ -140,28 +140,45 @@ public class LoginController {
 
     // ──────────────────────────────────────────────────────────────
     // Load main window after successful login
+    // Checks role: ADMIN → admin.fxml, USER → catalog.fxml
     // ──────────────────────────────────────────────────────────────
     private void loadMainWindow() {
-        try {
-            Platform.runLater(() -> {
-                primaryStage.setTitle("ChriOnline");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/catalog.fxml"));
-                Parent root = null;
-                try {
-                    root = loader.load();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                CatalogController catalogController = loader.getController();
-                catalogController.setSocketClient(socketClient);
-                catalogController.setPrimaryStage(primaryStage);
-                primaryStage.setScene(new Scene(root, 1100, 750));
-            });
+        Platform.runLater(() -> {
+            try {
+                if (AppState.isAdmin()) {
+                    // ── ADMIN → load admin dashboard ───────────────
+                    FXMLLoader loader = new FXMLLoader(
+                            getClass().getResource("/UI/admin.fxml"));
+                    Parent root = loader.load();
 
-        } catch (Exception e) {
-            showError("Could not load main window.");
-            e.printStackTrace();
-        }
+                    AdminController adminController = loader.getController();
+                    adminController.setSocketClient(socketClient);
+
+                    primaryStage.setTitle("ChriOnline — Admin Panel");
+                    primaryStage.setScene(new Scene(root, 1100, 750));
+
+                } else {
+                    // ── USER → load product catalogue ──────────────
+                    FXMLLoader loader = new FXMLLoader(
+                            getClass().getResource("/UI/catalog.fxml"));
+                    Parent root = loader.load();
+
+                    CatalogController catalogController = loader.getController();
+                    catalogController.setSocketClient(socketClient);
+                    catalogController.setPrimaryStage(primaryStage);
+
+                    primaryStage.setTitle("ChriOnline — Welcome, "
+                            + AppState.getUsername());
+                    primaryStage.setScene(new Scene(root, 1100, 750));
+                }
+
+                primaryStage.show();
+
+            } catch (Exception e) {
+                showError("Could not load main window.");
+                e.printStackTrace();
+            }
+        });
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -187,4 +204,3 @@ public class LoginController {
         errorLabel.setVisible(true);
     }
 }
-
