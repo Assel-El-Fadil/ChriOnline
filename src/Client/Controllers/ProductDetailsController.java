@@ -66,7 +66,7 @@ public class ProductDetailsController {
                 ? product.description : "—");
         lblPrice.setText(String.format("%.2f MAD", product.price));
 
-        lblStock.getStyleClass().remove("stock-out");
+        lblStock.getStyleClass().removeAll("stock-out", "toolbar-label");
 
         if (product.stock == 0) {
             lblStock.setText("Out of stock");
@@ -74,7 +74,8 @@ public class ProductDetailsController {
             addToCartButton.setDisable(true);
             quantitySpinner.setDisable(true);
         } else {
-            lblStock.setText("Stock: " + product.stock);
+            lblStock.setText("In Stock: " + product.stock);
+            lblStock.getStyleClass().add("toolbar-label");
             quantitySpinner.setDisable(false);
             quantitySpinner.setValueFactory(
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(1, product.stock, 1));

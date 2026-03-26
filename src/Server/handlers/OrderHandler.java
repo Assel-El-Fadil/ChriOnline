@@ -51,6 +51,7 @@ public class OrderHandler {
         switch (cmd) {
             case CHECKOUT: return handleCheckout(params);
             case ORDER_HISTORY: return handleOrderHistory(params);
+            case GET_ORDER_STATUS: return handleGetOrderStatus(params);
             default: return ResponseBuilder.error("Unknown order command");
         }
     }
@@ -58,7 +59,6 @@ public class OrderHandler {
     // ──────────────────────────────────────────────────────────────
     // CHECKOUT
     // params: 0=token, 1=method, 2=cardNum, 3=holder, 4=expiry, 5=cvv
-    // Command: CHECKOUT|token|CARD|cardNum|holder|expiry|cvv
     //
     // 8-step transaction flow:
     //   1. Validate session

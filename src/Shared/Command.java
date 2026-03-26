@@ -21,7 +21,8 @@ public enum Command {
     ADMIN_LIST_ORDERS,
     ADMIN_UPDATE_STATUS,
     ADMIN_LIST_USERS,
-    ADMIN_DELETE_USER;
+    ADMIN_DELETE_USER,
+    GET_ORDER_STATUS;
 
     public static Command fromString(String commandToken) throws InvalidRequestException {
         if (commandToken == null) {

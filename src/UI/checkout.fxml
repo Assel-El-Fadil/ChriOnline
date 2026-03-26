@@ -11,87 +11,117 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="14"
-      xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Client.Controllers.CheckoutController">
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Client.Controllers.CheckoutController"
+            stylesheets="@admin_theme.css"
+            styleClass="root"
+            prefWidth="1100"
+            prefHeight="750">
 
-    <padding>
-        <Insets top="15" right="15" bottom="15" left="15"/>
-    </padding>
+    <!-- ─── Top Header (same as catalog) ─── -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
+                <Label text="ChriOnline" styleClass="logo-text"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </VBox>
+    </top>
 
-    <!-- Title -->
-    <Label text="Checkout"
-           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 30 60;">
+                <VBox styleClass="content-section" spacing="24">
+                    <padding>
+                        <Insets top="28" right="32" bottom="28" left="32"/>
+                    </padding>
 
-    <!-- ── Order Summary section ────────────────────────────────── -->
-    <Label text="Order Summary"
-           style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    <!-- Title -->
+                    <VBox spacing="4">
+                        <Label text="Checkout" styleClass="section-title" style="-fx-padding: 0;"/>
+                        <Label text="Review your order and complete payment"
+                               styleClass="login-welcome-subtitle"/>
+                    </VBox>
 
-    <TableView fx:id="summaryTable" prefHeight="160">
-        <columns>
-            <TableColumn fx:id="colName"      text="Product"    prefWidth="200"/>
-            <TableColumn fx:id="colQty"       text="Qty"        prefWidth="55"/>
-            <TableColumn fx:id="colUnitPrice" text="Unit Price" prefWidth="100"/>
-            <TableColumn fx:id="colSubtotal"  text="Subtotal"   prefWidth="100"/>
-        </columns>
-    </TableView>
+                    <!-- ── Order Summary section ────────────────────────────────── -->
+                    <VBox spacing="12">
+                        <Label text="Order Summary" styleClass="login-field-label"/>
+                        <TableView fx:id="summaryTable" prefHeight="220" styleClass="table-view">
+                            <columns>
+                                <TableColumn fx:id="colName"      text="Product"    prefWidth="400"/>
+                                <TableColumn fx:id="colQty"       text="Qty"        prefWidth="80"/>
+                                <TableColumn fx:id="colUnitPrice" text="Unit Price" prefWidth="120"/>
+                                <TableColumn fx:id="colSubtotal"  text="Subtotal"   prefWidth="120"/>
+                            </columns>
+                        </TableView>
 
-    <HBox alignment="CENTER_RIGHT" spacing="8">
-        <Label text="Total:" style="-fx-font-weight: bold;"/>
-        <Label fx:id="totalLabel" text="0.00 MAD"
-               style="-fx-font-weight: bold; -fx-text-fill: #2a7ae2;"/>
-    </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="12">
+                            <Label text="Total Amount:" styleClass="cart-total-caption"/>
+                            <Label fx:id="totalLabel" text="0.00 MAD" styleClass="cart-total-value"/>
+                        </HBox>
+                    </VBox>
 
-    <Separator/>
+                    <Separator/>
 
-    <!-- ── Payment section ──────────────────────────────────────── -->
-    <Label text="Payment Details"
-           style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    <!-- ── Payment section ──────────────────────────────────────── -->
+                    <VBox spacing="16">
+                        <Label text="Payment Details" styleClass="login-field-label"/>
+                        
+                        <VBox spacing="12" maxWidth="500">
+                            <!-- Card Number -->
+                            <VBox spacing="6">
+                                <Label text="Card Number" styleClass="login-field-label"/>
+                                <TextField fx:id="cardNumberField"
+                                           promptText="16 digits"
+                                           styleClass="login-form-field"/>
+                            </VBox>
 
-    <GridPane hgap="12" vgap="10">
-        <padding><Insets top="4"/></padding>
+                            <!-- Card Holder -->
+                            <VBox spacing="6">
+                                <Label text="Card Holder" styleClass="login-field-label"/>
+                                <TextField fx:id="cardHolderField"
+                                           promptText="Full name on card"
+                                           styleClass="login-form-field"/>
+                            </VBox>
 
-        <!-- Card Number -->
-        <Label text="Card Number" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="cardNumberField"
-                   promptText="16 digits"
-                   prefWidth="240"
-                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <!-- Expiry + CVV on same row -->
+                            <HBox spacing="12">
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="Expiry (MM/YY)" styleClass="login-field-label"/>
+                                    <TextField fx:id="expiryField"
+                                               promptText="MM/YY"
+                                               styleClass="login-form-field"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="CVV" styleClass="login-field-label"/>
+                                    <TextField fx:id="cvvField"
+                                               promptText="3 digits"
+                                               styleClass="login-form-field"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </VBox>
 
-        <!-- Card Holder -->
-        <Label text="Card Holder" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <TextField fx:id="cardHolderField"
-                   promptText="Full name on card"
-                   prefWidth="240"
-                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <!-- Error label — hidden by default -->
+                    <Label fx:id="errorLabel"
+                           styleClass="login-error-label"
+                           visible="false"
+                           wrapText="true"/>
 
-        <!-- Expiry + CVV on same row -->
-        <Label text="Expiry (MM/YY)" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
-            <TextField fx:id="expiryField"
-                       promptText="MM/YY"
-                       prefWidth="90"/>
-            <Label text="CVV" style="-fx-padding: 0 0 0 10;"/>
-            <TextField fx:id="cvvField"
-                       promptText="3 digits"
-                       prefWidth="70"/>
-        </HBox>
-    </GridPane>
-
-    <!-- Error label — hidden by default -->
-    <Label fx:id="errorLabel"
-           style="-fx-text-fill: red; -fx-font-size: 12px;"
-           visible="false"
-           wrapText="true"/>
-
-    <!-- Place Order button -->
-    <HBox alignment="CENTER_RIGHT">
-        <Button fx:id="placeOrderButton"
-                text="Place Order"
-                onAction="#handlePlaceOrder"
-                defaultButton="true"
-                style="-fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 14px;"/>
-    </HBox>
-
-</VBox>
+                    <!-- Buttons -->
+                    <HBox spacing="12" alignment="CENTER_RIGHT">
+                        <Button text="Back to Cart"
+                                onAction="#handleBackToCart"
+                                styleClass="btn-secondary"/>
+                        <Button fx:id="placeOrderButton"
+                                text="Place Order"
+                                onAction="#handlePlaceOrder"
+                                defaultButton="true"
+                                styleClass="btn-primary"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

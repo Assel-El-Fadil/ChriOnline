@@ -289,6 +289,23 @@ public class CatalogController {
         }
     }
 
+    @FXML
+    private void handleOpenOrderHistory() {
+        if (socketClient == null || primaryStage == null) return;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/orderHistory.fxml"));
+            Parent root = loader.load();
+            OrderHistoryController controller = loader.getController();
+            controller.setSocketClient(socketClient);
+            controller.setPrimaryStage(primaryStage);
+            primaryStage.setTitle("ChriOnline — Order History");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Could not open order history.", true);
+        }
+    }
+
     private void promptAddToCart(ProductDTO selected) {
         if (selected.stock == 0) {
             showStatus("Product out of stock", true);

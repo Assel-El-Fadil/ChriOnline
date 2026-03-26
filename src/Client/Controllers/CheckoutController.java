@@ -35,6 +35,7 @@ public class CheckoutController {
     private SocketClient            socketClient;
     private List<CartItemDTO>       cartItems;   // passed from CartController
     private Runnable                onSuccess;   // callback → switch to Order History tab
+    private Runnable                onBack;      // callback → switch back to Cart tab
 
     // ──────────────────────────────────────────────────────────────
     // Setters
@@ -51,6 +52,11 @@ public class CheckoutController {
     /** Called after a successful checkout to switch to the Order History tab. */
     public void setOnSuccess(Runnable onSuccess) {
         this.onSuccess = onSuccess;
+    }
+
+    /** Called when the user wants to go back to the cart. */
+    public void setOnBack(Runnable onBack) {
+        this.onBack = onBack;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -183,6 +189,13 @@ public class CheckoutController {
         });
 
         new Thread(task).start();
+    }
+
+    @FXML
+    private void handleBackToCart() {
+        if (onBack != null) {
+            onBack.run();
+        }
     }
 
     // ──────────────────────────────────────────────────────────────
