@@ -237,6 +237,9 @@ public class ClientHandler implements Runnable {
             case ORDER_HISTORY:
                 return orderHandler.handle(cmd, params);
 
+            case GET_ORDER_STATUS:
+                return orderHandler.handle(cmd, params);
+
             // ── Admin ─────────────────────────────────────────────
             case ADMIN_ADD_PRODUCT:
                 return adminHandler.handleAddProduct(params);
