@@ -9,6 +9,7 @@ CREATE TABLE users (
     password_hash VARCHAR(64)  NOT NULL,
     email         VARCHAR(150) NOT NULL,
     address       VARCHAR(255),
+    profile_photo VARCHAR(255) DEFAULT NULL,
     role          ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
     active        TINYINT(1)   NOT NULL DEFAULT 1,
     created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,

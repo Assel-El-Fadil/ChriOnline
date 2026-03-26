@@ -289,6 +289,25 @@ public class CatalogController {
         }
     }
 
+    @FXML
+    private void handleOpenProfile() {
+        if (socketClient == null || primaryStage == null) {
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/profile.fxml"));
+            Parent root = loader.load();
+            ProfileController profileController = loader.getController();
+            profileController.setSocketClient(socketClient);
+            profileController.setPrimaryStage(primaryStage);
+            primaryStage.setTitle("ChriOnline — My Profile");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Could not open profile.", true);
+        }
+    }
+
     private void promptAddToCart(ProductDTO selected) {
         if (selected.stock == 0) {
             showStatus("Product out of stock", true);

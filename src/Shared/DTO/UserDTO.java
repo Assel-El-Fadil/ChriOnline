@@ -8,6 +8,7 @@ public class UserDTO {
     public String lastName;
     public String email;
     public String address;
+    public String profilePhoto;
     public String role;
     public int active;
 
@@ -16,20 +17,22 @@ public class UserDTO {
     public UserDTO() {}
 
     public UserDTO(int id, String username, String firstName, String lastName,
-                   String email, String address, String role, int active) {
-        this.id        = id;
-        this.username  = username;
-        this.firstName = firstName;
-        this.lastName  = lastName;
-        this.email     = email;
-        this.address   = address;
-        this.role      = role;
-        this.active    = active;
+                   String email, String address, String profilePhoto,
+                   String role, int active) {
+        this.id           = id;
+        this.username     = username;
+        this.firstName    = firstName;
+        this.lastName     = lastName;
+        this.email        = email;
+        this.address      = address;
+        this.profilePhoto = profilePhoto;
+        this.role         = role;
+        this.active       = active;
     }
 
     public UserDTO(int id, String username, String firstName, String lastName,
                    String email, String role, int active) {
-        this(id, username, firstName, lastName, email, null, role, active);
+        this(id, username, firstName, lastName, email, null, null, role, active);
     }
 
     public String getFullName() {
@@ -48,9 +51,12 @@ public class UserDTO {
                 .append(",role=")     .append(role)
                 .append(",active=")   .append(active);
 
-        // Only append address if the user has one set
+        // Only append optional fields if the user has them set
         if (address != null && !address.isBlank()) {
             sb.append(",address=").append(sanitize(address));
+        }
+        if (profilePhoto != null && !profilePhoto.isBlank()) {
+            sb.append(",profilePhoto=").append(sanitize(profilePhoto));
         }
 
         return sb.toString();
@@ -71,14 +77,15 @@ public class UserDTO {
             String val = pair.substring(eq + 1).trim();
 
             switch (key) {
-                case "id":        dto.id        = Integer.parseInt(val); break;
-                case "username":  dto.username  = val;                   break;
-                case "firstName": dto.firstName = val;                   break;
-                case "lastName":  dto.lastName  = val;                   break;
-                case "email":     dto.email     = val;                   break;
-                case "address":   dto.address   = val;                   break;
-                case "role":      dto.role      = val;                   break;
-                case "active":    dto.active    = Integer.parseInt(val); break;
+                case "id":           dto.id           = Integer.parseInt(val); break;
+                case "username":     dto.username     = val;                   break;
+                case "firstName":    dto.firstName    = val;                   break;
+                case "lastName":     dto.lastName     = val;                   break;
+                case "email":        dto.email        = val;                   break;
+                case "address":      dto.address      = val;                   break;
+                case "profilePhoto": dto.profilePhoto = val;                   break;
+                case "role":         dto.role         = val;                   break;
+                case "active":       dto.active       = Integer.parseInt(val); break;
             }
         }
         return dto;

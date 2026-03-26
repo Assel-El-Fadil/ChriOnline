@@ -281,6 +281,40 @@ public class AdminController {
         taDescription.setPrefRowCount(3);
         taDescription.setWrapText(true);
 
+        Button btnPhoto = new Button("Select Photo...");
+        Label lblPhotoPath = new Label("No photo selected");
+        final String[] selectedPhotoPath = {null};
+
+        btnPhoto.setOnAction(ev -> {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Select Product Photo");
+            fileChooser.getExtensionFilters().addAll(
+                    new javafx.stage.FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
+            java.io.File selectedFile = fileChooser.showOpenDialog(null);
+            if (selectedFile != null) {
+                try {
+                    java.io.File destDir = new java.io.File("src/Client/assets/images/products");
+                    if (!destDir.exists()) destDir.mkdirs();
+                    String ext = "";
+                    String n = selectedFile.getName();
+                    int i = n.lastIndexOf('.');
+                    if (i > 0) ext = n.substring(i);
+                    String destName = "prod_" + System.currentTimeMillis() + ext;
+                    java.io.File destFile = new java.io.File(destDir, destName);
+                    java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    selectedPhotoPath[0] = "assets/images/products/" + destName;
+                    lblPhotoPath.setText(destName);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    showError("Error copying photo locally");
+                }
+            }
+        });
+
+        javafx.scene.layout.HBox photoBox = new javafx.scene.layout.HBox(10, btnPhoto, lblPhotoPath);
+        photoBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
         cbCategory.getSelectionModel().selectFirst();
 
         grid.add(new Label("Name:"),        0, 0); grid.add(tfName,        1, 0);
@@ -288,6 +322,7 @@ public class AdminController {
         grid.add(new Label("Price (MAD):"), 0, 2); grid.add(tfPrice,       1, 2);
         grid.add(new Label("Stock:"),       0, 3); grid.add(tfStock,       1, 3);
         grid.add(new Label("Description:"), 0, 4); grid.add(taDescription, 1, 4);
+        grid.add(new Label("Photo:"),       0, 5); grid.add(photoBox,      1, 5);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -306,13 +341,15 @@ public class AdminController {
         }
 
         // Build the command
-        // ADMIN_ADD_PRODUCT|token|name|category|price|stock|description
+        // ADMIN_ADD_PRODUCT|token|name|category|price|stock|description|photoPath
+        String photoPathStr = selectedPhotoPath[0] != null ? selectedPhotoPath[0] : "";
         String command = "ADMIN_ADD_PRODUCT|" + AppState.getToken()
                 + "|" + name
                 + "|" + category
                 + "|" + priceStr
                 + "|" + stockStr
-                + "|" + description;
+                + "|" + description
+                + "|" + photoPathStr;
 
         runAdminCommand(command, lblProductsStatus,
                 "Product added successfully", this::loadProducts);

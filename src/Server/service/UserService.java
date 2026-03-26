@@ -85,7 +85,8 @@ public class UserService {
                 authUser.firstName,
                 authUser.lastName,
                 authUser.email,
-                authUser.address,   // may be null — UserDTO handles it
+                authUser.address,
+                authUser.profilePhoto,
                 authUser.role,
                 authUser.active
         );
@@ -95,12 +96,53 @@ public class UserService {
     //  Lookup
     // ────────────────────────────────────────────────────────────
 
-    public UserDTO findById(int userId) {
+    public UserDTO getProfile(int userId) {
         UserDTO user = userDAO.findById(userId);
         if (user == null) {
             throw new UserNotFoundException("No user found with id=" + userId);
         }
         return user;
+    }
+
+    // ────────────────────────────────────────────────────────────
+    //  Profile update
+    // ────────────────────────────────────────────────────────────
+
+    /**
+     * Maps user-facing field names (as sent by the client protocol)
+     * to the actual database column names, validates the new value,
+     * then delegates to UserDAO.updateProfile().
+     */
+    public void updateProfile(int userId, String field, String value) {
+        // Map client field name → DB column name
+        String column = switch (field) {
+            case "firstName"    -> "first_name";
+            case "lastName"     -> "last_name";
+            case "email"        -> "email";
+            case "address"      -> "address";
+            case "profilePhoto" -> "profile_photo";
+            default -> throw new ValidationException(
+                    "Unknown editable field: " + field);
+        };
+
+        // Validate the new value using existing validators where applicable
+        switch (field) {
+            case "firstName"    -> validateFirstName(value);
+            case "lastName"     -> validateLastName(value);
+            case "email"        -> validateEmail(value);
+            case "address"      -> validateAddress(value);
+            // profilePhoto — no validation beyond length, just pass through
+        }
+
+        try {
+            boolean updated = userDAO.updateProfile(userId, column, value);
+            if (!updated) {
+                throw new UserNotFoundException(
+                        "No active user found with id=" + userId);
+            }
+        } catch (UserDAO.DuplicateEmailException e) {
+            throw new DuplicateEmailException(e.getMessage());
+        }
     }
 
     public List<UserDTO> findAll() {
