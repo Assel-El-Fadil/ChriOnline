@@ -165,17 +165,6 @@ public class CheckoutController {
                 String orderId = parts.length > 0 ? parts[0] : "?";
                 String refCode = parts.length > 1 ? parts[1] : "?";
 
-                // Show confirmation dialog
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Order Confirmed");
-                alert.setHeaderText("Your order has been placed!");
-                alert.setContentText(
-                        "Reference: " + refCode + "\n" +
-                                "Order ID: " + orderId + "\n" +
-                                "Total: " + totalLabel.getText()
-                );
-                alert.showAndWait();
-
                 // Switch to Order History tab (if callback was set)
                 if (onSuccess != null) {
                     onSuccess.run();
