@@ -32,7 +32,7 @@ public class OrderDTO {
                 + ",status=" + status
                 + ",total="  + String.format("%.2f", totalAmount)
                 + ",method=" + paymentMethod
-                + ",created="+ (createdAt == null ? "" : createdAt);
+                + ",created="+ (createdAt == null ? "" : createdAt.getTime());
     }
 
     public static OrderDTO fromProtocolString(String s) {
@@ -56,7 +56,7 @@ public class OrderDTO {
                 case "status":  dto.status        = val;                     break;
                 case "total":   dto.totalAmount   = Double.parseDouble(val); break;
                 case "method":  dto.paymentMethod = val;                     break;
-                //case "created": dto.createdAt     = val;                     break;
+                case "created": if (!val.isEmpty()) dto.createdAt = new java.util.Date(Long.parseLong(val)); break;
             }
         }
         return dto;

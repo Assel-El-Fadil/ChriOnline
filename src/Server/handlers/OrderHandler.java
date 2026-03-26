@@ -229,4 +229,42 @@ public class OrderHandler {
 
         return ResponseBuilder.ok(sb.toString());
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // GET_ORDER_STATUS
+    // params: 0=token, 1=orderId
+    // returns: OK|order_dto_str  or  ERR|message
+    // ──────────────────────────────────────────────────────────────
+    private String handleGetOrderStatus(String[] params) {
+        if (params.length < 2) {
+            return ResponseBuilder.error("Missing order ID");
+        }
+
+        String token = params[0];
+        int orderId;
+        try {
+            orderId = Integer.parseInt(params[1]);
+        } catch (NumberFormatException e) {
+            return ResponseBuilder.error("Invalid order ID");
+        }
+
+        // Validate session
+        SessionData session = sessionManager.getSession(token);
+        if (session == null) {
+            return ResponseBuilder.error("Not logged in");
+        }
+
+        // Fetch order
+        OrderDTO order = orderService.getOrderById(orderId);
+        if (order == null) {
+            return ResponseBuilder.error("Order not found");
+        }
+
+        // Security: only allow users to see their own orders (unless admin)
+        if (order.userId != session.getUserId() && !session.isAdmin()) {
+            return ResponseBuilder.error("Unauthorized to view this order");
+        }
+
+        return ResponseBuilder.ok(order.toProtocolString());
+    }
 }

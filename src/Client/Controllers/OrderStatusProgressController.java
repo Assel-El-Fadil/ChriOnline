@@ -22,7 +22,7 @@ public class OrderStatusProgressController {
 
     @FXML private Circle step1Circle; // PENDING
     @FXML private Circle step2Circle; // VALIDATED
-    @寬ML private Circle step3Circle; // SHIPPED
+    @FXML private Circle step3Circle; // SHIPPED
     @FXML private Circle step4Circle; // DELIVERED
 
     @FXML private Line line1;
@@ -87,8 +87,7 @@ public class OrderStatusProgressController {
         Platform.runLater(() -> {
             lblOrderRef.setText("Order #" + order.referenceCode);
             lblTotalAmount.setText(String.format("%.2f MAD", order.totalAmount));
-            // Note: Date parsing might need adjustment depending on OrderDTO format
-            // lblOrderDate.setText("Placed on " + order.createdAt);
+            lblOrderDate.setText("Placed on " + order.createdAt);
 
             String status = order.status.toUpperCase();
             resetProgress();

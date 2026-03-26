@@ -34,6 +34,10 @@
                 <Region HBox.hgrow="ALWAYS"/>
 
                 <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Button text="My Orders"
+                            styleClass="btn-secondary"
+                            onAction="#handleOpenOrderHistory"
+                            focusTraversable="false"/>
                     <Label text="📍" styleClass="icon-button"/>
                     <Button text="🛒"
                             styleClass="catalog-header-cart-btn"
