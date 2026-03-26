@@ -215,8 +215,26 @@ public class CartController {
             showError("Your cart is empty.");
             return;
         }
-        // TODO (M3-17): switch to Checkout tab / load checkout.fxml
-        System.out.println("[CartController] Proceeding to checkout...");
+        
+        if (socketClient == null || primaryStage == null) {
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/checkout.fxml"));
+            Parent root = loader.load();
+            
+            CheckoutController checkoutController = loader.getController();
+            checkoutController.setSocketClient(socketClient);
+            checkoutController.setPrimaryStage(primaryStage);
+            checkoutController.setCartItems(cartItems);
+            
+            primaryStage.setTitle("ChriOnline — Checkout");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Could not open checkout page.");
+        }
     }
 
     // ──────────────────────────────────────────────────────────────
