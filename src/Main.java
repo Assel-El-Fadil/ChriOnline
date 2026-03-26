@@ -179,14 +179,11 @@ public class Main extends Application implements NotificationCallback {
         System.out.println("[UDP] Order confirmed — ref: " + refCode + " | total: " + total);
 
         Platform.runLater(() -> {
-            // TODO (M3-18): forward to MainWindowController to show the banner
-            // if (mainWindowController != null) {
-            //     mainWindowController.showNotificationBanner(
-            //         "Order " + refCode + " confirmed! Total: " + total + " MAD"
-            //     );
-            // }
-            System.out.println("[Main][UI thread] Banner would show: Order "
-                    + refCode + " confirmed! Total: " + total + " MAD");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Order Confirmed");
+            alert.setHeaderText("Success! Your order has been placed.");
+            alert.setContentText("Order Reference: " + refCode + "\nTotal Amount: " + total + " MAD");
+            alert.show();
         });
     }
 
