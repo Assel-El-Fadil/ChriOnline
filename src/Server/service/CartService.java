@@ -41,19 +41,21 @@ public class CartService {
     }
 
     public void addItem(String token, int userId, int productId, int qty) throws SQLException {
-        Cart cart = getOrCreateCart(token);
-        cart.addItem(productId, qty); // Update memory
-
+        // [Fix] Update DB first, then memory to ensure consistency
         int cartId = cartDAO.getOrCreateCartId(userId);
         cartDAO.upsert(cartId, productId, qty); // Persist
+
+        Cart cart = getOrCreateCart(token);
+        cart.addItem(productId, qty); // Update memory
     }
 
     public void removeItem(String token, int userId, int productId) throws SQLException {
-        Cart cart = getOrCreateCart(token);
-        cart.removeItem(productId); // Update memory
-
+        // [Fix] Update DB first, then memory to ensure consistency
         int cartId = cartDAO.getOrCreateCartId(userId);
         cartDAO.removeItem(cartId, productId); // Persist
+
+        Cart cart = getOrCreateCart(token);
+        cart.removeItem(productId); // Update memory
     }
 
     public void clearCart(String token, int userId) throws SQLException {
