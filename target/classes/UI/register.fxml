@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Client.Controllers.RegisterController"
+            stylesheets="@admin_theme.css"
+            styleClass="root"
+            prefWidth="550"
+            prefHeight="580">
+
+    <!-- ─── Top Header (same as catalog / cart) ─── -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
+                <Label text="ChriOnline" styleClass="logo-text"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- ─── Center: register form card ─── -->
+    <center>
+        <StackPane style="-fx-padding: 24 60;">
+            <VBox styleClass="content-section" spacing="16" maxWidth="420">
+                <padding>
+                    <Insets top="24" right="32" bottom="24" left="32"/>
+                </padding>
+
+                <!-- Title -->
+                <VBox spacing="4">
+                    <Label text="Create Account" styleClass="section-title" style="-fx-padding: 0;"/>
+                    <Label text="Join ChriOnline and start shopping"
+                           styleClass="login-welcome-subtitle"/>
+                </VBox>
+
+                <!-- First name / Last name side by side -->
+                <HBox spacing="12">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="First Name" styleClass="login-field-label"/>
+                        <TextField fx:id="firstNameField"
+                                   promptText="First name"
+                                   styleClass="login-form-field"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Last Name" styleClass="login-field-label"/>
+                        <TextField fx:id="lastNameField"
+                                   promptText="Last name"
+                                   styleClass="login-form-field"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Username field -->
+                <VBox spacing="6">
+                    <Label text="Username" styleClass="login-field-label"/>
+                    <TextField fx:id="usernameField"
+                               promptText="Choose a username"
+                               styleClass="login-form-field"/>
+                </VBox>
+
+                <!-- Password field -->
+                <VBox spacing="6">
+                    <Label text="Password" styleClass="login-field-label"/>
+                    <PasswordField fx:id="passwordField"
+                                   promptText="At least 6 characters"
+                                   styleClass="login-form-field"/>
+                </VBox>
+
+                <!-- Email field -->
+                <VBox spacing="6">
+                    <Label text="Email" styleClass="login-field-label"/>
+                    <TextField fx:id="emailField"
+                               promptText="example@email.com"
+                               styleClass="login-form-field"/>
+                </VBox>
+
+                <!-- Error label — hidden by default -->
+                <Label fx:id="errorLabel"
+                       styleClass="login-error-label"
+                       visible="false"
+                       wrapText="true"/>
+
+                <!-- Buttons -->
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Back to Login"
+                            onAction="#handleBackToLogin"
+                            styleClass="btn-secondary"/>
+                    <Button fx:id="registerButton"
+                            text="Register"
+                            onAction="#handleRegister"
+                            defaultButton="true"
+                            styleClass="btn-primary"/>
+                </HBox>
+            </VBox>
+        </StackPane>
+    </center>
+</BorderPane>
