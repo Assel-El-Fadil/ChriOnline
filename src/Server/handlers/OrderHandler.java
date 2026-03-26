@@ -152,6 +152,18 @@ public class OrderHandler {
             conn.commit();
             conn.setAutoCommit(true);
 
+            // Send UDP notification (non-blocking, non-fatal)
+            try {
+                clientIP = sessionManager.getClientIP(token);
+                int clientPort = sessionManager.getClientUdpPort(token);
+                if (clientIP != null && clientPort > 0) {
+                    String msg = "ORDER_CONFIRMED|" + refCode + "|" + String.format("%.2f", total);
+                    udpServer.notify(clientIP, clientPort, msg);
+                }
+            } catch (Exception e) {
+                System.err.println("[OrderHandler] UDP notification failed: " + e.getMessage());
+            }
+
             // Clear cart in memory and DB
             try {
                 cartService.clearCart(token, userId);
