@@ -9,11 +9,14 @@ public class ProductDTO {
     public int    stock;
     public String category;   // one of the ENUM values, e.g. "ELECTRONIQUES"
     public int active;     // 1 = visible, 0 = soft-deleted
+    /** Local file path for product image; may be null if not set. */
+    public String imagePath;
 
     public ProductDTO() {}
 
     public ProductDTO(int id, String name, String description,
-                      double price, int stock, String category, int active) {
+                      double price, int stock, String category, int active,
+                      String imagePath) {
         this.id          = id;
         this.name        = name;
         this.description = description;
@@ -21,17 +24,24 @@ public class ProductDTO {
         this.stock       = stock;
         this.category    = category;
         this.active      = active;
+        this.imagePath   = imagePath;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String toProtocolString() {
         String safeDesc = (description == null ? "" : description.replace(",", " "));
+        String img = imagePath != null ? imagePath : "";
         return "id="       + id
                 + ",name="    + name
                 + ",cat="     + category
                 + ",price="   + String.format("%.2f", price)
                 + ",stock="   + stock
                 + ",active="  + active
-                + ",desc="    + safeDesc;
+                + ",desc="    + safeDesc
+                + "|" + img;
     }
 
     public static ProductDTO fromProtocolString(String s) {
@@ -39,8 +49,16 @@ public class ProductDTO {
             throw new IllegalArgumentException("Cannot parse blank ProductDTO string");
         }
 
+        int pipe = s.lastIndexOf('|');
+        String mainPart = pipe >= 0 ? s.substring(0, pipe) : s;
+        String imgPart = pipe >= 0 && pipe + 1 <= s.length()
+                ? s.substring(pipe + 1)
+                : "";
+
         ProductDTO dto = new ProductDTO();
-        String[] pairs = s.split(",");
+        dto.imagePath = imgPart;
+
+        String[] pairs = mainPart.split(",");
 
         for (String pair : pairs) {
             int eq = pair.indexOf('=');

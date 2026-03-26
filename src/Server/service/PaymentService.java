@@ -9,7 +9,7 @@ public class PaymentService {
     //   CHECKOUT|token|CARD|cardNum|holder|expiry|cvv
     //                        [0]     [1]    [2]   [3]
     // ──────────────────────────────────────────────────────────────
-    public static PaymentResult validate(String cardNum, String holder,
+    public PaymentResult validate(String cardNum, String holder,
                                          String expiry,  String cvv) {
 
         // 1. Card number — must be exactly 16 digits

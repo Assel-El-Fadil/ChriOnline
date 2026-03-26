@@ -166,7 +166,6 @@ public class UserDAO {
                 );
             }
             return null;
-
         } catch (SQLException e) {
             throw new DAOException("findByUsernameForAuth failed: " + e.getMessage(), e);
         } finally {

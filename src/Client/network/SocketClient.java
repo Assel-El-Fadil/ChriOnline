@@ -42,7 +42,7 @@ public class SocketClient {
             return response;
         } catch (IOException e) {
             connected = false;
-            throw new NetworkException("Connection lost");
+            throw new NetworkException("Connection lost", e);
         }
     }
 
@@ -78,7 +78,6 @@ public class SocketClient {
         }
     }
 
-    
     public boolean isConnected() {
         return connected;
     }

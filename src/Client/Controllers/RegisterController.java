@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 public class RegisterController {
 
     // ── FXML injections ───────────────────────────────────────────
+    @FXML private TextField     firstNameField;
+    @FXML private TextField     lastNameField;
     @FXML private TextField     usernameField;
     @FXML private PasswordField passwordField;
     @FXML private TextField     emailField;
@@ -47,11 +49,21 @@ public class RegisterController {
     // ──────────────────────────────────────────────────────────────
     @FXML
     private void handleRegister() {
-        String username = usernameField.getText().trim();
-        String password = passwordField.getText();
-        String email    = emailField.getText().trim();
+        String firstName = firstNameField.getText().trim();
+        String lastName  = lastNameField.getText().trim();
+        String username  = usernameField.getText().trim();
+        String password  = passwordField.getText();
+        String email     = emailField.getText().trim();
 
         // ── Client-side validation ─────────────────────────────────
+        if (firstName.isBlank()) {
+            showError("First name cannot be empty.");
+            return;
+        }
+        if (lastName.isBlank()) {
+            showError("Last name cannot be empty.");
+            return;
+        }
         if (username.isBlank()) {
             showError("Username cannot be empty.");
             return;
@@ -70,8 +82,8 @@ public class RegisterController {
         hideError();
 
         // Build REGISTER command
-        // REGISTER|username|password|email
-        String command = "REGISTER|" + username + "|" + password + "|" + email;
+        // REGISTER|firstName|lastName|username|password|email
+        String command = "REGISTER|" + firstName + "|" + lastName + "|" + username + "|" + password + "|" + email;
 
         // Run on background thread — NEVER call sendCommand() on the UI thread
         Task<String> task = new Task<>() {

@@ -1,14 +1,14 @@
 package Server.handlers;
 
 import Server.DAO.ConnectionPool;
-import Server.DAO.OrderDAO;
-import Server.DAO.ProductDAO;
 import Server.SessionManager;
 import Server.UDPServer;
 import Server.service.Cart;
 import Server.service.CartService;
+import Server.service.OrderService;
 import Server.service.PaymentResult;
 import Server.service.PaymentService;
+import Server.service.ProductService;
 import Shared.Command;
 import Shared.DTO.OrderDTO;
 import Shared.ResponseBuilder;
@@ -23,25 +23,25 @@ import java.util.UUID;
 public class OrderHandler {
 
     // ─── Dependencies injected via constructor ─────────────────────
-    private final OrderDAO       orderDAO;
-    private final CartService    cartService;
+    private final OrderService orderService;
+    private final CartService cartService;
     private final PaymentService paymentService;
     private final SessionManager sessionManager;
-    private final UDPServer      udpBroadcaster;
-    private final ProductDAO     productDAO;
+    private final UDPServer udpServer;
+    private final ProductService productService;
 
     // ──────────────────────────────────────────────────────────────
     // Constructor
     // ──────────────────────────────────────────────────────────────
-    public OrderHandler(OrderDAO orderDAO, CartService cartService,
+    public OrderHandler(OrderService orderService, CartService cartService,
                         PaymentService paymentService, SessionManager sessionManager,
-                        UDPServer udpBroadcaster, ProductDAO productDAO) {
-        this.orderDAO       = orderDAO;
-        this.cartService    = cartService;
-        this.paymentService = paymentService;
-        this.sessionManager = sessionManager;
-        this.udpBroadcaster = udpBroadcaster;
-        this.productDAO     = productDAO;
+                        UDPServer udpServer, ProductService productService) {
+        this.orderService    = orderService;
+        this.cartService     = cartService;
+        this.paymentService  = paymentService;
+        this.sessionManager  = sessionManager;
+        this.udpServer = udpServer;
+        this.productService  = productService;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -49,9 +49,9 @@ public class OrderHandler {
     // ──────────────────────────────────────────────────────────────
     public String handle(Command cmd, String[] params) {
         switch (cmd) {
-            case CHECKOUT:      return handleCheckout(params);
+            case CHECKOUT: return handleCheckout(params);
             case ORDER_HISTORY: return handleOrderHistory(params);
-            default:            return ResponseBuilder.error("Unknown order command");
+            default: return ResponseBuilder.error("Unknown order command");
         }
     }
 
@@ -99,13 +99,13 @@ public class OrderHandler {
         }
 
         // ── Step 3 : Validate payment ─────────────────────────────
-        PaymentResult pr = PaymentService.validate(cardNum, holder, expiry, cvv);
+        PaymentResult pr = paymentService.validate(cardNum, holder, expiry, cvv);
         if (!pr.isSuccess()) {
             return ResponseBuilder.error(pr.getMessage());
         }
 
         // ── Step 4 : Calculate total & open JDBC transaction ──────
-        double total = cart.calculateTotal(productDAO);
+        double total = cart.calculateTotal(productService);
 
         // Generate reference code before the transaction
         String refCode = UUID.randomUUID().toString()
@@ -118,7 +118,7 @@ public class OrderHandler {
             conn.setAutoCommit(false);  // BEGIN transaction
 
             // ── Step 5 : Insert order row ──────────────────────────
-            int orderId = orderDAO.createOrder(conn, userId, total, paymentMethod, refCode);
+            int orderId = orderService.createOrder(conn, userId, total, paymentMethod, refCode);
 
             // ── Step 6 : Process each cart item ───────────────────
             for (Map.Entry<Integer, Integer> entry : cart.getItems().entrySet()) {
@@ -128,7 +128,7 @@ public class OrderHandler {
                 // Get unit price from DB (price at time of purchase)
                 double unitPrice = 0.0;
                 try {
-                    var product = productDAO.findById(productId);
+                    var product = productService.getById(productId);
                     if (product != null) unitPrice = product.price;
                 } catch (SQLException e) {
                     conn.rollback();
@@ -137,10 +137,10 @@ public class OrderHandler {
                 }
 
                 // Insert line item
-                orderDAO.addOrderItem(conn, orderId, productId, qty, unitPrice);
+                orderService.addOrderItem(conn, orderId, productId, qty, unitPrice);
 
                 // Deduct stock — rollback if stock ran out
-                boolean stocked = orderDAO.deductStock(conn, productId, qty);
+                boolean stocked = orderService.deductStock(conn, productId, qty);
                 if (!stocked) {
                     conn.rollback();
                     conn.setAutoCommit(true);
@@ -165,7 +165,7 @@ public class OrderHandler {
                     + " ref=" + refCode + " total=" + total + " user=" + userId);
 
             // ── Step 8 : UDP notification (fire-and-forget) ───────
-            udpBroadcaster.notify(
+            udpServer.notify(
                     clientIP,
                     udpPort,
                     "ORDER_CONFIRMED|" + refCode + "|" + String.format("%.2f", total)
@@ -214,7 +214,7 @@ public class OrderHandler {
         int userId = session.getUserId();
 
         // Fetch orders from DB
-        List<OrderDTO> orders = orderDAO.findByUser(userId);
+        List<OrderDTO> orders = orderService.getUserOrders(userId);
 
         if (orders.isEmpty()) {
             return ResponseBuilder.ok("");

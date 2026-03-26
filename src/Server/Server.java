@@ -2,6 +2,8 @@ package Server;
 
 import Server.DAO.*;
 import Server.service.*;
+import Server.handlers.*;
+import Server.service.PaymentService;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -27,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * What Server does NOT do:
  *   - Business logic              → Service classes
  *   - SQL                         → DAO classes
- *   - Protocol parsing/formatting → chri.shared classes
+ *   - Protocol parsing/formatting → shared classes
  *   - Per-client I/O and dispatch → ClientHandler
  *
  * Threading model:
@@ -40,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class Server {
 
     // ── Network configuration ─────────────────────────────────────
-    private static final int TCP_PORT         = 5000;
+    private static final int TCP_PORT         = 8084;
     private static final int THREAD_POOL_SIZE = 20;
 
     // ── Core server infrastructure ────────────────────────────────
@@ -62,6 +64,7 @@ public class Server {
     private final ProductService productService;
     private final CartService    cartService;
     private final OrderService   orderService;
+    private final PaymentService paymentService;
 
     // ── Handlers ──────────────────────────────────────────────────
     private final AuthHandler    authHandler;
@@ -114,13 +117,14 @@ public class Server {
         this.userService    = new UserService(userDAO);
         this.productService = new ProductService(productDAO);
         this.cartService    = new CartService(cartDAO, productDAO);
-        this.orderService   = new OrderService(orderDAO, cartService, productDAO);
+        this.orderService   = new OrderService(orderDAO);
+        this.paymentService = new PaymentService();
 
         // ── 5. Handlers ───────────────────────────────────────────
         this.authHandler    = new AuthHandler(userService, sessionManager);
         this.productHandler = new ProductHandler(productService);
-        this.cartHandler    = new CartHandler(cartService, sessionManager);
-        this.orderHandler   = new OrderHandler(orderService, sessionManager, udpServer);
+        this.cartHandler    = new CartHandler(cartService, productService, sessionManager);
+        this.orderHandler   = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService);
         this.adminHandler   = new AdminHandler(userService, productService,
                 orderService, sessionManager);
 

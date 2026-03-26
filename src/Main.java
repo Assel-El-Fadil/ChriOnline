@@ -1,9 +1,13 @@
 import Client.network.NotificationCallback;
 import Client.network.SocketClient;
 import Client.network.UDPListener;
+import Client.Controllers.LoginController;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -14,12 +18,13 @@ public class Main extends Application implements NotificationCallback {
     // ─── Constants ────────────────────────────────────────────────
     private static final String SERVER_HOST = "127.0.0.1";
     private static final int    SERVER_PORT  = 8084;    // TCP port
-    private static final int    UDP_PORT     = 5002;    // UDP listen port
+    private static final int    UDP_PORT     = 8085;    // UDP listen port
 
     // ─── Shared instances ─────────────────────────────────────────
     private SocketClient socketClient;
     private UDPListener  udpListener;
     private Thread       udpThread;
+    private LoginController loginController;
 
     // ──────────────────────────────────────────────────────────────
     @Override
@@ -65,17 +70,34 @@ public class Main extends Application implements NotificationCallback {
         System.out.println("[Main] UDP listener started on port " + UDP_PORT);
 
         // ── Step 3 : Load the Login screen ────────────────────────
-        // TODO (M3-14): load login.fxml and pass socketClient + UDP_PORT
-        // to LoginController once it is built
-        //
-        // FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-        // Parent root = loader.load();
-        // LoginController loginController = loader.getController();
-        // loginController.setSocketClient(socketClient);
-        // loginController.setUdpPort(UDP_PORT);
-        // primaryStage.setScene(new Scene(root, 400, 300));
-        // primaryStage.setTitle("ChriOnline");
-        // primaryStage.show();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            Parent root = loader.load();
+            loginController = loader.getController();
+            loginController.setSocketClient(socketClient);
+            loginController.setUdpPort(UDP_PORT);
+            loginController.setPrimaryStage(primaryStage);
+
+            primaryStage.setScene(new Scene(root, 400, 300));
+            primaryStage.setTitle("ChriOnline");
+            primaryStage.show();
+
+            System.out.println("[Main] Login screen loaded successfully");
+        } catch (Exception e) {
+            System.err.println("[Main] Failed to load login screen: " + e.getMessage());
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("UI Error");
+            alert.setHeaderText("Cannot load login screen");
+            alert.setContentText("Failed to load login.fxml: " + e.getMessage());
+            alert.showAndWait();
+            
+            // Clean up before exit
+            if (udpListener != null) udpListener.stop();
+            if (socketClient != null) socketClient.disconnect();
+            Platform.exit();
+            return;
+        }
 
         // ── Step 4 : Clean shutdown on window close ────────────────
         primaryStage.setOnCloseRequest(event -> {

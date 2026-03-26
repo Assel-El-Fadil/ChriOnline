@@ -16,41 +16,41 @@ import java.nio.charset.StandardCharsets;
  * client's connection.
  *
  * Responsibilities — exactly three things:
- *   1. Wrap the Socket's InputStream/OutputStream in text-mode streams
- *   2. Loop: read one line → parse with RequestParser → dispatch → write response
- *   3. Clean up streams, socket, and session on disconnect or error
+ * 1. Wrap the Socket's InputStream/OutputStream in text-mode streams
+ * 2. Loop: read one line → parse with RequestParser → dispatch → write response
+ * 3. Clean up streams, socket, and session on disconnect or error
  *
  * What ClientHandler does NOT do:
- *   - Business logic      → Service classes
- *   - SQL                 → DAO classes
- *   - Authentication rules → AuthHandler / UserService
- *   - Cart rules          → CartHandler / CartService
- *   - Anything else       → the appropriate Handler class
+ * - Business logic → Service classes
+ * - SQL → DAO classes
+ * - Authentication rules → AuthHandler / UserService
+ * - Cart rules → CartHandler / CartService
+ * - Anything else → the appropriate Handler class
  *
  * Thread safety:
- *   Each ClientHandler instance is used by exactly one thread.
- *   The only shared state it touches is SessionManager (thread-safe
- *   ConcurrentHashMap) and the Handler instances (stateless — they hold
- *   only final references to Services, which are also stateless).
- *   There is no shared mutable state inside ClientHandler itself.
+ * Each ClientHandler instance is used by exactly one thread.
+ * The only shared state it touches is SessionManager (thread-safe
+ * ConcurrentHashMap) and the Handler instances (stateless — they hold
+ * only final references to Services, which are also stateless).
+ * There is no shared mutable state inside ClientHandler itself.
  *
  * currentToken field:
- *   Tracks the session token of the logged-in user on this connection.
- *   Set when a LOGIN succeeds, cleared when LOGOUT is processed.
- *   Used exclusively by the finally block to remove the session from
- *   SessionManager when the client disconnects — whether cleanly or not.
+ * Tracks the session token of the logged-in user on this connection.
+ * Set when a LOGIN succeeds, cleared when LOGOUT is processed.
+ * Used exclusively by the finally block to remove the session from
+ * SessionManager when the client disconnects — whether cleanly or not.
  */
 public class ClientHandler implements Runnable {
 
     // ── Injected dependencies ─────────────────────────────────────
-    private final Socket         socket;
+    private final Socket socket;
     private final SessionManager sessionManager;
     private final UDPServer udpServer;
-    private final AuthHandler    authHandler;
+    private final AuthHandler authHandler;
     private final ProductHandler productHandler;
-    private final CartHandler    cartHandler;
-    private final OrderHandler   orderHandler;
-    private final AdminHandler   adminHandler;
+    private final CartHandler cartHandler;
+    private final OrderHandler orderHandler;
+    private final AdminHandler adminHandler;
 
     // ── Per-connection mutable state ──────────────────────────────
     // volatile: although only one thread reads/writes this, the shutdown
@@ -58,29 +58,29 @@ public class ClientHandler implements Runnable {
     private volatile String currentToken = null;
 
     // ────────────────────────────────────────────────────────────
-    //  Constructor
+    // Constructor
     // ────────────────────────────────────────────────────────────
 
     public ClientHandler(Socket socket,
-                         SessionManager sessionManager,
-                         UDPServer udpServer,
-                         AuthHandler    authHandler,
-                         ProductHandler productHandler,
-                         CartHandler    cartHandler,
-                         OrderHandler   orderHandler,
-                         AdminHandler   adminHandler) {
-        this.socket         = socket;
+            SessionManager sessionManager,
+            UDPServer udpServer,
+            AuthHandler authHandler,
+            ProductHandler productHandler,
+            CartHandler cartHandler,
+            OrderHandler orderHandler,
+            AdminHandler adminHandler) {
+        this.socket = socket;
         this.sessionManager = sessionManager;
         this.udpServer = udpServer;
-        this.authHandler    = authHandler;
+        this.authHandler = authHandler;
         this.productHandler = productHandler;
-        this.cartHandler    = cartHandler;
-        this.orderHandler   = orderHandler;
-        this.adminHandler   = adminHandler;
+        this.cartHandler = cartHandler;
+        this.orderHandler = orderHandler;
+        this.adminHandler = adminHandler;
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Runnable entry point
+    // Runnable entry point
     // ────────────────────────────────────────────────────────────
 
     @Override
@@ -89,7 +89,7 @@ public class ClientHandler implements Runnable {
                 + ":" + socket.getPort();
 
         BufferedReader reader = null;
-        PrintWriter    writer = null;
+        PrintWriter writer = null;
 
         try {
             // ── Open streams ──────────────────────────────────────
@@ -144,7 +144,6 @@ public class ClientHandler implements Runnable {
             // This is normal — not a server bug. Log at info level, not error.
             System.out.println("[ClientHandler] Client disconnected abruptly: "
                     + clientAddress + " — " + e.getMessage());
-
         } finally {
             // ── Cleanup — always runs, even after an exception ────
             cleanup(reader, writer, clientAddress);
@@ -152,7 +151,7 @@ public class ClientHandler implements Runnable {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Command dispatcher
+    // Command dispatcher
     // ────────────────────────────────────────────────────────────
 
     /**
@@ -163,24 +162,24 @@ public class ClientHandler implements Runnable {
      * adding one case here and one method on the appropriate handler.
      *
      * ClientHandler tracks the session token for two commands:
-     *   LOGIN  — on success, extract the token from the response and
-     *            store it in currentToken for cleanup on disconnect
-     *   LOGOUT — clear currentToken so cleanup does not double-remove
+     * LOGIN — on success, extract the token from the response and
+     * store it in currentToken for cleanup on disconnect
+     * LOGOUT — clear currentToken so cleanup does not double-remove
      *
      * All other commands simply delegate and return the handler's response.
      */
     private String dispatch(ParsedRequest req) {
-        Command  cmd    = req.getCommand();
+        Command cmd = req.getCommand();
         String[] params = req.getParams();
 
         switch (cmd) {
 
             // ── Authentication ────────────────────────────────────
             case REGISTER:
-                return authHandler.handleRegister(params);
+                return authHandler.handle(cmd, params, socket);
 
             case LOGIN: {
-                String response = authHandler.handleLogin(params, socket);
+                String response = authHandler.handle(cmd, params, socket);
                 // On successful login, extract and track the session token
                 // so the finally block can remove it from SessionManager
                 // if the client disconnects without sending LOGOUT.
@@ -197,7 +196,7 @@ public class ClientHandler implements Runnable {
             }
 
             case LOGOUT: {
-                String response = authHandler.handleLogout(params, sessionManager);
+                String response = authHandler.handle(cmd, params, socket);
                 // Clear the token regardless of response — if the handler
                 // returned ERR (token was already gone), the session is
                 // already removed. Either way we should not remove it again.
@@ -207,13 +206,13 @@ public class ClientHandler implements Runnable {
 
             // ── Product browsing ──────────────────────────────────
             case GET_PRODUCTS:
-                return productHandler.handleGetProducts(params);
+                return productHandler.handle(cmd, params, currentToken);
 
             case GET_PRODUCT:
-                return productHandler.handleGetProduct(params);
+                return productHandler.handle(cmd, params, currentToken);
 
             case GET_CATEGORIES:
-                return productHandler.handleGetCategories();
+                return productHandler.handle(cmd, params, currentToken);
 
             // ── Cart ──────────────────────────────────────────────
             case CART_ADD:
@@ -230,10 +229,10 @@ public class ClientHandler implements Runnable {
 
             // ── Orders ────────────────────────────────────────────
             case CHECKOUT:
-                return orderHandler.handleCheckout(params);
+                return orderHandler.handle(cmd, params);
 
             case ORDER_HISTORY:
-                return orderHandler.handleHistory(params);
+                return orderHandler.handle(cmd, params);
 
             // ── Admin ─────────────────────────────────────────────
             case ADMIN_ADD_PRODUCT:
@@ -263,7 +262,7 @@ public class ClientHandler implements Runnable {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Cleanup
+    // Cleanup
     // ────────────────────────────────────────────────────────────
 
     /**
@@ -271,21 +270,21 @@ public class ClientHandler implements Runnable {
      * Always runs — in a finally block in run().
      *
      * Order of cleanup:
-     *   1. Remove the session from SessionManager — done first so the
-     *      token is invalidated before any stream is closed. Prevents a
-     *      race where another thread reads a session whose socket is
-     *      already half-closed.
-     *   2. Close PrintWriter (flushes any buffered output)
-     *   3. Close BufferedReader
-     *   4. Close the Socket itself
+     * 1. Remove the session from SessionManager — done first so the
+     * token is invalidated before any stream is closed. Prevents a
+     * race where another thread reads a session whose socket is
+     * already half-closed.
+     * 2. Close PrintWriter (flushes any buffered output)
+     * 3. Close BufferedReader
+     * 4. Close the Socket itself
      *
      * All close operations are individually try-caught — if one fails
      * the others still run. We never let one cleanup failure prevent
      * the remaining resources from being released.
      */
     private void cleanup(BufferedReader reader,
-                         PrintWriter writer,
-                         String clientAddress) {
+            PrintWriter writer,
+            String clientAddress) {
 
         // Step 1 — Invalidate session
         if (currentToken != null) {
@@ -312,7 +311,8 @@ public class ClientHandler implements Runnable {
             if (!socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
         System.out.println("[ClientHandler] Resources released for: " + clientAddress);
     }

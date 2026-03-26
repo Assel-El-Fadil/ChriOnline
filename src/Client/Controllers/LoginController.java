@@ -15,6 +15,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class LoginController {
 
     // ── FXML injections ───────────────────────────────────────────
@@ -141,16 +143,19 @@ public class LoginController {
     // ──────────────────────────────────────────────────────────────
     private void loadMainWindow() {
         try {
-            // TODO (M3-20): load main window FXML once it is built
-            // For now just update the stage title as a placeholder
             Platform.runLater(() -> {
-                primaryStage.setTitle("ChriOnline — Welcome, "
-                        + AppState.getUsername()
-                        + (AppState.isAdmin() ? " [ADMIN]" : ""));
-                // Uncomment when main.fxml is ready:
-                // FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/main.fxml"));
-                // Parent root = loader.load();
-                // primaryStage.setScene(new Scene(root, 900, 600));
+                primaryStage.setTitle("ChriOnline");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/catalog.fxml"));
+                Parent root = null;
+                try {
+                    root = loader.load();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                CatalogController catalogController = loader.getController();
+                catalogController.setSocketClient(socketClient);
+                catalogController.setPrimaryStage(primaryStage);
+                primaryStage.setScene(new Scene(root, 1100, 750));
             });
 
         } catch (Exception e) {
@@ -172,12 +177,6 @@ public class LoginController {
         errorLabel.setText("");
     }
 
-    // Note: add this method to LoginController to support success message from RegisterController
-// public void showSuccessMessage(String message) {
-//     errorLabel.setStyle("-fx-text-fill: green; -fx-font-size: 12px;");
-//     errorLabel.setText(message);
-//     errorLabel.setVisible(true);
-//
     // ──────────────────────────────────────────────────────────────
     // Called by RegisterController after successful registration
     // Shows a green success message on the login screen
