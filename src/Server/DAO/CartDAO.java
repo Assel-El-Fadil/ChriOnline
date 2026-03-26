@@ -8,12 +8,8 @@ import java.util.List;
 
 public class CartDAO {
 
-    private static final String DB_URL  = "jdbc:mysql://localhost:3306/chriOnline";
-    private static final String DB_USER = "root";
-    private static final String DB_PASS = "";   // change if needed
-
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+        return ConnectionPool.getConnection();
     }
 
     /**
@@ -25,7 +21,8 @@ public class CartDAO {
         String insertSql = "INSERT IGNORE INTO carts (user_id) VALUES (?)";
         String selectSql = "SELECT id FROM carts WHERE user_id = ?";
 
-        try (Connection conn = getConnection()) {
+        Connection conn = getConnection();
+        try {
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setInt(1, userId);
                 ps.executeUpdate();
@@ -39,6 +36,8 @@ public class CartDAO {
                     }
                 }
             }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
         throw new SQLException("Failed to get or create cart for user " + userId);
     }
@@ -51,12 +50,16 @@ public class CartDAO {
         String sql = "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?,?,?) "
                    + "ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, cartId);
-            ps.setInt(2, productId);
-            ps.setInt(3, qty);
-            ps.executeUpdate();
+        Connection conn = getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, cartId);
+                ps.setInt(2, productId);
+                ps.setInt(3, qty);
+                ps.executeUpdate();
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
     }
 
@@ -66,12 +69,16 @@ public class CartDAO {
     public boolean setQuantity(int cartId, int productId, int qty) throws SQLException {
         String sql = "UPDATE cart_items SET quantity = ? WHERE cart_id = ? AND product_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, qty);
-            ps.setInt(2, cartId);
-            ps.setInt(3, productId);
-            return ps.executeUpdate() == 1;
+        Connection conn = getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, qty);
+                ps.setInt(2, cartId);
+                ps.setInt(3, productId);
+                return ps.executeUpdate() == 1;
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
     }
 
@@ -81,11 +88,15 @@ public class CartDAO {
     public boolean removeItem(int cartId, int productId) throws SQLException {
         String sql = "DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, cartId);
-            ps.setInt(2, productId);
-            return ps.executeUpdate() == 1;
+        Connection conn = getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, cartId);
+                ps.setInt(2, productId);
+                return ps.executeUpdate() == 1;
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
     }
 
@@ -102,20 +113,24 @@ public class CartDAO {
 
         List<CartItemDTO> list = new ArrayList<>();
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    CartItemDTO item = new CartItemDTO();
-                    item.productId   = rs.getInt("product_id");
-                    item.productName = rs.getString("name");
-                    item.quantity    = rs.getInt("quantity");
-                    item.unitPrice   = rs.getDouble("price");
-                    item.subtotal    = item.unitPrice * item.quantity;
-                    list.add(item);
+        Connection conn = getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        CartItemDTO item = new CartItemDTO();
+                        item.productId   = rs.getInt("product_id");
+                        item.productName = rs.getString("name");
+                        item.quantity    = rs.getInt("quantity");
+                        item.unitPrice   = rs.getDouble("price");
+                        item.subtotal    = item.unitPrice * item.quantity;
+                        list.add(item);
+                    }
                 }
             }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
         return list;
     }
@@ -126,10 +141,14 @@ public class CartDAO {
     public void clearItems(int cartId) throws SQLException {
         String sql = "DELETE FROM cart_items WHERE cart_id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, cartId);
-            ps.executeUpdate();
+        Connection conn = getConnection();
+        try {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, cartId);
+                ps.executeUpdate();
+            }
+        } finally {
+            ConnectionPool.returnConnection(conn);
         }
     }
 }
