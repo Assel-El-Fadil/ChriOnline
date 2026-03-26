@@ -12,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class CheckoutController {
     private SocketClient            socketClient;
     private List<CartItemDTO>       cartItems;   // passed from CartController
     private Runnable                onSuccess;   // callback → switch to Order History tab
-    private Stage                   primaryStage;
+    private Runnable                onBack;      // callback → switch back to Cart tab
 
     // ──────────────────────────────────────────────────────────────
     // Setters
@@ -55,8 +54,9 @@ public class CheckoutController {
         this.onSuccess = onSuccess;
     }
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    /** Called when the user wants to go back to the cart. */
+    public void setOnBack(Runnable onBack) {
+        this.onBack = onBack;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -189,6 +189,13 @@ public class CheckoutController {
         });
 
         new Thread(task).start();
+    }
+
+    @FXML
+    private void handleBackToCart() {
+        if (onBack != null) {
+            onBack.run();
+        }
     }
 
     // ──────────────────────────────────────────────────────────────

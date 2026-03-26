@@ -51,6 +51,7 @@ public class OrderHandler {
         switch (cmd) {
             case CHECKOUT: return handleCheckout(params);
             case ORDER_HISTORY: return handleOrderHistory(params);
+            case GET_ORDER_STATUS: return handleGetOrderStatus(params);
             default: return ResponseBuilder.error("Unknown order command");
         }
     }
@@ -58,7 +59,6 @@ public class OrderHandler {
     // ──────────────────────────────────────────────────────────────
     // CHECKOUT
     // params: 0=token, 1=method, 2=cardNum, 3=holder, 4=expiry, 5=cvv
-    // Command: CHECKOUT|token|CARD|cardNum|holder|expiry|cvv
     //
     // 8-step transaction flow:
     //   1. Validate session
@@ -228,5 +228,43 @@ public class OrderHandler {
         }
 
         return ResponseBuilder.ok(sb.toString());
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // GET_ORDER_STATUS
+    // params: 0=token, 1=orderId
+    // returns: OK|order_dto_str  or  ERR|message
+    // ──────────────────────────────────────────────────────────────
+    private String handleGetOrderStatus(String[] params) {
+        if (params.length < 2) {
+            return ResponseBuilder.error("Missing order ID");
+        }
+
+        String token = params[0];
+        int orderId;
+        try {
+            orderId = Integer.parseInt(params[1]);
+        } catch (NumberFormatException e) {
+            return ResponseBuilder.error("Invalid order ID");
+        }
+
+        // Validate session
+        SessionData session = sessionManager.getSession(token);
+        if (session == null) {
+            return ResponseBuilder.error("Not logged in");
+        }
+
+        // Fetch order
+        OrderDTO order = orderService.getOrderById(orderId);
+        if (order == null) {
+            return ResponseBuilder.error("Order not found");
+        }
+
+        // Security: only allow users to see their own orders (unless admin)
+        if (order.userId != session.getUserId() && !session.isAdmin()) {
+            return ResponseBuilder.error("Unauthorized to view this order");
+        }
+
+        return ResponseBuilder.ok(order.toProtocolString());
     }
 }

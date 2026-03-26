@@ -202,7 +202,7 @@ public class CatalogController {
         HBox priceRow = new HBox(10, price, grow, addBtn);
         priceRow.setAlignment(Pos.CENTER_LEFT);
 
-        Button detailsBtn = new Button("Product details");
+        Button detailsBtn = new Button("View details");
         detailsBtn.getStyleClass().add("catalog-card-details-btn");
         detailsBtn.setMaxWidth(Double.MAX_VALUE);
         detailsBtn.setOnAction(ev -> openProductDetails(p));
@@ -216,7 +216,7 @@ public class CatalogController {
             System.out.println("[CatalogController] Card clicked for: " + p.name);
             openProductDetails(p);
         });
-        
+
         // Prevent button clicks from double-triggering or conflicting if needed
         detailsBtn.setOnAction(ev -> {
             ev.consume();
@@ -286,6 +286,23 @@ public class CatalogController {
         }
     }
 
+    @FXML
+    private void handleOpenOrderHistory() {
+        if (socketClient == null || primaryStage == null) return;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/orderHistory.fxml"));
+            Parent root = loader.load();
+            OrderHistoryController controller = loader.getController();
+            controller.setSocketClient(socketClient);
+            controller.setPrimaryStage(primaryStage);
+            primaryStage.setTitle("ChriOnline — Order History");
+            primaryStage.setScene(new Scene(root, 1100, 750));
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Could not open order history.", true);
+        }
+    }
+
     private void promptAddToCart(ProductDTO selected) {
         if (selected.stock == 0) {
             showStatus("Product out of stock", true);
@@ -339,7 +356,7 @@ public class CatalogController {
 
     private void openProductDetails(ProductDTO selected) {
         System.out.println("[CatalogController] Attempting to open details for: " + selected.name);
-        
+
         // Fallback: If injected primaryStage is null, try to get it from the grid
         Stage targetStage = primaryStage;
         if (targetStage == null && productGrid.getScene() != null) {
