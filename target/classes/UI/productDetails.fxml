@@ -16,7 +16,7 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="Client.Controllers.ProductDetailsController"
-      stylesheets="@admin_theme.css"
+      stylesheets="@theme.css"
       spacing="20"
       styleClass="root"
       prefWidth="900"

@@ -8,7 +8,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Client.Controllers.AdminController"
-            stylesheets="@admin_theme.css"
+            stylesheets="@theme.css"
             prefWidth="1100" prefHeight="750">
 
     <!-- ── Header (ChriOnline admin) ── -->
@@ -124,7 +124,7 @@
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Button fx:id="btnDeactivateUser" text="Deactivate" styleClass="btn-warning"/>
                             <Button fx:id="btnActivateUser" text="Activate" styleClass="btn-success" visible="false" managed="false"/>
-                            <Button fx:id="btnDeleteUser"    text="Delete (Hard)" styleClass="btn-danger"/>
+                            <Button fx:id="btnDeleteUser"    text="Delete" styleClass="btn-danger"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button fx:id="btnRefreshUsers"  text="↻ Refresh List" styleClass="btn-secondary"/>
                         </HBox>

@@ -55,7 +55,7 @@ public class AdminHandler {
         String priceStr = params[3].trim();
         String stockStr = params[4].trim();
         String description = params.length > 5 ? params[5].trim() : null;
-        String photoPath   = params.length > 6 && !params[6].isBlank() ? params[6].trim() : null;
+        String photoPath = params.length > 6 && !params[6].isBlank() ? params[6].trim() : null;
 
         double price;
         int stock;

@@ -40,6 +40,6 @@ public class ResponseBuilder {
     }
 
     public static String extractError(String responseLine) {
-        return extractPayload(responseLine); // same operation, different semantic context
+        return extractPayload(responseLine);
     }
 }

@@ -216,7 +216,6 @@ public class ClientHandler implements Runnable {
             PrintWriter writer,
             String clientAddress) {
 
-
         if (currentToken != null) {
             sessionManager.removeSession(currentToken);
             currentToken = null;
