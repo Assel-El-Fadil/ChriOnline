@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Cart {
 
-    // Maps productId -> quantity
     private final HashMap<Integer, Integer> items = new HashMap<>();
 
     public void addItem(int productId, int qty) {

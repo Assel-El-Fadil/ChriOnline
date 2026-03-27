@@ -18,8 +18,6 @@ public class UserHandler {
 
     // ────────────────────────────────────────────────────────────
     //  GET_PROFILE
-    //  params: [token]
-    //  returns: OK|<UserDTO protocol string>  or  ERR|message
     // ────────────────────────────────────────────────────────────
 
     public String handleGetProfile(String[] params) {
@@ -47,8 +45,6 @@ public class UserHandler {
 
     // ────────────────────────────────────────────────────────────
     //  EDIT_PROFILE
-    //  params: [token, field, value]
-    //  returns: OK  or  ERR|message
     // ────────────────────────────────────────────────────────────
 
     public String handleEditProfile(String[] params) {

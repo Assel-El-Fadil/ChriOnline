@@ -52,7 +52,6 @@ public class UserService {
         String passwordHash = hashPassword(password);
 
         try {
-            // address is null at registration — user sets it later
             return userDAO.createUser(
                     firstName, lastName, username, passwordHash, email, null);
 
@@ -78,7 +77,6 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        // Build UserDTO — all new fields included, no hash exposed
         return new UserDTO(
                 authUser.id,
                 authUser.username,

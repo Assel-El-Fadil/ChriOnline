@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 
 public class ClientHandler implements Runnable {
 
-    // ── Injected dependencies ─────────────────────────────────────
     private final Socket socket;
     private final SessionManager sessionManager;
     private final UDPServer udpServer;

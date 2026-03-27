@@ -10,17 +10,8 @@ public class OrderDAO {
 
     // ──────────────────────────────────────────────────────────────
     // WRITE OPERATIONS
-    // All write methods receive an open Connection from OrderHandler.
-    // They do NOT open or close the connection — that is the
-    // caller's responsibility (needed for the JDBC transaction).
     // ──────────────────────────────────────────────────────────────
 
-    /**
-     * Inserts a new order row and returns the generated id.
-     * Called first inside the checkout transaction.
-     *
-     * INSERT INTO orders (user_id, total_amount, payment_method, status, payment_ref)
-     */
     public int createOrder(Connection conn, int userId, double total,
                            String paymentMethod, String payment_ref) throws SQLException {
 
@@ -42,12 +33,6 @@ public class OrderDAO {
         throw new SQLException("createOrder: INSERT succeeded but no generated key returned");
     }
 
-    /**
-     * Inserts one line item into order_items.
-     * Called once per cart item inside the checkout transaction.
-     *
-     * INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-     */
     public void addOrderItem(Connection conn, int orderId, int productId,
                              int qty, double unitPrice) throws SQLException {
 
@@ -64,17 +49,6 @@ public class OrderDAO {
         ps.executeUpdate();
     }
 
-    /**
-     * Decrements stock atomically.
-     * The WHERE stock >= ? clause is the race-condition guard —
-     * if another checkout already consumed the stock, executeUpdate()
-     * returns 0 and the caller must rollback.
-     *
-     * UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?
-     *
-     * @return true if exactly 1 row was updated (stock successfully deducted)
-     *         false if stock was insufficient (caller must rollback)
-     */
     public boolean deductStock(Connection conn, int productId, int qty) throws SQLException {
 
         final String sql =
@@ -87,10 +61,6 @@ public class OrderDAO {
         return ps.executeUpdate() == 1;
     }
 
-    /**
-     * Updates the status of an order.
-     * Called by AdminHandler (ADMIN_UPDATE_STATUS command).
-     */
     public boolean updateStatus(int orderId, String newStatus) {
         final String sql = "UPDATE orders SET status = ? WHERE id = ?";
 
@@ -112,15 +82,8 @@ public class OrderDAO {
 
     // ──────────────────────────────────────────────────────────────
     // READ OPERATIONS
-    // These open their own connection from the pool (no transaction needed).
     // ──────────────────────────────────────────────────────────────
 
-    /**
-     * Returns all orders for a specific user, most recent first.
-     * Used by OrderHandler for ORDER_HISTORY command.
-     *
-     * SELECT orders WHERE user_id = ? ORDER BY created_at DESC
-     */
     public List<OrderDTO> findByUser(int userId) {
         final String sql =
                 "SELECT id, payment_ref, user_id, status, total_amount, payment_method, created_at " +
@@ -149,10 +112,6 @@ public class OrderDAO {
         }
     }
 
-    /**
-     * Returns all orders in the system, most recent first.
-     * Used by AdminHandler for ADMIN_LIST_ORDERS command.
-     */
     public List<OrderDTO> findAll() {
         final String sql =
                 "SELECT id, payment_ref, user_id, status, total_amount, payment_method, created_at " +

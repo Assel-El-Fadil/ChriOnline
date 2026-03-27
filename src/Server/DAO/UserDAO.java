@@ -63,7 +63,6 @@ public class UserDAO {
             ps.setString(4, passwordHash);
             ps.setString(5, email);
 
-            // address is nullable — use setNull when not provided
             if (address == null || address.isBlank()) {
                 ps.setNull(6, Types.VARCHAR);
             } else {
@@ -159,26 +158,15 @@ public class UserDAO {
     //  Update operations
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Whitelist of columns that may be updated via the generic updateProfile method.
-     * This prevents SQL injection through the field name parameter.
-     */
     private static final Set<String> UPDATABLE_COLUMNS = Set.of(
             "first_name", "last_name", "email", "address", "profile_photo"
     );
 
-    /**
-     * Updates a single column for a given user.
-     * The column name is validated against a whitelist before being used in SQL.
-     *
-     * @return true if exactly one row was updated
-     */
     public boolean updateProfile(int userId, String column, String value) {
         if (!UPDATABLE_COLUMNS.contains(column)) {
             throw new DAOException("Column '" + column + "' is not updatable");
         }
 
-        // Column name is safe (from whitelist), so string concatenation is OK here
         final String sql = "UPDATE users SET " + column + " = ? WHERE id = ? AND active = 1";
 
         Connection conn = null;

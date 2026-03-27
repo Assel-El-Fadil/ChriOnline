@@ -17,32 +17,19 @@ public class OrderService {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Order creation operations (for checkout transaction)
+    //  Order creation operations
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Creates a new order and returns the generated ID.
-     * This method is used within a transaction context.
-     */
     public int createOrder(Connection conn, int userId, double total, 
                           String paymentMethod, String referenceCode) throws SQLException {
         return orderDAO.createOrder(conn, userId, total, paymentMethod, referenceCode);
     }
 
-    /**
-     * Adds an item to an existing order.
-     * This method is used within a transaction context.
-     */
     public void addOrderItem(Connection conn, int orderId, int productId, 
                             int quantity, double unitPrice) throws SQLException {
         orderDAO.addOrderItem(conn, orderId, productId, quantity, unitPrice);
     }
 
-    /**
-     * Deducts stock from a product.
-     * Returns true if stock was successfully deducted, false if insufficient stock.
-     * This method is used within a transaction context.
-     */
     public boolean deductStock(Connection conn, int productId, int quantity) throws SQLException {
         return orderDAO.deductStock(conn, productId, quantity);
     }
@@ -51,17 +38,10 @@ public class OrderService {
     //  Order retrieval operations
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Retrieves all orders for a specific user, most recent first.
-     */
     public List<OrderDTO> getUserOrders(int userId) {
         return orderDAO.findByUser(userId);
     }
 
-    /**
-     * Retrieves all orders in the system, most recent first.
-     * Used by admin functionality.
-     */
     public List<OrderDTO> getAllOrders() {
         return orderDAO.findAll();
     }
@@ -70,33 +50,22 @@ public class OrderService {
     //  Order status management
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Updates the status of an order.
-     * Validates that the status transition is allowed.
-     */
     public void updateOrderStatus(int orderId, String newStatus) {
-        // Validate status
         validateStatus(newStatus);
-        
-        // Get current order to validate transition
+
         OrderDTO currentOrder = getOrderById(orderId);
         if (currentOrder == null) {
             throw new OrderNotFoundException("Order not found with ID: " + orderId);
         }
-        
-        // Validate status transition
+
         validateStatusTransition(currentOrder.status, newStatus);
-        
-        // Update the status
+
         boolean updated = orderDAO.updateStatus(orderId, newStatus);
         if (!updated) {
             throw new OrderUpdateException("Failed to update order status for order ID: " + orderId);
         }
     }
 
-    /**
-     * Retrieves a specific order by ID.
-     */
     public OrderDTO getOrderById(int orderId) {
         Connection conn = null;
         try {
@@ -153,8 +122,7 @@ public class OrderService {
     private void validateStatusTransition(String currentStatus, String newStatus) {
         String current = currentStatus.toUpperCase();
         String newStat = newStatus.toUpperCase();
-        
-        // CANCELLED can only be set from PENDING or VALIDATED
+
         if ("CANCELLED".equals(newStat)) {
             if (!"PENDING".equals(current) && !"VALIDATED".equals(current)) {
                 throw new IllegalStatusTransitionException(
@@ -162,8 +130,7 @@ public class OrderService {
             }
             return;
         }
-        
-        // Normal flow: PENDING -> VALIDATED -> SHIPPED -> DELIVERED
+
         switch (current) {
             case "PENDING":
                 if (!"VALIDATED".equals(newStat)) {

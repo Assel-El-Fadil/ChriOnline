@@ -20,19 +20,15 @@ public class CartService {
     }
 
     public void loadFromDB(String token, int userId) throws SQLException {
-        // Ensure a carts row exists
         cartDAO.getOrCreateCartId(userId);
 
-        // Load items from DB
         List<CartItemDTO> dbItems = cartDAO.loadItems(userId);
 
-        // Populate memory cart
         Cart cart = new Cart();
         for (CartItemDTO dto : dbItems) {
             cart.addItem(dto.productId, dto.quantity);
         }
 
-        // Store in memory map
         carts.put(token, cart);
     }
 
@@ -41,27 +37,25 @@ public class CartService {
     }
 
     public void addItem(String token, int userId, int productId, int qty) throws SQLException {
-        // [Fix] Update DB first, then memory to ensure consistency
         int cartId = cartDAO.getOrCreateCartId(userId);
-        cartDAO.upsert(cartId, productId, qty); // Persist
+        cartDAO.upsert(cartId, productId, qty);
 
         Cart cart = getOrCreateCart(token);
-        cart.addItem(productId, qty); // Update memory
+        cart.addItem(productId, qty);
     }
 
     public void removeItem(String token, int userId, int productId) throws SQLException {
-        // [Fix] Update DB first, then memory to ensure consistency
         int cartId = cartDAO.getOrCreateCartId(userId);
-        cartDAO.removeItem(cartId, productId); // Persist
+        cartDAO.removeItem(cartId, productId);
 
         Cart cart = getOrCreateCart(token);
-        cart.removeItem(productId); // Update memory
+        cart.removeItem(productId);
     }
 
     public void clearCart(String token, int userId) throws SQLException {
         int cartId = cartDAO.getOrCreateCartId(userId);
-        cartDAO.clearItems(cartId); // Wipe DB rows
-        carts.remove(token); // Wipe memory
+        cartDAO.clearItems(cartId);
+        carts.remove(token);
     }
 
     public boolean hasCart(String token) {

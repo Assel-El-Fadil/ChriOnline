@@ -68,7 +68,7 @@ public class SocketClient {
             try {
                 Thread.sleep(attempt * 2000L);
                 connect();
-                return; // success
+                return;
             } catch (IOException | InterruptedException e) {
                 if (attempt == maxRetries) {
                     throw new NetworkException(

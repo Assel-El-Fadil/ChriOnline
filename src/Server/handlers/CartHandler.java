@@ -29,7 +29,6 @@ public class CartHandler {
         return sessionManager.getSession(token);
     }
 
-    // params: token|productId|qty
     public String handleAdd(String[] params) {
         try {
             if (params == null || params.length < 3) {
@@ -60,7 +59,6 @@ public class CartHandler {
                 return ResponseBuilder.error("Invalid quantity");
             }
 
-            // Stock check
             ProductDTO product;
             try {
                 product = productService.getById(productId);
@@ -79,9 +77,8 @@ public class CartHandler {
                 return ResponseBuilder.error("Not enough stock");
             }
 
-            // Proceed
             cartService.addItem(token, userId, productId, qty);
-            // Re-fetch the cart after addItem for total calculation
+
             double total = cartService.getOrCreateCart(token)
                     .calculateTotal(productService);
             return ResponseBuilder.ok(String.valueOf(total));
@@ -92,7 +89,6 @@ public class CartHandler {
         }
     }
 
-    // params: token|productId
     public String handleRemove(String[] params) {
         try {
             if (params == null || params.length < 2) {
@@ -124,7 +120,6 @@ public class CartHandler {
         }
     }
 
-    // params: token
     public String handleView(String[] params) {
         try {
             if (params == null || params.length < 1) {
@@ -150,8 +145,6 @@ public class CartHandler {
                 try {
                     ProductDTO product = productService.getById(productId);
                     if (product != null) {
-                        // Protocol string for the view must omit `id` and `cartId`
-                        // (so the client doesn't receive serialized `0` values).
                         return "productId=" + productId
                                 + ",qty=" + qty
                                 + ",name=" + product.name
@@ -171,7 +164,6 @@ public class CartHandler {
         }
     }
 
-    // params: token
     public String handleClear(String[] params) {
         try {
             if (params == null || params.length < 1) {

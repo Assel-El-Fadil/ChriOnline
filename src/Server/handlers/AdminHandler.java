@@ -161,7 +161,6 @@ public class AdminHandler {
     //  Order management
     // ────────────────────────────────────────────────────────────
 
-
     public String handleListOrders(String[] params) {
         if (requireAdmin(params[0]) == null) {
             return ResponseBuilder.error("Unauthorized");

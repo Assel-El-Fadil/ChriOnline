@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 
 public class RegisterController {
 
-    // ── FXML injections ───────────────────────────────────────────
     @FXML private TextField     firstNameField;
     @FXML private TextField     lastNameField;
     @FXML private TextField     usernameField;
@@ -24,13 +23,12 @@ public class RegisterController {
     @FXML private Label         errorLabel;
     @FXML private Button        registerButton;
 
-    // ── Injected by LoginController before the scene is shown ─────
     private SocketClient socketClient;
     private int          udpPort;
     private Stage        primaryStage;
 
     // ──────────────────────────────────────────────────────────────
-    // Setters — called before showing the scene
+    // Setters
     // ──────────────────────────────────────────────────────────────
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
@@ -55,7 +53,6 @@ public class RegisterController {
         String password  = passwordField.getText();
         String email     = emailField.getText().trim();
 
-        // ── Client-side validation ─────────────────────────────────
         if (firstName.isBlank()) {
             showError("First name cannot be empty.");
             return;
@@ -77,15 +74,11 @@ public class RegisterController {
             return;
         }
 
-        // Disable button to prevent double-click
         registerButton.setDisable(true);
         hideError();
 
-        // Build REGISTER command
-        // REGISTER|firstName|lastName|username|password|email
         String command = "REGISTER|" + firstName + "|" + lastName + "|" + username + "|" + password + "|" + email;
 
-        // Run on background thread — NEVER call sendCommand() on the UI thread
         Task<String> task = new Task<>() {
             @Override
             protected String call() {
@@ -93,21 +86,17 @@ public class RegisterController {
             }
         };
 
-        // ── On OK : redirect to login with success message ─────────
         task.setOnSucceeded(event -> {
             String response = task.getValue();
 
             if (ResponseBuilder.isOk(response)) {
-                // Registration successful — go back to login screen
                 loadLoginScreen("Registration successful! Please log in.");
             } else {
-                // ERR|message — show the specific server error
                 registerButton.setDisable(false);
                 showError(ResponseBuilder.extractError(response));
             }
         });
 
-        // ── On failure : network error ─────────────────────────────
         task.setOnFailed(event -> {
             registerButton.setDisable(false);
             showError("Cannot reach server. Check your connection.");
@@ -125,7 +114,7 @@ public class RegisterController {
     }
 
     // ──────────────────────────────────────────────────────────────
-    // Load login screen — optionally pre-fill a success message
+    // Load login screen
     // ──────────────────────────────────────────────────────────────
     private void loadLoginScreen(String successMessage) {
         try {
@@ -134,13 +123,11 @@ public class RegisterController {
             );
             Parent root = loader.load();
 
-            // Pass shared dependencies back to LoginController
             LoginController lc = loader.getController();
             lc.setSocketClient(socketClient);
             lc.setUdpPort(udpPort);
             lc.setPrimaryStage(primaryStage);
 
-            // If registration succeeded, show the success message on the login screen
             if (successMessage != null) {
                 lc.showSuccessMessage(successMessage);
             }

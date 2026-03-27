@@ -12,11 +12,6 @@ public class CartDAO {
         return ConnectionPool.getConnection();
     }
 
-    /**
-     * Creates a cart for the user if one doesn't already exist, then returns the cart id.
-     * Safe to call on every login.
-     */
-
     public int getOrCreateCartId(int userId) throws SQLException {
         String insertSql = "INSERT IGNORE INTO carts (user_id) VALUES (?)";
         String selectSql = "SELECT id FROM carts WHERE user_id = ?";
@@ -42,10 +37,6 @@ public class CartDAO {
         throw new SQLException("Failed to get or create cart for user " + userId);
     }
 
-    /**
-     * Adds a product to the cart. If the product already exists in the cart,
-     * increments the quantity atomically instead of inserting a duplicate.
-     */
     public void upsert(int cartId, int productId, int qty) throws SQLException {
         String sql = "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES (?,?,?) "
                    + "ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
@@ -63,9 +54,6 @@ public class CartDAO {
         }
     }
 
-    /**
-     * Sets an exact quantity for a product in the cart.
-     */
     public boolean setQuantity(int cartId, int productId, int qty) throws SQLException {
         String sql = "UPDATE cart_items SET quantity = ? WHERE cart_id = ? AND product_id = ?";
 
@@ -82,9 +70,6 @@ public class CartDAO {
         }
     }
 
-    /**
-     * Removes a product from the cart (hard delete).
-     */
     public boolean removeItem(int cartId, int productId) throws SQLException {
         String sql = "DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?";
 
@@ -100,10 +85,6 @@ public class CartDAO {
         }
     }
 
-    /**
-     * Loads all cart items for a user, joining with products to get name and price.
-     * Only includes active products.
-     */
     public List<CartItemDTO> loadItems(int userId) throws SQLException {
         String sql = "SELECT ci.product_id, p.name, ci.quantity, p.price "
                    + "FROM cart_items ci "
@@ -135,9 +116,6 @@ public class CartDAO {
         return list;
     }
 
-    /**
-     * Removes all items from a cart. Used at checkout.
-     */
     public void clearItems(int cartId) throws SQLException {
         String sql = "DELETE FROM cart_items WHERE cart_id = ?";
 
