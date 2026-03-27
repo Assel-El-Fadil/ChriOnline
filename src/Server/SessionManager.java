@@ -6,8 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
 
-    private final ConcurrentHashMap<String, SessionData> sessions =
-            new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SessionData> sessions = new ConcurrentHashMap<>();
 
     // ────────────────────────────────────────────────────────────
     //  Write operations

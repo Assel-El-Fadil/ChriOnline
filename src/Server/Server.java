@@ -139,7 +139,6 @@ public class Server {
     public void shutdown() {
         System.out.println("\n[Server] Shutdown initiated...");
 
-        // Step 1 — Close the server socket (unblocks accept())
         try {
             if (!serverSocket.isClosed()) {
                 serverSocket.close();
@@ -190,12 +189,6 @@ public class Server {
             System.exit(1);
             return;
         }
-
-        // Register shutdown hook — runs on Ctrl+C
-        final Server serverRef = server;
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            serverRef.shutdown();
-        }, "shutdown-hook"));
 
         server.start();
     }

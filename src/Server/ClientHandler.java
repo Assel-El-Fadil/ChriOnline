@@ -59,12 +59,10 @@ public class ClientHandler implements Runnable {
 
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(
-                            socket.getInputStream(), StandardCharsets.UTF_8));
+                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
             writer = new PrintWriter(
-                    new OutputStreamWriter(
-                            socket.getOutputStream(), StandardCharsets.UTF_8),
+                    new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8),
                     true);
 
             // ── Read-dispatch-respond loop ─────────────────────────

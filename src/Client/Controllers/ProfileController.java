@@ -27,10 +27,10 @@ import java.util.Map;
 public class ProfileController {
 
     // ── FXML injections ──────────────────────────────────────────
-    @FXML private Label     avatarLabel;
-    @FXML private Label     fullNameLabel;
-    @FXML private Label     roleLabel;
-    @FXML private Label     statusLabel;
+    @FXML private Label avatarLabel;
+    @FXML private Label fullNameLabel;
+    @FXML private Label roleLabel;
+    @FXML private Label statusLabel;
     @FXML private javafx.scene.image.ImageView avatarImageView;
 
     @FXML private TextField firstNameField;
@@ -39,13 +39,12 @@ public class ProfileController {
     @FXML private TextField emailField;
     @FXML private TextField addressField;
 
-    @FXML private Button    saveButton;
+    @FXML private Button saveButton;
 
     // ── Dependencies ─────────────────────────────────────────────
     private SocketClient socketClient;
-    private Stage        primaryStage;
+    private Stage primaryStage;
 
-    // Snapshot of original values before editing — used to detect changes
     private final Map<String, String> originalValues = new LinkedHashMap<>();
 
     // ── Setters ──────────────────────────────────────────────────
@@ -92,7 +91,6 @@ public class ProfileController {
 
     private void populateFields(UserDTO user) {
         Platform.runLater(() -> {
-            // Avatar logic — use image if present, otherwise initial
             if (user.profilePhoto != null && !user.profilePhoto.isBlank()) {
                 Image img = Client.util.ProductImageHelper.loadLocalImage(user.profilePhoto);
                 if (img != null) {
@@ -114,7 +112,6 @@ public class ProfileController {
             emailField.setText(user.email != null ? user.email : "");
             addressField.setText(user.address != null ? user.address : "");
 
-            // Snapshot original values
             snapshotOriginals();
         });
     }
@@ -150,13 +147,11 @@ public class ProfileController {
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
         if (selectedFile != null) {
             try {
-                // Ensure directory exists
                 File destDir = new File("src/Client/assets/images/profiles");
                 if (!destDir.exists()) {
                     destDir.mkdirs();
                 }
 
-                // Create a unique filename based on the current time
                 String ext = "";
                 String name = selectedFile.getName();
                 int i = name.lastIndexOf('.');
@@ -168,12 +163,10 @@ public class ProfileController {
 
                 Files.copy(selectedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                // Quick preview update on client side
                 Image img = new Image(destFile.toURI().toString());
                 avatarImageView.setImage(img);
                 avatarLabel.setVisible(false);
 
-                // Automatically save it to the server
                 savePhotoToServer("src/Client/assets/images/profiles/" + destName);
 
             } catch (Exception e) {
@@ -209,7 +202,6 @@ public class ProfileController {
 
     @FXML
     private void handleSave() {
-        // Collect changed fields
         Map<String, String> changes = new LinkedHashMap<>();
 
         checkChange(changes, "firstName", firstNameField.getText().trim());
@@ -222,11 +214,9 @@ public class ProfileController {
             return;
         }
 
-        // Disable button while saving
         saveButton.setDisable(true);
         showStatus("Saving...", false);
 
-        // Send each changed field as a separate EDIT_PROFILE command
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
@@ -241,7 +231,7 @@ public class ProfileController {
 
                     String response = socketClient.sendCommand(cmd);
                     if (!ResponseBuilder.isOk(response)) {
-                        return response; // Return first error
+                        return response;
                     }
                 }
                 return "OK";
@@ -252,8 +242,7 @@ public class ProfileController {
             String response = task.getValue();
             if ("OK".equals(response) || ResponseBuilder.isOk(response)) {
                 showStatus("Profile updated successfully!", false);
-                snapshotOriginals(); // Update snapshot to new values
-                // Refresh header display
+                snapshotOriginals();
                 fullNameLabel.setText(firstNameField.getText() + " " + lastNameField.getText());
             } else {
                 showStatus(ResponseBuilder.extractError(response), true);

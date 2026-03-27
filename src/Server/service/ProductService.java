@@ -36,6 +36,9 @@ public class ProductService {
     }
 
     public boolean update(int id, String field, Object value) throws SQLException {
+        if (field.equals("imagePath")) {
+            field = "image_path";
+        }
         validateField(field, value);
         return productDAO.update(id, field, value);
     }
@@ -45,7 +48,7 @@ public class ProductService {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Validation methods
+    // Validation methods
     // ────────────────────────────────────────────────────────────
 
     private void validateProduct(ProductDTO product) {
@@ -116,6 +119,11 @@ public class ProductService {
                     throw new InvalidFieldException("Image path must be a string");
                 }
                 break;
+            case "image_path":
+                if (value != null && !(value instanceof String)) {
+                    throw new InvalidFieldException("Image path must be a string");
+                }
+                break;
             default:
                 throw new InvalidFieldException("Invalid field: " + field);
         }
@@ -136,26 +144,36 @@ public class ProductService {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Service-specific exceptions
+    // Service-specific exceptions
     // ────────────────────────────────────────────────────────────
 
     public static class ValidationException extends RuntimeException {
-        public ValidationException(String message) { super(message); }
+        public ValidationException(String message) {
+            super(message);
+        }
     }
 
     public static class ProductNotFoundException extends RuntimeException {
-        public ProductNotFoundException(String message) { super(message); }
+        public ProductNotFoundException(String message) {
+            super(message);
+        }
     }
 
     public static class InvalidFieldException extends RuntimeException {
-        public InvalidFieldException(String message) { super(message); }
+        public InvalidFieldException(String message) {
+            super(message);
+        }
     }
 
     public static class InvalidCategoryException extends RuntimeException {
-        public InvalidCategoryException(String message) { super(message); }
+        public InvalidCategoryException(String message) {
+            super(message);
+        }
     }
 
     public static class ProductInActiveCartException extends RuntimeException {
-        public ProductInActiveCartException(String message) { super(message); }
+        public ProductInActiveCartException(String message) {
+            super(message);
+        }
     }
 }

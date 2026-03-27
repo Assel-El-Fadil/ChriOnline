@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
 public class UserService {
 
     // ── Validation constants ─────────────────────────────────────
-    private static final int     USERNAME_MIN     = 3;
-    private static final int     USERNAME_MAX     = 50;
-    private static final int     PASSWORD_MIN     = 6;
-    private static final int     NAME_MAX         = 50;
-    private static final int     EMAIL_MAX        = 150;
-    private static final int     ADDRESS_MAX      = 255;
+    private static final int USERNAME_MIN = 3;
+    private static final int USERNAME_MAX = 50;
+    private static final int PASSWORD_MIN = 6;
+    private static final int NAME_MAX = 50;
+    private static final int EMAIL_MAX = 150;
+    private static final int ADDRESS_MAX = 255;
 
     // Alphanumeric + underscore — no spaces
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
@@ -106,30 +106,21 @@ public class UserService {
     //  Profile update
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Maps user-facing field names (as sent by the client protocol)
-     * to the actual database column names, validates the new value,
-     * then delegates to UserDAO.updateProfile().
-     */
     public void updateProfile(int userId, String field, String value) {
-        // Map client field name → DB column name
         String column = switch (field) {
-            case "firstName"    -> "first_name";
-            case "lastName"     -> "last_name";
-            case "email"        -> "email";
-            case "address"      -> "address";
+            case "firstName" -> "first_name";
+            case "lastName" -> "last_name";
+            case "email" -> "email";
+            case "address" -> "address";
             case "profilePhoto" -> "profile_photo";
-            default -> throw new ValidationException(
-                    "Unknown editable field: " + field);
+            default -> throw new ValidationException("Unknown editable field: " + field);
         };
 
-        // Validate the new value using existing validators where applicable
         switch (field) {
-            case "firstName"    -> validateFirstName(value);
-            case "lastName"     -> validateLastName(value);
-            case "email"        -> validateEmail(value);
-            case "address"      -> validateAddress(value);
-            // profilePhoto — no validation beyond length, just pass through
+            case "firstName" -> validateFirstName(value);
+            case "lastName" -> validateLastName(value);
+            case "email" -> validateEmail(value);
+            case "address" -> validateAddress(value);
         }
 
         try {
@@ -195,7 +186,6 @@ public class UserService {
             return hex.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            // SHA-256 is guaranteed in every JVM — never happens
             throw new RuntimeException("SHA-256 algorithm not available", e);
         }
     }

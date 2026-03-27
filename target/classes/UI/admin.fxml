@@ -11,21 +11,17 @@
             stylesheets="@theme.css"
             prefWidth="1100" prefHeight="750">
 
-    <!-- ── Header (ChriOnline admin) ── -->
     <top>
         <VBox>
-            <!-- Top Nav Bar -->
             <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
                 <Label text="ChriOnline Admin" styleClass="logo-text"/>
                 
                 <Region HBox.hgrow="ALWAYS" />
-                
-                <!-- Dummy Search Bar mimicking the design -->
+
                 <TextField promptText="Search for any product or user..." styleClass="search-bar" focusTraversable="false"/>
                 
                 <Region HBox.hgrow="ALWAYS" />
-                
-                <!-- Icons area (simulated with text/symbols for now) -->
+
                 <HBox spacing="15" alignment="CENTER">
                     <Label text="👤 Admin" styleClass="icon-button" style="-fx-font-weight: bold; -fx-text-fill: #111827;"/>
                     <Button text="Logout" onAction="#handleLogout" styleClass="btn-danger" focusTraversable="false" />
@@ -34,7 +30,6 @@
         </VBox>
     </top>
 
-    <!-- ── Main Content Area ── -->
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="tab-pane">
 
@@ -49,7 +44,6 @@
                             <Label fx:id="lblProductsStatus" style="-fx-text-fill: #10B981; -fx-font-weight: bold;" />
                         </HBox>
 
-                        <!-- Toolbar -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Button fx:id="btnAddProduct"     text="+ Add Product"  styleClass="btn-primary"/>
                             <Button fx:id="btnEditProduct"    text="Edit Selected"  styleClass="btn-secondary"/>
@@ -58,7 +52,6 @@
                             <Button fx:id="btnRefreshProducts" text="↻ Refresh List" styleClass="btn-secondary"/>
                         </HBox>
 
-                        <!-- Table -->
                         <TableView fx:id="productsTable" VBox.vgrow="ALWAYS" styleClass="table-view">
                             <columns>
                                 <TableColumn fx:id="colProductId"       text="ID"          prefWidth="50"  style="-fx-alignment: center;"/>
@@ -85,14 +78,12 @@
                             <Label fx:id="lblOrdersStatus" style="-fx-text-fill: #10B981; -fx-font-weight: bold;"/>
                         </HBox>
 
-                        <!-- Toolbar -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Button fx:id="btnUpdateStatus"  text="Update Status" styleClass="btn-primary"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button fx:id="btnRefreshOrders" text="↻ Refresh List" styleClass="btn-secondary"/>
                         </HBox>
 
-                        <!-- Table -->
                         <TableView fx:id="ordersTable" VBox.vgrow="ALWAYS" styleClass="table-view">
                             <columns>
                                 <TableColumn fx:id="colOrderId"     text="ID"        prefWidth="50"  style="-fx-alignment: center;"/>
@@ -120,16 +111,14 @@
                             <Label fx:id="lblUsersStatus" style="-fx-text-fill: #10B981; -fx-font-weight: bold;"/>
                         </HBox>
 
-                        <!-- Toolbar -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Button fx:id="btnDeactivateUser" text="Deactivate" styleClass="btn-warning"/>
                             <Button fx:id="btnActivateUser" text="Activate" styleClass="btn-success" visible="false" managed="false"/>
-                            <Button fx:id="btnDeleteUser"    text="Delete (Hard)" styleClass="btn-danger"/>
+                            <Button fx:id="btnDeleteUser"    text="Delete" styleClass="btn-danger"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button fx:id="btnRefreshUsers"  text="↻ Refresh List" styleClass="btn-secondary"/>
                         </HBox>
 
-                        <!-- Table -->
                         <TableView fx:id="usersTable" VBox.vgrow="ALWAYS" styleClass="table-view">
                             <columns>
                                 <TableColumn fx:id="colUserId"       text="ID"       prefWidth="50"  style="-fx-alignment: center;"/>
