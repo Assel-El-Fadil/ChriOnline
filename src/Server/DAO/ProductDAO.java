@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
-    /**
-     * Returns every active product ordered by category then name.
-     */
     public List<ProductDTO> findAll() throws SQLException {
         String sql = "SELECT id, category, name, description, price, stock, image_path "
                    + "FROM products WHERE active = 1 ORDER BY category, name";
@@ -30,9 +27,6 @@ public class ProductDAO {
         return list;
     }
 
-    /**
-     * Returns active products that belong to the given category ENUM value (e.g. "ELECTRONIQUES").
-     */
     public List<ProductDTO> findByCategory(String category) throws SQLException {
         String sql = "SELECT id, category, name, description, price, stock, image_path "
                    + "FROM products WHERE active = 1 AND category = ? "
@@ -56,10 +50,6 @@ public class ProductDAO {
         return list;
     }
 
-    /**
-     * Returns a single active product by id, or {@code null} if not found.
-     * Used by CartHandler for stock checks.
-     */
     public ProductDTO findById(int id) throws SQLException {
         String sql = "SELECT id, category, name, description, price, stock, image_path "
                    + "FROM products WHERE id = ? AND active = 1";
@@ -80,9 +70,6 @@ public class ProductDAO {
         return null;
     }
 
-    /**
-     * Inserts a new product and returns its generated id.
-     */
     public int create(ProductDTO p) throws SQLException {
         String sql = "INSERT INTO products (category, name, description, price, stock, image_path) "
                    + "VALUES (?, ?, ?, ?, ?, ?)";
@@ -114,15 +101,7 @@ public class ProductDAO {
         throw new SQLException("Insert succeeded but no generated key was returned");
     }
 
-    /**
-     * Updates a single column for the given product id.
-     * Important: The {@code field} parameter is a raw column name.
-     * It must be validated upstream (by AdminHandler) before reaching this method.
-     * For the {@code category} column, the value must be a valid ENUM string
-     * (e.g. "ELECTRONIQUES") or MySQL will reject the UPDATE.
-     */
     public boolean update(int id, String field, Object value) throws SQLException {
-        // Only allow known column names to prevent SQL injection
         String sql = "UPDATE products SET " + field + " = ? WHERE id = ?";
 
         Connection conn = ConnectionPool.getConnection();
@@ -137,13 +116,6 @@ public class ProductDAO {
         }
     }
 
-    /**
-     * Soft-deletes a product (sets active = 0).
-     * Never hard-delete — order_items has a FK pointing to products
-     * with ON DELETE RESTRICT.
-     *
-     * @return true if exactly one row was affected.
-     */
     public boolean delete(int id) throws SQLException {
         String sql = "UPDATE products SET active = 0 WHERE id = ?";
 
@@ -160,10 +132,6 @@ public class ProductDAO {
 
     // ─── HELPERS ─────────────────────────────────────────────────────
 
-    /**
-     * Maps the current ResultSet row to a ProductDTO.
-     * The {@code active} field is always 1 for rows returned by our queries.
-     */
     private ProductDTO mapRow(ResultSet rs) throws SQLException {
         return new ProductDTO(
                 rs.getInt("id"),
@@ -171,8 +139,8 @@ public class ProductDAO {
                 rs.getString("description"),
                 rs.getDouble("price"),
                 rs.getInt("stock"),
-                rs.getString("category"),   // comes back as a plain String from MySQL ENUM
-                1,                           // active = 1 (we only query active rows)
+                rs.getString("category"),
+                1,
                 rs.getString("image_path")
         );
     }

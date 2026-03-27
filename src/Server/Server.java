@@ -14,31 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * TCP server entry point and accept loop.
- *
- * Responsibilities:
- *   - Bind ServerSocket on TCP_PORT (8084)
- *   - Maintain a fixed ExecutorService thread pool (20 threads)
- *   - Construct and wire the full dependency graph once at startup:
- *       ConnectionPool → DAOs → Services → Handlers
- *   - Accept incoming client connections in a blocking loop
- *   - Wrap each accepted Socket in a ClientHandler and submit to pool
- *   - Shut down cleanly on SIGTERM / Ctrl+C via a shutdown hook
- *
- * What Server does NOT do:
- *   - Business logic              → Service classes
- *   - SQL                         → DAO classes
- *   - Protocol parsing/formatting → shared classes
- *   - Per-client I/O and dispatch → ClientHandler
- *
- * Threading model:
- *   The main thread runs the accept() loop — it blocks on accept()
- *   and does nothing else. Each accepted connection is handed off
- *   immediately to the thread pool. The main thread never touches
- *   stream I/O. This means the server can accept a new connection
- *   in microseconds regardless of what the 20 worker threads are doing.
- */
 public class Server {
 
     // ── Network configuration ─────────────────────────────────────
@@ -49,7 +24,7 @@ public class Server {
     private final ServerSocket serverSocket;
     private final ExecutorService pool;
 
-    // ── Server-wide singletons (shared across all ClientHandlers) ─
+    // ── Server-wide singletons ─
     private final SessionManager sessionManager;
     private final UDPServer udpServer;
 
@@ -75,26 +50,11 @@ public class Server {
     private final UserHandler userHandler;
 
     // ────────────────────────────────────────────────────────────
-    //  Constructor — builds the full dependency graph
+    //  Constructor
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Wires every dependency from ConnectionPool up to Handlers.
-     * If any step fails (e.g. port already bound, DB unreachable)
-     * the constructor throws and main() exits with a clear message.
-     *
-     * Dependency wiring order:
-     *   1. Network infrastructure (ServerSocket, thread pool)
-     *   2. Server-wide singletons (SessionManager, UDPBroadcaster)
-     *   3. DAOs  — depend only on ConnectionPool (initialized statically)
-     *   4. Services — depend on DAOs
-     *   5. Handlers — depend on Services and SessionManager
-     *
-     * @throws IOException if the ServerSocket cannot bind to TCP_PORT
-     */
     public Server() throws IOException {
 
-        // ── 1. Network infrastructure ─────────────────────────────
         this.serverSocket = new ServerSocket(TCP_PORT);
         System.out.println("[Server] Bound to TCP port " + TCP_PORT);
 
@@ -102,53 +62,35 @@ public class Server {
         System.out.println("[Server] Thread pool ready ("
                 + THREAD_POOL_SIZE + " threads)");
 
-        // ── 2. Server-wide singletons ─────────────────────────────
         this.sessionManager = new SessionManager();
-        this.udpServer = new UDPServer();   // throws RuntimeException if socket fails
+        this.udpServer = new UDPServer();
 
-        // ── 3. DAOs ───────────────────────────────────────────────
-        // ConnectionPool initializes itself statically on first class load.
-        // Constructing a DAO here triggers that initialization if not done yet.
-        this.userDAO    = new UserDAO();
+
+        this.userDAO = new UserDAO();
         this.productDAO = new ProductDAO();
-        this.cartDAO    = new CartDAO();
-        this.orderDAO   = new OrderDAO();
+        this.cartDAO = new CartDAO();
+        this.orderDAO = new OrderDAO();
 
-        // ── 4. Services ───────────────────────────────────────────
-        this.userService    = new UserService(userDAO);
+        this.userService = new UserService(userDAO);
         this.productService = new ProductService(productDAO);
-        this.cartService    = new CartService(cartDAO, productDAO);
-        this.orderService   = new OrderService(orderDAO);
+        this.cartService = new CartService(cartDAO, productDAO);
+        this.orderService = new OrderService(orderDAO);
         this.paymentService = new PaymentService();
 
-        // ── 5. Handlers ───────────────────────────────────────────
-        this.authHandler    = new AuthHandler(userService, cartService, sessionManager);
+        this.authHandler = new AuthHandler(userService, cartService, sessionManager);
         this.productHandler = new ProductHandler(productService);
-        this.cartHandler    = new CartHandler(cartService, productService, sessionManager);
-        this.orderHandler   = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService);
-        this.adminHandler   = new AdminHandler(userService, productService,
-                orderService, sessionManager);
-        this.userHandler    = new UserHandler(userService, sessionManager);
+        this.cartHandler = new CartHandler(cartService, productService, sessionManager);
+        this.orderHandler = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService);
+        this.adminHandler = new AdminHandler(userService, productService, orderService, sessionManager);
+        this.userHandler = new UserHandler(userService, sessionManager);
 
         System.out.println("[Server] All dependencies wired — ready to accept connections.");
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Accept loop — runs on the main thread
+    //  Accept loop
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Blocks on accept() until the server is shut down.
-     *
-     * Each time a client connects:
-     *   1. accept() returns a new Socket for that specific client
-     *   2. A ClientHandler is constructed with the socket and all handlers
-     *   3. The handler is submitted to the thread pool (non-blocking)
-     *   4. The loop immediately calls accept() again for the next client
-     *
-     * The main thread never does I/O itself. It only accepts and delegates.
-     * This means a slow client never blocks the next client from connecting.
-     */
     public void start() {
         System.out.println("[Server] Listening — waiting for client connections...\n");
 
@@ -162,7 +104,6 @@ public class Server {
                         + "  | Active sessions: "
                         + sessionManager.getActiveSessionCount());
 
-                // Build one ClientHandler per connected client and submit it
                 ClientHandler handler = new ClientHandler(
                         clientSocket,
                         sessionManager,
@@ -178,21 +119,15 @@ public class Server {
                 pool.submit(handler);
 
             } catch (SocketException e) {
-                // serverSocket.close() in shutdown() throws SocketException
-                // from the blocking accept() call — this is the expected exit path
                 if (serverSocket.isClosed()) {
                     System.out.println("[Server] Server socket closed — exiting accept loop.");
                     break;
                 }
-                // Unexpected SocketException — log and keep running
-                System.err.println("[Server] SocketException in accept loop: "
-                        + e.getMessage());
+
+                System.err.println("[Server] SocketException in accept loop: " + e.getMessage());
 
             } catch (IOException e) {
-                // Individual connection failure — log and keep running.
-                // One bad client should never stop other clients from connecting.
-                System.err.println("[Server] IOException accepting connection: "
-                        + e.getMessage());
+                System.err.println("[Server] IOException accepting connection: " + e.getMessage());
             }
         }
     }
@@ -201,17 +136,6 @@ public class Server {
     //  Graceful shutdown
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Shuts down the server cleanly.
-     * Called by the shutdown hook registered in main().
-     *
-     * Shutdown sequence:
-     *   1. Close ServerSocket — unblocks accept(), exits the start() loop
-     *   2. Invalidate all sessions — tokens become invalid immediately
-     *   3. Close UDP socket
-     *   4. Shut down thread pool — waits up to 10 seconds for
-     *      in-flight ClientHandlers to finish, then forces shutdown
-     */
     public void shutdown() {
         System.out.println("\n[Server] Shutdown initiated...");
 
@@ -224,13 +148,10 @@ public class Server {
             System.err.println("[Server] Error closing server socket: " + e.getMessage());
         }
 
-        // Step 2 — Invalidate all active sessions
         sessionManager.clearAll();
 
-        // Step 3 — Close UDP socket
         udpServer.close();
 
-        // Step 4 — Drain the thread pool
         pool.shutdown();
         try {
             boolean finished = pool.awaitTermination(10, TimeUnit.SECONDS);
@@ -265,19 +186,17 @@ public class Server {
             System.exit(1);
             return;
         } catch (RuntimeException e) {
-            // Catches UDPBroadcaster init failure and ConnectionPool init failure
             System.err.println("[Server] FATAL: Startup error — " + e.getMessage());
             System.exit(1);
             return;
         }
 
-        // Register shutdown hook — runs on Ctrl+C or SIGTERM
+        // Register shutdown hook — runs on Ctrl+C
         final Server serverRef = server;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             serverRef.shutdown();
         }, "shutdown-hook"));
 
-        // Blocks here on the accept() loop until serverSocket is closed
         server.start();
     }
 }

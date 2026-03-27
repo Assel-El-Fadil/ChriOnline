@@ -8,7 +8,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Client.Controllers.AdminController"
-            stylesheets="@admin_theme.css"
+            stylesheets="@theme.css"
             prefWidth="1100" prefHeight="750">
 
     <!-- ── Header (ChriOnline admin) ── -->

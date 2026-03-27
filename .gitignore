@@ -3,3 +3,4 @@
 out/
 target/
 *.class
+server_config.properties

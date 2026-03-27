@@ -22,7 +22,6 @@ import java.util.UUID;
 
 public class OrderHandler {
 
-    // ─── Dependencies injected via constructor ─────────────────────
     private final OrderService orderService;
     private final CartService cartService;
     private final PaymentService paymentService;
@@ -36,17 +35,14 @@ public class OrderHandler {
     public OrderHandler(OrderService orderService, CartService cartService,
                         PaymentService paymentService, SessionManager sessionManager,
                         UDPServer udpServer, ProductService productService) {
-        this.orderService    = orderService;
-        this.cartService     = cartService;
-        this.paymentService  = paymentService;
-        this.sessionManager  = sessionManager;
+        this.orderService = orderService;
+        this.cartService = cartService;
+        this.paymentService = paymentService;
+        this.sessionManager = sessionManager;
         this.udpServer = udpServer;
-        this.productService  = productService;
+        this.productService = productService;
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Main entry point — called by ClientHandler dispatch switch
-    // ──────────────────────────────────────────────────────────────
     public String handle(Command cmd, String[] params) {
         switch (cmd) {
             case CHECKOUT: return handleCheckout(params);
@@ -56,58 +52,39 @@ public class OrderHandler {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // CHECKOUT
-    // params: 0=token, 1=method, 2=cardNum, 3=holder, 4=expiry, 5=cvv
-    //
-    // 8-step transaction flow:
-    //   1. Validate session
-    //   2. Check cart not empty
-    //   3. Validate payment (PaymentService)
-    //   4. Open JDBC transaction (setAutoCommit false)
-    //   5. createOrder() → get orderId
-    //   6. For each item → addOrderItem() + deductStock() — rollback if stock fails
-    //   7. commit(), generate refCode, clearCart()
-    //   8. UDP notify → return OK|orderId|ref
-    // ──────────────────────────────────────────────────────────────
     private String handleCheckout(String[] params) {
 
         if (params.length < 6) {
             return ResponseBuilder.error("Missing checkout parameters");
         }
 
-        String token         = params[0];
+        String token = params[0];
         String paymentMethod = params[1];
-        String cardNum       = params[2];
-        String holder        = params[3];
-        String expiry        = params[4];
-        String cvv           = params[5];
+        String cardNum = params[2];
+        String holder = params[3];
+        String expiry = params[4];
+        String cvv = params[5];
 
-        // ── Step 1 : Validate session ──────────────────────────────
         SessionData session = sessionManager.getSession(token);
         if (session == null) {
             return ResponseBuilder.error("Not logged in");
         }
-        int    userId    = session.getUserId();
-        String clientIP  = session.getClientIP();
-        int    udpPort   = session.getClientUdpPort();
+        int userId = session.getUserId();
+        String clientIP = session.getClientIP();
+        int udpPort = session.getClientUdpPort();
 
-        // ── Step 2 : Check cart is not empty ──────────────────────
         Cart cart = cartService.getOrCreateCart(token);
         if (cart.getItems().isEmpty()) {
             return ResponseBuilder.error("Cart is empty");
         }
 
-        // ── Step 3 : Validate payment ─────────────────────────────
         PaymentResult pr = paymentService.validate(cardNum, holder, expiry, cvv);
         if (!pr.isSuccess()) {
             return ResponseBuilder.error(pr.getMessage());
         }
 
-        // ── Step 4 : Calculate total & open JDBC transaction ──────
         double total = cart.calculateTotal(productService);
 
-        // Generate reference code before the transaction
         String refCode = UUID.randomUUID().toString()
                 .substring(0, 8)
                 .toUpperCase();
@@ -115,17 +92,14 @@ public class OrderHandler {
         Connection conn = null;
         try {
             conn = ConnectionPool.getConnection();
-            conn.setAutoCommit(false);  // BEGIN transaction
+            conn.setAutoCommit(false);
 
-            // ── Step 5 : Insert order row ──────────────────────────
             int orderId = orderService.createOrder(conn, userId, total, paymentMethod, refCode);
 
-            // ── Step 6 : Process each cart item ───────────────────
             for (Map.Entry<Integer, Integer> entry : cart.getItems().entrySet()) {
                 int productId = entry.getKey();
                 int qty       = entry.getValue();
 
-                // Get unit price from DB (price at time of purchase)
                 double unitPrice = 0.0;
                 try {
                     var product = productService.getById(productId);
@@ -136,10 +110,8 @@ public class OrderHandler {
                     return ResponseBuilder.error("Product lookup failed during checkout");
                 }
 
-                // Insert line item
                 orderService.addOrderItem(conn, orderId, productId, qty, unitPrice);
 
-                // Deduct stock — rollback if stock ran out
                 boolean stocked = orderService.deductStock(conn, productId, qty);
                 if (!stocked) {
                     conn.rollback();
@@ -148,11 +120,9 @@ public class OrderHandler {
                 }
             }
 
-            // ── Step 7 : Commit, clear cart ───────────────────────
             conn.commit();
             conn.setAutoCommit(true);
 
-            // Send UDP notification (non-blocking, non-fatal)
             try {
                 clientIP = sessionManager.getClientIP(token);
                 int clientPort = sessionManager.getClientUdpPort(token);
@@ -164,11 +134,9 @@ public class OrderHandler {
                 System.err.println("[OrderHandler] UDP notification failed: " + e.getMessage());
             }
 
-            // Clear cart in memory and DB
             try {
                 cartService.clearCart(token, userId);
             } catch (SQLException e) {
-                // Non-fatal — order is already committed
                 System.err.println("[OrderHandler] Cart clear failed after commit: "
                         + e.getMessage());
             }
@@ -176,18 +144,15 @@ public class OrderHandler {
             System.out.println("[OrderHandler] CHECKOUT success — orderId=" + orderId
                     + " ref=" + refCode + " total=" + total + " user=" + userId);
 
-            // ── Step 8 : UDP notification (fire-and-forget) ───────
             udpServer.notify(
                     clientIP,
                     udpPort,
                     "ORDER_CONFIRMED|" + refCode + "|" + String.format("%.2f", total)
             );
 
-            // Return orderId and refCode to the client
             return ResponseBuilder.ok(orderId + "|" + refCode);
 
         } catch (SQLException e) {
-            // Unexpected DB error — try to rollback
             try {
                 if (conn != null) {
                     conn.rollback();
@@ -206,8 +171,6 @@ public class OrderHandler {
 
     // ──────────────────────────────────────────────────────────────
     // ORDER_HISTORY
-    // params: 0=token
-    // returns: OK|order1_str;order2_str;...  or  ERR|message
     // ──────────────────────────────────────────────────────────────
     private String handleOrderHistory(String[] params) {
 
@@ -217,7 +180,6 @@ public class OrderHandler {
 
         String token = params[0];
 
-        // Validate session
         SessionData session = sessionManager.getSession(token);
         if (session == null) {
             return ResponseBuilder.error("Not logged in");
@@ -225,14 +187,12 @@ public class OrderHandler {
 
         int userId = session.getUserId();
 
-        // Fetch orders from DB
         List<OrderDTO> orders = orderService.getUserOrders(userId);
 
         if (orders.isEmpty()) {
             return ResponseBuilder.ok("");
         }
 
-        // Serialize each OrderDTO and join with ';'
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < orders.size(); i++) {
             sb.append(orders.get(i).toProtocolString());
@@ -244,8 +204,6 @@ public class OrderHandler {
 
     // ──────────────────────────────────────────────────────────────
     // GET_ORDER_STATUS
-    // params: 0=token, 1=orderId
-    // returns: OK|order_dto_str  or  ERR|message
     // ──────────────────────────────────────────────────────────────
     private String handleGetOrderStatus(String[] params) {
         if (params.length < 2) {
@@ -260,19 +218,16 @@ public class OrderHandler {
             return ResponseBuilder.error("Invalid order ID");
         }
 
-        // Validate session
         SessionData session = sessionManager.getSession(token);
         if (session == null) {
             return ResponseBuilder.error("Not logged in");
         }
 
-        // Fetch order
         OrderDTO order = orderService.getOrderById(orderId);
         if (order == null) {
             return ResponseBuilder.error("Order not found");
         }
 
-        // Security: only allow users to see their own orders (unless admin)
         if (order.userId != session.getUserId() && !session.isAdmin()) {
             return ResponseBuilder.error("Unauthorized to view this order");
         }

@@ -7,9 +7,8 @@ public class ProductDTO {
     public String description;
     public double price;
     public int    stock;
-    public String category;   // one of the ENUM values, e.g. "ELECTRONIQUES"
-    public int active;     // 1 = visible, 0 = soft-deleted
-    /** Local file path for product image; may be null if not set. */
+    public String category;
+    public int active;
     public String imagePath;
 
     public ProductDTO() {}

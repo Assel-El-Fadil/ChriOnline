@@ -21,19 +21,16 @@ import javafx.scene.control.TextInputDialog;
 
 public class Main extends Application implements NotificationCallback {
 
-    // ─── Constants ────────────────────────────────────────────────
     private static String SERVER_HOST = "127.0.0.1";
     private static final int    SERVER_PORT  = 8084;    // TCP port
     private static final int    UDP_PORT     = 8085;    // UDP listen port
     private static final String CONFIG_FILE = "server_config.properties";
 
-    // ─── Shared instances ───────────────────────────────────────── (no changes)
     private SocketClient socketClient;
     private UDPListener  udpListener;
     private Thread       udpThread;
     private LoginController loginController;
 
-    // ──────────────────────────────────────────────────────────────
     private void loadConfig() {
         Properties props = new Properties();
         try (FileInputStream in = new FileInputStream(CONFIG_FILE)) {
@@ -72,9 +69,8 @@ public class Main extends Application implements NotificationCallback {
     public void start(Stage primaryStage) {
         loadConfig();
 
-        // ── Step 1 : Create and connect the TCP client ────────────
         if (!tryConnect()) {
-            // If default/saved host fails, ask user for IP
+
             TextInputDialog dialog = new TextInputDialog(SERVER_HOST);
             dialog.setTitle("Server Connection");
             dialog.setHeaderText("Cannot connect to server at " + SERVER_HOST);
@@ -92,15 +88,13 @@ public class Main extends Application implements NotificationCallback {
                     Platform.exit();
                     return;
                 }
-                saveConfig(); // Save successful IP
+                saveConfig();
             } else {
                 Platform.exit();
                 return;
             }
         }
 
-        // ── Step 2 : Start UDPListener as a daemon thread ─────────
-        // UDPListener constructor throws SocketException — must be caught
         try {
             udpListener = new UDPListener(UDP_PORT, this);
         } catch (SocketException e) {
@@ -115,12 +109,11 @@ public class Main extends Application implements NotificationCallback {
         }
 
         udpThread = new Thread(udpListener);
-        udpThread.setDaemon(true);                   // dies automatically when app closes
+        udpThread.setDaemon(true);
         udpThread.setName("UDP-Client-Listener");
         udpThread.start();
         System.out.println("[Main] UDP listener started on port " + UDP_PORT);
 
-        // ── Step 3 : Load the Login screen ────────────────────────
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
             Parent root = loader.load();
@@ -129,7 +122,7 @@ public class Main extends Application implements NotificationCallback {
             loginController.setUdpPort(UDP_PORT);
             loginController.setPrimaryStage(primaryStage);
 
-            primaryStage.setScene(new Scene(root, 550, 500));
+            primaryStage.setScene(new Scene(root, 1100, 750));
             primaryStage.setTitle("ChriOnline");
             primaryStage.show();
 
@@ -142,20 +135,18 @@ public class Main extends Application implements NotificationCallback {
             alert.setHeaderText("Cannot load login screen");
             alert.setContentText("Failed to load login.fxml: " + e.getMessage());
             alert.showAndWait();
-            
-            // Clean up before exit
+
             if (udpListener != null) udpListener.stop();
             if (socketClient != null) socketClient.disconnect();
             Platform.exit();
             return;
         }
 
-        // ── Step 4 : Clean shutdown on window close ────────────────
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("[Main] Application closing...");
 
             if (udpListener != null) {
-                udpListener.stop();          // sets running=false + closes socket
+                udpListener.stop();
             }
             if (socketClient != null) {
                 socketClient.disconnect();
@@ -169,11 +160,6 @@ public class Main extends Application implements NotificationCallback {
         primaryStage.show();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // NotificationCallback — called by UDPListener background thread
-    // when ORDER_CONFIRMED packet arrives.
-    // MUST use Platform.runLater() before touching any JavaFX UI.
-    // ──────────────────────────────────────────────────────────────
     @Override
     public void onOrderConfirmed(String refCode, String total) {
         System.out.println("[UDP] Order confirmed — ref: " + refCode + " | total: " + total);
@@ -187,9 +173,6 @@ public class Main extends Application implements NotificationCallback {
         });
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Getters — used by controllers that need the shared SocketClient
-    // ──────────────────────────────────────────────────────────────
     public SocketClient getSocketClient() {
         return socketClient;
     }
@@ -198,7 +181,6 @@ public class Main extends Application implements NotificationCallback {
         return UDP_PORT;
     }
 
-    // ──────────────────────────────────────────────────────────────
     public static void main(String[] args) {
         launch(args);
     }
