@@ -164,9 +164,9 @@ public class CatalogController {
         imageBg.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(216);
-        imageView.setFitHeight(148);
-        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(260);
+        imageView.setFitHeight(172);
+        imageView.setPreserveRatio(false); // Fill the entire pane
         imageView.setSmooth(true);
         imageView.setImage(ProductImageHelper.loadLocalImage(p.imagePath));
 
@@ -182,11 +182,6 @@ public class CatalogController {
         name.getStyleClass().add("catalog-card-name");
         name.setWrapText(true);
         name.setMaxWidth(236);
-
-        int reviewCount = 200 + Math.abs(p.id * 47) % 9800;
-        double ratingStars = 4.0 + (Math.abs(p.id) % 10) / 10.0;
-        Label rating = new Label(String.format("★ %.1f  (%d reviews)", ratingStars, reviewCount));
-        rating.getStyleClass().add("catalog-card-rating");
 
         Label price = new Label(String.format("%.2f MAD", p.price));
         price.getStyleClass().add("catalog-card-price");

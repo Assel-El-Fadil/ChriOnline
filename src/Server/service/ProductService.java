@@ -35,10 +35,6 @@ public class ProductService {
         return productDAO.create(p);
     }
 
-    public int create() throws SQLException {
-        throw new UnsupportedOperationException("Use create(ProductDTO) method instead");
-    }
-
     public boolean update(int id, String field, Object value) throws SQLException {
         validateField(field, value);
         return productDAO.update(id, field, value);

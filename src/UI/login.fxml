@@ -16,8 +16,8 @@
             fx:controller="Client.Controllers.LoginController"
             stylesheets="@admin_theme.css"
             styleClass="root"
-            prefWidth="550"
-            prefHeight="500">
+            prefWidth="1100"
+            prefHeight="750">
 
     <!-- ─── Top Header (same as catalog / cart) ─── -->
     <top>

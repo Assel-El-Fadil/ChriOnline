@@ -12,8 +12,6 @@ public class UserDTO {
     public String role;
     public int active;
 
-    // ── Constructors ─────────────────────────────────────────────
-
     public UserDTO() {}
 
     public UserDTO(int id, String username, String firstName, String lastName,
@@ -39,8 +37,6 @@ public class UserDTO {
         return firstName + " " + lastName;
     }
 
-    // ── Protocol serialization ────────────────────────────────────
-
     public String toProtocolString() {
         StringBuilder sb = new StringBuilder();
         sb.append("id=")        .append(id)
@@ -51,7 +47,6 @@ public class UserDTO {
                 .append(",role=")     .append(role)
                 .append(",active=")   .append(active);
 
-        // Only append optional fields if the user has them set
         if (address != null && !address.isBlank()) {
             sb.append(",address=").append(sanitize(address));
         }
@@ -90,8 +85,6 @@ public class UserDTO {
         }
         return dto;
     }
-
-    // ── Private helpers ───────────────────────────────────────────
 
     private String sanitize(String value) {
         return value == null ? "" : value.replace(",", " ");

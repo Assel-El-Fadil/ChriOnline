@@ -320,7 +320,7 @@ public class ProfileController {
             lc.setPrimaryStage(primaryStage);
 
             primaryStage.setTitle("ChriOnline");
-            primaryStage.setScene(new Scene(root, 400, 300));
+            primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
             e.printStackTrace();
             showStatus("Failed to load login screen.", true);

@@ -146,7 +146,7 @@ public class RegisterController {
             }
 
             primaryStage.setTitle("ChriOnline — Login");
-            primaryStage.setScene(new Scene(root));
+            primaryStage.setScene(new Scene(root, 1100, 750));
 
         } catch (Exception e) {
             showError("Could not load login screen.");

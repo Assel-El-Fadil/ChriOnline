@@ -767,7 +767,7 @@ public class AdminController {
             lc.setPrimaryStage(stage);
 
             stage.setTitle("ChriOnline");
-            stage.setScene(new Scene(root, 400, 300));
+            stage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
             e.printStackTrace();
             showError("Failed to load login screen.");

@@ -130,7 +130,7 @@ public class LoginController {
             rc.setPrimaryStage(primaryStage);
 
             primaryStage.setTitle("ChriOnline — Register");
-            primaryStage.setScene(new Scene(root));
+            primaryStage.setScene(new Scene(root, 1100, 750));
 
         } catch (Exception e) {
             showError("Could not load register screen.");
