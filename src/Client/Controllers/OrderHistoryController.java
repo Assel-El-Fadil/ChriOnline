@@ -53,7 +53,6 @@ public class OrderHistoryController {
         colTotal.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f MAD", c.getValue().totalAmount)));
         colStatus.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().status));
 
-        // Add track button to actions column
         colActions.setCellFactory(param -> new TableCell<>() {
             private final Button btnTrack = new Button("Track Progress");
             {

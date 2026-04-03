@@ -19,7 +19,7 @@
             prefWidth="550"
             prefHeight="580">
 
-    <!-- ─── Top Header (same as catalog / cart) ─── -->
+
     <top>
         <VBox>
             <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
@@ -68,12 +68,42 @@
                                styleClass="login-form-field"/>
                 </VBox>
 
-                <!-- Password field -->
                 <VBox spacing="6">
                     <Label text="Password" styleClass="login-field-label"/>
-                    <PasswordField fx:id="passwordField"
-                                   promptText="At least 6 characters"
-                                   styleClass="login-form-field"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="passwordField"
+                                           promptText="At least 6 characters"
+                                           styleClass="login-form-field"/>
+                            <TextField fx:id="passwordVisibleField"
+                                       promptText="At least 6 characters"
+                                       styleClass="login-form-field"
+                                       visible="false"/>
+                        </StackPane>
+                        <Button fx:id="togglePasswordBtn"
+                                text="Show"
+                                onAction="#handleTogglePassword"
+                                styleClass="toggle-password-btn"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Confirm Password" styleClass="login-field-label"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="confirmPasswordField"
+                                           promptText="Re-enter your password"
+                                           styleClass="login-form-field"/>
+                            <TextField fx:id="confirmPasswordVisibleField"
+                                       promptText="Re-enter your password"
+                                       styleClass="login-form-field"
+                                       visible="false"/>
+                        </StackPane>
+                        <Button fx:id="toggleConfirmPasswordBtn"
+                                text="Show"
+                                onAction="#handleToggleConfirmPassword"
+                                styleClass="toggle-password-btn"/>
+                    </HBox>
                 </VBox>
 
                 <!-- Email field -->

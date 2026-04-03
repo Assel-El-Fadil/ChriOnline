@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class CartController {
 
-    // ── FXML injections ───────────────────────────────────────────
+
     @FXML private TableView<CartItemDTO>              cartTable;
     @FXML private TableColumn<CartItemDTO, String>    colName;
     @FXML private TableColumn<CartItemDTO, Number>    colQty;
@@ -32,16 +32,13 @@ public class CartController {
     @FXML private Button                              removeButton;
     @FXML private Button                              checkoutButton;
 
-    // ── Injected by parent controller ─────────────────────────────
+
     private SocketClient socketClient;
     private Stage        primaryStage;
 
-    // ── Internal state ────────────────────────────────────────────
+
     private final ObservableList<CartItemDTO> cartItems = FXCollections.observableArrayList();
 
-    // ──────────────────────────────────────────────────────────────
-    // Setter
-    // ──────────────────────────────────────────────────────────────
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
         loadCart();
@@ -70,10 +67,6 @@ public class CartController {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // initialize() — called automatically by FXMLLoader
-    // Sets up table columns and loads cart data from server
-    // ──────────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
 
@@ -106,19 +99,15 @@ public class CartController {
             }
         });
 
-        // ── Enable Remove button only when a row is selected ───────
         removeButton.setDisable(true);
         cartTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldVal, newVal) -> removeButton.setDisable(newVal == null)
         );
 
-        // ── Bind table to observable list ──────────────────────────
+
         cartTable.setItems(cartItems);
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // loadCart() — sends CART_VIEW|token in a background Task
-    // ──────────────────────────────────────────────────────────────
     private void loadCart() {
         String command = "CART_VIEW|" + AppState.getToken();
 
@@ -136,7 +125,6 @@ public class CartController {
                 String payload = ResponseBuilder.extractPayload(response);
                 cartItems.clear();
 
-                // Parse response — split on ';', then parse each CartItemDTO string
                 if (!payload.isBlank()) {
                     String[] parts = payload.split(";");
                     for (String part : parts) {
@@ -150,7 +138,6 @@ public class CartController {
                     }
                 }
 
-                // Calculate and display total in Label
                 updateTotal();
                 hideStatus();
 
@@ -166,10 +153,6 @@ public class CartController {
         new Thread(task).start();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Remove button — CART_REMOVE|token|productId in a Task
-    // then refresh the view
-    // ──────────────────────────────────────────────────────────────
     @FXML
     private void handleRemove() {
         CartItemDTO selected = cartTable.getSelectionModel().getSelectedItem();
@@ -189,7 +172,6 @@ public class CartController {
         task.setOnSucceeded(event -> {
             String response = task.getValue();
             if (ResponseBuilder.isOk(response)) {
-                // Refresh the full cart view from server
                 loadCart();
             } else {
                 removeButton.setDisable(false);
@@ -205,10 +187,6 @@ public class CartController {
         new Thread(task).start();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Checkout button — handled by parent (MainController / TabPane)
-    // Fires an event or navigates to checkout tab
-    // ──────────────────────────────────────────────────────────────
     @FXML
     private void handleCheckout() {
         if (cartItems.isEmpty()) {
@@ -229,10 +207,9 @@ public class CartController {
             checkoutController.setPrimaryStage(primaryStage);
             checkoutController.setCartItems(cartItems);
 
-            // Set navigation callbacks
-            checkoutController.setOnBack(() -> handleBackToCatalog()); // Or back to cart? 
-            // Actually, handleBackToCatalog returns to catalog. 
-            // Let's make it return to Cart.
+
+            checkoutController.setOnBack(() -> handleBackToCatalog());
+
             checkoutController.setOnBack(() -> {
                 try {
                     FXMLLoader cartLoader = new FXMLLoader(getClass().getResource("/UI/cart.fxml"));
@@ -268,9 +245,6 @@ public class CartController {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // updateTotal() — sum all subtotals and update the label
-    // ──────────────────────────────────────────────────────────────
     private void updateTotal() {
         double total = cartItems.stream()
                 .mapToDouble(item -> item.subtotal)
@@ -278,9 +252,6 @@ public class CartController {
         totalLabel.setText(String.format("%.2f MAD", total));
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // UI helpers
-    // ──────────────────────────────────────────────────────────────
     private void showError(String message) {
         statusLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
         statusLabel.setText(message);

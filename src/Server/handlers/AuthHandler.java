@@ -14,13 +14,12 @@ import java.util.UUID;
 
 public class AuthHandler {
 
-    // ─── Dependencies injected via constructor ─────────────────────
     private final UserService     userService;
     private final CartService     cartService;
     private final SessionManager sessionManager;
 
     // ──────────────────────────────────────────────────────────────
-    // Constructor — takes UserService and SessionManager
+    // Constructor
     // ──────────────────────────────────────────────────────────────
     public AuthHandler(UserService userService, CartService cartService, SessionManager sessionManager) {
         this.userService     = userService;
@@ -28,9 +27,6 @@ public class AuthHandler {
         this.sessionManager = sessionManager;
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Main entry point — called by ClientHandler dispatch switch
-    // ──────────────────────────────────────────────────────────────
     public String handle(Command cmd, String[] params, Socket clientSocket) {
         switch (cmd) {
             case REGISTER: return handleRegister(params);
@@ -42,8 +38,6 @@ public class AuthHandler {
 
     // ──────────────────────────────────────────────────────────────
     // REGISTER
-    // params: 0=firstName, 1=lastName, 2=username, 3=password, 4=email
-    // returns: OK|userId  or  ERR|message
     // ──────────────────────────────────────────────────────────────
     private String handleRegister(String[] params) {
 
@@ -92,8 +86,6 @@ public class AuthHandler {
 
     // ──────────────────────────────────────────────────────────────
     // LOGIN
-    // params: 0=username, 1=password, 2=udpPort
-    // returns: OK|token|role  or  ERR|message
     // ──────────────────────────────────────────────────────────────
     private String handleLogin(String[] params, Socket clientSocket) {
 
@@ -134,7 +126,6 @@ public class AuthHandler {
         );
         sessionManager.addSession(token, sessionData);
 
-        // [Fix] Load cart from DB into memory session upon login
         try {
             cartService.loadFromDB(token, user.id);
         } catch (Exception e) {
@@ -151,8 +142,6 @@ public class AuthHandler {
 
     // ──────────────────────────────────────────────────────────────
     // LOGOUT
-    // params: 0=token
-    // returns: OK|
     // ──────────────────────────────────────────────────────────────
     private String handleLogout(String[] params) {
         if (params.length < 1) {
@@ -162,5 +151,4 @@ public class AuthHandler {
         System.out.println("[AuthHandler] LOGOUT — token removed: " + params[0]);
         return ResponseBuilder.ok();
     }
-
 }

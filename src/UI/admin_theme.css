@@ -374,3 +374,20 @@
     -fx-font-size: 12px;
     -fx-padding: 4 0 0 0;
 }
+
+/* Toggle show/hide password button */
+.toggle-password-btn {
+    -fx-background-color: #F3F4F6;
+    -fx-background-radius: 8;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 8;
+    -fx-padding: 8 12;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-min-width: 42;
+    -fx-min-height: 38;
+}
+.toggle-password-btn:hover {
+    -fx-background-color: #E5E7EB;
+}
+

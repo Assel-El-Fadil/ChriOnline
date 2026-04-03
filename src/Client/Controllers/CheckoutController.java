@@ -18,30 +18,26 @@ import java.util.List;
 
 public class CheckoutController {
 
-    // ── FXML injections ───────────────────────────────────────────
     @FXML private TableView<CartItemDTO>           summaryTable;
     @FXML private TableColumn<CartItemDTO, String> colName;
     @FXML private TableColumn<CartItemDTO, Number> colQty;
     @FXML private TableColumn<CartItemDTO, Number> colUnitPrice;
     @FXML private TableColumn<CartItemDTO, Number> colSubtotal;
-    @FXML private Label                            totalLabel;
-    @FXML private TextField                        cardNumberField;
-    @FXML private TextField                        cardHolderField;
-    @FXML private TextField                        expiryField;
-    @FXML private TextField                        cvvField;
-    @FXML private Label                            errorLabel;
-    @FXML private Button                           placeOrderButton;
+    @FXML private Label  totalLabel;
+    @FXML private TextField  cardNumberField;
+    @FXML private TextField cardHolderField;
+    @FXML private TextField expiryField;
+    @FXML private TextField cvvField;
+    @FXML private Label  errorLabel;
+    @FXML private Button  placeOrderButton;
 
-    // ── Injected by parent controller ─────────────────────────────
     private SocketClient            socketClient;
     private Stage primaryStage;
-    private List<CartItemDTO>       cartItems;   // passed from CartController
-    private Runnable                onSuccess;   // callback → switch to Order History tab
-    private Runnable                onBack;      // callback → switch back to Cart tab
+    private List<CartItemDTO>       cartItems;
+    private Runnable                onSuccess;
+    private Runnable                onBack;
 
-    // ──────────────────────────────────────────────────────────────
-    // Setters
-    // ──────────────────────────────────────────────────────────────
+
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
     }
@@ -50,11 +46,10 @@ public class CheckoutController {
         this.primaryStage = primaryStage;
     }
 
-    /** Pre-load cart items from CartController so we can show the summary. */
+
     public void setCartItems(List<CartItemDTO> items) {
         this.cartItems = items;
 
-        // Populate order summary if cart items were pre-loaded
         if (cartItems != null && !cartItems.isEmpty()) {
             ObservableList<CartItemDTO> list = FXCollections.observableArrayList(cartItems);
             summaryTable.setItems(list);
@@ -64,19 +59,14 @@ public class CheckoutController {
         }
     }
 
-    /** Called after a successful checkout to switch to the Order History tab. */
     public void setOnSuccess(Runnable onSuccess) {
         this.onSuccess = onSuccess;
     }
 
-    /** Called when the user wants to go back to the cart. */
     public void setOnBack(Runnable onBack) {
         this.onBack = onBack;
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // initialize() — wire columns and populate summary table
-    // ──────────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
 
@@ -105,9 +95,6 @@ public class CheckoutController {
         });
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Place Order button handler
-    // ──────────────────────────────────────────────────────────────
     @FXML
     private void handlePlaceOrder() {
         String cardNum = cardNumberField.getText().trim();
@@ -115,7 +102,6 @@ public class CheckoutController {
         String expiry  = expiryField.getText().trim();
         String cvv     = cvvField.getText().trim();
 
-        // ── Client-side validation (same rules as PaymentService) ──
         if (!cardNum.matches("[0-9]{16}")) {
             showError("Card number must be exactly 16 digits.");
             return;
@@ -133,19 +119,15 @@ public class CheckoutController {
             return;
         }
 
-        // Disable button to prevent double-click
         placeOrderButton.setDisable(true);
         hideError();
 
-        // Build CHECKOUT command
-        // CHECKOUT|token|CARD|cardNum|holder|expiry|cvv
         String command = "CHECKOUT|" + AppState.getToken()
                 + "|CARD|" + cardNum
                 + "|" + holder
                 + "|" + expiry
                 + "|" + cvv;
 
-        // Run on background thread
         Task<String> task = new Task<>() {
             @Override
             protected String call() {
@@ -153,31 +135,27 @@ public class CheckoutController {
             }
         };
 
-        // ── On OK : parse orderId + refCode, show confirmation ─────
         task.setOnSucceeded(event -> {
             String response = task.getValue();
 
             if (ResponseBuilder.isOk(response)) {
-                // Response format: OK|orderId|refCode
+
                 String payload = ResponseBuilder.extractPayload(response);
                 String[] parts = payload.split("\\|", 2);
 
                 String orderId = parts.length > 0 ? parts[0] : "?";
                 String refCode = parts.length > 1 ? parts[1] : "?";
 
-                // Switch to Order History tab (if callback was set)
                 if (onSuccess != null) {
                     onSuccess.run();
                 }
 
             } else {
-                // ERR — display error in red Label
                 placeOrderButton.setDisable(false);
                 showError(ResponseBuilder.extractError(response));
             }
         });
 
-        // ── On failure : network error ─────────────────────────────
         task.setOnFailed(event -> {
             placeOrderButton.setDisable(false);
             showError("Cannot reach server. Check your connection.");
@@ -193,9 +171,6 @@ public class CheckoutController {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // UI helpers
-    // ──────────────────────────────────────────────────────────────
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);

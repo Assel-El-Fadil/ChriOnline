@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 public class UserService {
 
-    // ── Validation constants ─────────────────────────────────────
     private static final int     USERNAME_MIN     = 3;
     private static final int     USERNAME_MAX     = 50;
     private static final int     PASSWORD_MIN     = 6;
@@ -20,13 +19,10 @@ public class UserService {
     private static final int     EMAIL_MAX        = 150;
     private static final int     ADDRESS_MAX      = 255;
 
-    // Alphanumeric + underscore — no spaces
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
-    // Letters, spaces, hyphens, apostrophes — covers most real names
     private static final Pattern NAME_PATTERN = Pattern.compile("^[\\p{L} '\\-]+$");
 
-    // Basic email structure — something@something.something
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
@@ -36,9 +32,6 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    // ────────────────────────────────────────────────────────────
-    //  Registration
-    // ────────────────────────────────────────────────────────────
 
     public int register(String firstName, String lastName,
                         String username, String password, String email) {
@@ -63,9 +56,6 @@ public class UserService {
         }
     }
 
-    // ────────────────────────────────────────────────────────────
-    //  Authentication
-    // ────────────────────────────────────────────────────────────
 
     public UserDTO authenticate(String username, String password) {
         AuthUser authUser = userDAO.findByUsernameForAuth(username);
@@ -92,9 +82,6 @@ public class UserService {
         );
     }
 
-    // ────────────────────────────────────────────────────────────
-    //  Lookup
-    // ────────────────────────────────────────────────────────────
 
     public UserDTO getProfile(int userId) {
         UserDTO user = userDAO.findById(userId);

@@ -114,7 +114,6 @@ public class OrderStatusProgressController {
             lblCancelledStatus.setVisible(false);
             lblCancelledStatus.setManaged(false);
 
-            // Step 1: PENDING (Always completed if order exists)
             markStepCompleted(step1Circle, null);
             lblStatusText.setText("Your order is being processed.");
 
