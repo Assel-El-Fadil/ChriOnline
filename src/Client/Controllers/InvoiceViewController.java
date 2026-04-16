@@ -63,7 +63,14 @@ public class InvoiceViewController {
         if (order == null || socketClient == null) return;
 
         lblInvoiceRef.setText("REF: #" + order.referenceCode);
-        lblIssueDate.setText("Date: " + order.createdAt);
+        
+        if (order.createdAt != null) {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            lblIssueDate.setText("Horodatage de validation: " + sdf.format(order.createdAt));
+        } else {
+            lblIssueDate.setText("Horodatage de validation: N/A");
+        }
+        
         lblPaymentMethod.setText("Payment: " + order.paymentMethod);
         lblTotalAmount.setText(String.format("%.2f MAD", order.totalAmount));
 

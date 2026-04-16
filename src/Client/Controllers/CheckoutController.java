@@ -159,10 +159,10 @@ public class CheckoutController {
                 
                 if (parts.length >= 1 && "2FA_REQUIRED".equals(parts[0])) {
                     String transactionId = parts.length > 1 ? parts[1] : null;
-                    // String creationDate = parts.length > 2 ? parts[2] : null; // Optional: could show this
+                    String requestTime = parts.length > 2 ? parts[2] : null;
 
                     // Step 2: Open Verification Dialog
-                    showVerificationDialog(transactionId);
+                    showVerificationDialog(transactionId, requestTime);
                 } else {
                     placeOrderButton.setDisable(false);
                     showError("Unexpected response: " + response);
@@ -181,12 +181,13 @@ public class CheckoutController {
         new Thread(initTask).start();
     }
 
-    private void showVerificationDialog(String transactionId) {
+    private void showVerificationDialog(String transactionId, String requestTime) {
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/UI/paymentVerification.fxml"));
             javafx.scene.Parent root = loader.load();
 
             PaymentVerificationController controller = loader.getController();
+            controller.setTransactionInfo(transactionId, requestTime);
 
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Verify Payment");
@@ -222,7 +223,18 @@ public class CheckoutController {
         confirmTask.setOnSucceeded(event -> {
             String response = confirmTask.getValue();
             if (ResponseBuilder.isOk(response)) {
-                if (onSuccess != null) onSuccess.run();
+                // response is "OK|orderId|refCode|timestamp"
+                String payload = ResponseBuilder.extractPayload(response);
+                String[] parts = payload.split("\\|");
+                String orderId = parts[0];
+                String refCode = parts[1];
+                String finalTime = parts.length > 2 ? parts[2] : String.valueOf(System.currentTimeMillis());
+
+                if (onSuccess != null) {
+                    // We might want to pass these to the invoice view, 
+                    // but for now, we follow the established onSuccess callback pattern.
+                    onSuccess.run();
+                }
             } else {
                 placeOrderButton.setDisable(false);
                 showError(ResponseBuilder.extractError(response));

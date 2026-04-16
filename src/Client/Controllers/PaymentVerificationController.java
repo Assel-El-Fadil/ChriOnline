@@ -10,6 +10,8 @@ public class PaymentVerificationController {
 
     @FXML private TextField codeField;
     @FXML private Label errorLabel;
+    @FXML private Label transactionIdLabel;
+    @FXML private Label horodatageLabel;
     @FXML private Button verifyButton;
 
     private String result = null;
@@ -51,6 +53,21 @@ public class PaymentVerificationController {
 
     public boolean isCancelled() {
         return cancelled;
+    }
+
+    public void setTransactionInfo(String transactionId, String timestampStr) {
+        if (transactionId != null) {
+            transactionIdLabel.setText("ID: " + transactionId.substring(0, 8).toUpperCase());
+        }
+        if (timestampStr != null) {
+            try {
+                long ts = Long.parseLong(timestampStr);
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                horodatageLabel.setText("Horodatage: " + sdf.format(new java.util.Date(ts)));
+            } catch (NumberFormatException e) {
+                horodatageLabel.setText("Horodatage: " + timestampStr);
+            }
+        }
     }
 
     private void showError(String message) {

@@ -35,5 +35,10 @@
     </VBox>
 
     <Hyperlink text="Didn't receive code? Resend" style="-fx-text-fill: #2563eb;"/>
+    
+    <VBox spacing="2" alignment="CENTER" style="-fx-opacity: 0.7;">
+        <Label fx:id="transactionIdLabel" style="-fx-font-size: 10px; -fx-text-fill: #6b7280;"/>
+        <Label fx:id="horodatageLabel"    style="-fx-font-size: 10px; -fx-text-fill: #6b7280;"/>
+    </VBox>
 
 </VBox>

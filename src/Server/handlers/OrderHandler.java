@@ -119,15 +119,24 @@ public class OrderHandler {
             return ResponseBuilder.error("Not logged in");
         }
 
-        // Validate card before sending 2FA
-        PaymentResult pr = paymentService.validate(cardNum, holder, expiry, cvv);
-        if (!pr.isSuccess()) {
-            return ResponseBuilder.error(pr.getMessage());
+        // ── Cooldown Check ──
+        List<OrderDTO> userOrders = orderService.getUserOrders(session.getUserId());
+        if (!userOrders.isEmpty()) {
+            OrderDTO lastOrder = userOrders.get(0); // Orders are DESC by created_at
+            if (lastOrder.createdAt != null) {
+                long elapsed = System.currentTimeMillis() - lastOrder.createdAt.getTime();
+                long cooldownMs = 60 * 1000; // 60 seconds
+                if (elapsed < cooldownMs) {
+                    long remaining = (cooldownMs - elapsed) / 1000;
+                    return ResponseBuilder.error("Please wait " + remaining + " more seconds before placing another order.");
+                }
+            }
         }
 
         // Generate 6-digit code and transaction UUID
         String code = String.format("%06d", new Random().nextInt(1000000));
         String transactionId = UUID.randomUUID().toString();
+        long now = System.currentTimeMillis();
         
         // Log to database as PENDING
         transactionDAO.logTransaction(session.getUserId(), transactionId);
@@ -141,9 +150,10 @@ public class OrderHandler {
         System.out.println("Subject: Payment Verification Code");
         System.out.println("Transaction ID: " + transactionId);
         System.out.println("Your ChriOnline verification code is: " + code);
+        System.out.println("Horodatage: " + new java.util.Date(now));
         System.out.println("==========================================");
 
-        return ResponseBuilder.ok("2FA_REQUIRED|" + transactionId + "|" + System.currentTimeMillis());
+        return ResponseBuilder.ok("2FA_REQUIRED|" + transactionId + "|" + now);
     }
 
     private String handleCheckoutConfirm(String[] params) {
@@ -178,6 +188,10 @@ public class OrderHandler {
         if (ResponseBuilder.isOk(result)) {
             pendingCheckouts.remove(token);
             transactionDAO.updateStatus(transactionId, "SUCCESS");
+            
+            // Append horodatage to the success result
+            long now = System.currentTimeMillis();
+            return result.substring(0, result.length()) + "|" + now;
         } else {
             transactionDAO.updateStatus(transactionId, "FAILED");
         }
