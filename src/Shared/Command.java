@@ -27,7 +27,10 @@ public enum Command {
     ADMIN_HARD_DELETE_USER,     // ADMIN_HARD_DELETE_USER|token|userId
     GET_PROFILE,        // GET_PROFILE|token
     EDIT_PROFILE,       // EDIT_PROFILE|token|field|value
-    GET_ORDER_STATUS;   // GET_ORDER_STATUS|token|orderId
+    GET_ORDER_STATUS,   // GET_ORDER_STATUS|token|orderId
+    GET_ORDER_ITEMS,    // GET_ORDER_ITEMS|token|orderId
+    CHECKOUT_INIT,      // CHECKOUT_INIT|token|method|card|holder|expiry|cvv
+    CHECKOUT_CONFIRM;   // CHECKOUT_CONFIRM|token|code
 
     public static Command fromString(String commandToken) throws InvalidRequestException {
         if (commandToken == null) {

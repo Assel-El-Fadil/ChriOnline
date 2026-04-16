@@ -27,6 +27,7 @@ public class OrderHistoryController {
     @FXML private TableColumn<OrderDTO, String> colTotal;
     @FXML private TableColumn<OrderDTO, String> colStatus;
     @FXML private TableColumn<OrderDTO, Void> colActions;
+    @FXML private TableColumn<OrderDTO, Void> colFacture;
     @FXML private Label statusLabel;
 
     private SocketClient socketClient;
@@ -72,6 +73,29 @@ public class OrderHistoryController {
                     setGraphic(null);
                 } else {
                     setGraphic(btnTrack);
+                }
+            }
+        });
+
+        // Add view button to facture column
+        colFacture.setCellFactory(param -> new TableCell<>() {
+            private final Button btnView = new Button("View");
+            {
+                btnView.getStyleClass().add("btn-secondary");
+                btnView.setPrefWidth(100);
+                btnView.setOnAction(event -> {
+                    OrderDTO order = getTableView().getItems().get(getIndex());
+                    openInvoiceView(order);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnView);
                 }
             }
         });
@@ -151,6 +175,25 @@ public class OrderHistoryController {
         } catch (IOException e) {
             e.printStackTrace();
             showStatus("Could not open progress page.", true);
+        }
+    }
+
+    private void openInvoiceView(OrderDTO order) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/invoiceView.fxml"));
+            Parent root = loader.load();
+
+            InvoiceViewController controller = loader.getController();
+            controller.setSocketClient(socketClient);
+            controller.setOrder(order);
+
+            Stage stage = new Stage();
+            stage.setTitle("Invoice — " + order.referenceCode);
+            stage.setScene(new Scene(root, 800, 700));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showStatus("Could not open invoice view.", true);
         }
     }
 

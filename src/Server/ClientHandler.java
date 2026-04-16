@@ -161,10 +161,19 @@ public class ClientHandler implements Runnable {
             case CHECKOUT:
                 return orderHandler.handle(cmd, params);
 
+            case CHECKOUT_INIT:
+                return orderHandler.handle(cmd, params);
+
+            case CHECKOUT_CONFIRM:
+                return orderHandler.handle(cmd, params);
+
             case ORDER_HISTORY:
                 return orderHandler.handle(cmd, params);
 
             case GET_ORDER_STATUS:
+                return orderHandler.handle(cmd, params);
+
+            case GET_ORDER_ITEMS:
                 return orderHandler.handle(cmd, params);
 
             // ── Admin ─────────────────────────────────────────────

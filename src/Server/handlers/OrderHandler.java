@@ -18,9 +18,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OrderHandler {
+
+    private final Map<String, PendingCheckout> pendingCheckouts = new ConcurrentHashMap<>();
 
     private final OrderService orderService;
     private final CartService cartService;
@@ -28,28 +32,171 @@ public class OrderHandler {
     private final SessionManager sessionManager;
     private final UDPServer udpServer;
     private final ProductService productService;
+    private final Server.DAO.TransactionDAO transactionDAO;
 
     // ──────────────────────────────────────────────────────────────
     // Constructor
     // ──────────────────────────────────────────────────────────────
     public OrderHandler(OrderService orderService, CartService cartService,
                         PaymentService paymentService, SessionManager sessionManager,
-                        UDPServer udpServer, ProductService productService) {
+                        UDPServer udpServer, ProductService productService,
+                        Server.DAO.TransactionDAO transactionDAO) {
         this.orderService = orderService;
         this.cartService = cartService;
         this.paymentService = paymentService;
         this.sessionManager = sessionManager;
         this.udpServer = udpServer;
         this.productService = productService;
+        this.transactionDAO = transactionDAO;
     }
 
     public String handle(Command cmd, String[] params) {
         switch (cmd) {
             case CHECKOUT: return handleCheckout(params);
+            case CHECKOUT_INIT: return handleCheckoutInit(params);
+            case CHECKOUT_CONFIRM: return handleCheckoutConfirm(params);
             case ORDER_HISTORY: return handleOrderHistory(params);
             case GET_ORDER_STATUS: return handleGetOrderStatus(params);
+            case GET_ORDER_ITEMS: return handleGetOrderItems(params);
             default: return ResponseBuilder.error("Unknown order command");
         }
+    }
+
+    private String handleGetOrderItems(String[] params) {
+        if (params.length < 2) {
+            return ResponseBuilder.error("Missing order ID");
+        }
+
+        String token = params[0];
+        int orderId;
+        try {
+            orderId = Integer.parseInt(params[1]);
+        } catch (NumberFormatException e) {
+            return ResponseBuilder.error("Invalid order ID");
+        }
+
+        SessionData session = sessionManager.getSession(token);
+        if (session == null) {
+            return ResponseBuilder.error("Not logged in");
+        }
+
+        // Authorization check
+        OrderDTO order = orderService.getOrderById(orderId);
+        if (order == null) {
+            return ResponseBuilder.error("Order not found");
+        }
+        if (order.userId != session.getUserId() && !session.isAdmin()) {
+            return ResponseBuilder.error("Unauthorized");
+        }
+
+        List<Shared.DTO.OrderItemDTO> items = orderService.getOrderItems(orderId);
+        if (items.isEmpty()) {
+            return ResponseBuilder.ok("");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < items.size(); i++) {
+            sb.append(items.get(i).toProtocolString());
+            if (i < items.size() - 1) sb.append(";");
+        }
+        return ResponseBuilder.ok(sb.toString());
+    }
+
+    private String handleCheckoutInit(String[] params) {
+        if (params.length < 6) {
+            return ResponseBuilder.error("Missing checkout parameters");
+        }
+
+        String token = params[0];
+        String paymentMethod = params[1];
+        String cardNum = params[2];
+        String holder = params[3];
+        String expiry = params[4];
+        String cvv = params[5];
+
+        SessionData session = sessionManager.getSession(token);
+        if (session == null) {
+            return ResponseBuilder.error("Not logged in");
+        }
+
+        // ── Cooldown Check ──
+        List<OrderDTO> userOrders = orderService.getUserOrders(session.getUserId());
+        if (!userOrders.isEmpty()) {
+            OrderDTO lastOrder = userOrders.get(0); // Orders are DESC by created_at
+            if (lastOrder.createdAt != null) {
+                long elapsed = System.currentTimeMillis() - lastOrder.createdAt.getTime();
+                long cooldownMs = 60 * 1000; // 60 seconds
+                if (elapsed < cooldownMs) {
+                    long remaining = (cooldownMs - elapsed) / 1000;
+                    return ResponseBuilder.error("Please wait " + remaining + " more seconds before placing another order.");
+                }
+            }
+        }
+
+        // Generate 6-digit code and transaction UUID
+        String code = String.format("%06d", new Random().nextInt(1000000));
+        String transactionId = UUID.randomUUID().toString();
+        long now = System.currentTimeMillis();
+        
+        // Log to database as PENDING
+        transactionDAO.logTransaction(session.getUserId(), transactionId);
+
+        // Store pending checkout in memory
+        pendingCheckouts.put(token, new PendingCheckout(paymentMethod, cardNum, holder, expiry, cvv, code, transactionId));
+
+        // Simulate Email
+        System.out.println("==========================================");
+        System.out.println("SIMULATED EMAIL TO: (User ID " + session.getUserId() + ")");
+        System.out.println("Subject: Payment Verification Code");
+        System.out.println("Transaction ID: " + transactionId);
+        System.out.println("Your ChriOnline verification code is: " + code);
+        System.out.println("Horodatage: " + new java.util.Date(now));
+        System.out.println("==========================================");
+
+        return ResponseBuilder.ok("2FA_REQUIRED|" + transactionId + "|" + now);
+    }
+
+    private String handleCheckoutConfirm(String[] params) {
+        if (params.length < 3) {
+            return ResponseBuilder.error("Missing verification parameters");
+        }
+
+        String token = params[0];
+        String code = params[1];
+        String transactionId = params[2];
+
+        PendingCheckout pc = pendingCheckouts.get(token);
+        if (pc == null) {
+            return ResponseBuilder.error("No pending checkout found. Please restart the process.");
+        }
+
+        if (!pc.verificationCode.equals(code)) {
+            return ResponseBuilder.error("Invalid verification code");
+        }
+
+        if (!pc.transactionId.equals(transactionId)) {
+            return ResponseBuilder.error("Transaction ID mismatch. Security breach detected.");
+        }
+
+        // Use stored info to complete checkout
+        String[] checkoutParams = {
+            token, pc.paymentMethod, pc.cardNum, pc.holder, pc.expiry, pc.cvv
+        };
+        
+        String result = handleCheckout(checkoutParams);
+        
+        if (ResponseBuilder.isOk(result)) {
+            pendingCheckouts.remove(token);
+            transactionDAO.updateStatus(transactionId, "SUCCESS");
+            
+            // Append horodatage to the success result
+            long now = System.currentTimeMillis();
+            return result.substring(0, result.length()) + "|" + now;
+        } else {
+            transactionDAO.updateStatus(transactionId, "FAILED");
+        }
+        
+        return result;
     }
 
     private String handleCheckout(String[] params) {
