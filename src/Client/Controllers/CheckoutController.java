@@ -115,7 +115,7 @@ public class CheckoutController {
         String expiry  = expiryField.getText().trim();
         String cvv     = cvvField.getText().trim();
 
-        // ── Client-side validation (same rules as PaymentService) ──
+        // ── Client-side validation ──
         if (!cardNum.matches("[0-9]{16}")) {
             showError("Card number must be exactly 16 digits.");
             return;
@@ -133,57 +133,108 @@ public class CheckoutController {
             return;
         }
 
-        // Disable button to prevent double-click
         placeOrderButton.setDisable(true);
         hideError();
 
-        // Build CHECKOUT command
-        // CHECKOUT|token|CARD|cardNum|holder|expiry|cvv
-        String command = "CHECKOUT|" + AppState.getToken()
+        // Step 1: Initialize Checkout (Triggers 2FA code sending)
+        // CHECKOUT_INIT|token|CARD|cardNum|holder|expiry|cvv
+        String initCommand = "CHECKOUT_INIT|" + AppState.getToken()
                 + "|CARD|" + cardNum
                 + "|" + holder
                 + "|" + expiry
                 + "|" + cvv;
 
-        // Run on background thread
-        Task<String> task = new Task<>() {
+        Task<String> initTask = new Task<>() {
             @Override
             protected String call() {
-                return socketClient.sendCommand(command);
+                return socketClient.sendCommand(initCommand);
             }
         };
 
-        // ── On OK : parse orderId + refCode, show confirmation ─────
-        task.setOnSucceeded(event -> {
-            String response = task.getValue();
-
+        initTask.setOnSucceeded(event -> {
+            String response = initTask.getValue();
             if (ResponseBuilder.isOk(response)) {
-                // Response format: OK|orderId|refCode
                 String payload = ResponseBuilder.extractPayload(response);
-                String[] parts = payload.split("\\|", 2);
+                String[] parts = payload.split("\\|");
+                
+                if (parts.length >= 1 && "2FA_REQUIRED".equals(parts[0])) {
+                    String transactionId = parts.length > 1 ? parts[1] : null;
+                    // String creationDate = parts.length > 2 ? parts[2] : null; // Optional: could show this
 
-                String orderId = parts.length > 0 ? parts[0] : "?";
-                String refCode = parts.length > 1 ? parts[1] : "?";
-
-                // Switch to Order History tab (if callback was set)
-                if (onSuccess != null) {
-                    onSuccess.run();
+                    // Step 2: Open Verification Dialog
+                    showVerificationDialog(transactionId);
+                } else {
+                    placeOrderButton.setDisable(false);
+                    showError("Unexpected response: " + response);
                 }
-
             } else {
-                // ERR — display error in red Label
                 placeOrderButton.setDisable(false);
                 showError(ResponseBuilder.extractError(response));
             }
         });
 
-        // ── On failure : network error ─────────────────────────────
-        task.setOnFailed(event -> {
+        initTask.setOnFailed(event -> {
             placeOrderButton.setDisable(false);
-            showError("Cannot reach server. Check your connection.");
+            showError("Server unreachable. Check connection.");
         });
 
-        new Thread(task).start();
+        new Thread(initTask).start();
+    }
+
+    private void showVerificationDialog(String transactionId) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/UI/paymentVerification.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            PaymentVerificationController controller = loader.getController();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Verify Payment");
+            dialogStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            dialogStage.initOwner(primaryStage);
+            dialogStage.setScene(new javafx.scene.Scene(root));
+            dialogStage.showAndWait();
+
+            if (!controller.isCancelled() && controller.getResult() != null) {
+                confirmCheckout(controller.getResult(), transactionId);
+            } else {
+                placeOrderButton.setDisable(false);
+            }
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            showError("Could not open verification dialog.");
+            placeOrderButton.setDisable(false);
+        }
+    }
+
+    private void confirmCheckout(String code, String transactionId) {
+        // Step 3: Confirm Checkout with 2FA code AND transactionId
+        // CHECKOUT_CONFIRM|token|code|transactionId
+        String confirmCommand = "CHECKOUT_CONFIRM|" + AppState.getToken() + "|" + code + "|" + transactionId;
+
+        Task<String> confirmTask = new Task<>() {
+            @Override
+            protected String call() {
+                return socketClient.sendCommand(confirmCommand);
+            }
+        };
+
+        confirmTask.setOnSucceeded(event -> {
+            String response = confirmTask.getValue();
+            if (ResponseBuilder.isOk(response)) {
+                if (onSuccess != null) onSuccess.run();
+            } else {
+                placeOrderButton.setDisable(false);
+                showError(ResponseBuilder.extractError(response));
+            }
+        });
+
+        confirmTask.setOnFailed(event -> {
+            placeOrderButton.setDisable(false);
+            showError("Confirmation failed. Check connection.");
+        });
+
+        new Thread(confirmTask).start();
     }
 
     @FXML

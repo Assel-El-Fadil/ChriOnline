@@ -52,12 +52,24 @@
                                styleClass="login-form-field"/>
                 </VBox>
 
-                <!-- Password field -->
+                <!-- Password field with show/hide toggle -->
                 <VBox spacing="6">
                     <Label text="Password" styleClass="login-field-label"/>
-                    <PasswordField fx:id="passwordField"
-                                   promptText="Enter your password"
-                                   styleClass="login-form-field"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="passwordField"
+                                           promptText="Enter your password"
+                                           styleClass="login-form-field"/>
+                            <TextField fx:id="passwordVisibleField"
+                                       promptText="Enter your password"
+                                       styleClass="login-form-field"
+                                       visible="false"/>
+                        </StackPane>
+                        <Button fx:id="togglePasswordBtn"
+                                text="Show"
+                                onAction="#handleTogglePassword"
+                                styleClass="toggle-password-btn"/>
+                    </HBox>
                 </VBox>
 
                 <!-- Error label — hidden by default -->

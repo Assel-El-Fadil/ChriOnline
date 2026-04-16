@@ -97,6 +97,10 @@ public class OrderService {
         }
     }
 
+    public List<Shared.DTO.OrderItemDTO> getOrderItems(int orderId) {
+        return orderDAO.findItemsByOrderId(orderId);
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Private validation methods
     // ────────────────────────────────────────────────────────────

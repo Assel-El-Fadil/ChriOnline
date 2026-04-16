@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Client.Controllers.InvoiceViewController"
+      stylesheets="@theme.css"
+      spacing="20"
+      style="-fx-background-color: white; -fx-padding: 40;">
+
+    <!-- Invoice Header -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="INVOICE" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #1e40af;"/>
+            <Label fx:id="lblInvoiceRef" text="REF: #2AAD15BB" style="-fx-font-size: 16px; -fx-text-fill: #6b7280;"/>
+        </VBox>
+        <VBox alignment="TOP_RIGHT" spacing="5">
+            <Label text="ChriOnline Inc." style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <Label text="123 Commerce St, Casablanca"/>
+            <Label text="contact@chrionline.ma"/>
+        </VBox>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Bill To / Info Section -->
+    <HBox spacing="50">
+        <VBox spacing="5">
+            <Label text="BILL TO:" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <Label fx:id="lblCustomerName" text="Customer Name"/>
+            <Label fx:id="lblCustomerEmail" text="customer@example.com"/>
+        </VBox>
+        <VBox spacing="5">
+            <Label text="DETAILS:" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <Label fx:id="lblIssueDate" text="Date: April 16, 2026"/>
+            <Label fx:id="lblPaymentMethod" text="Payment: Credit Card"/>
+        </VBox>
+    </HBox>
+
+    <!-- Items Table -->
+    <TableView fx:id="itemsTable" VBox.vgrow="ALWAYS" styleClass="invoice-table">
+        <columns>
+            <TableColumn fx:id="colName"     text="Product Name" prefWidth="350"/>
+            <TableColumn fx:id="colQty"      text="Qty"          prefWidth="80"/>
+            <TableColumn fx:id="colPrice"    text="Unit Price"   prefWidth="120"/>
+            <TableColumn fx:id="colSubtotal" text="Subtotal"     prefWidth="130"/>
+        </columns>
+    </TableView>
+
+    <!-- Footer / Total Section -->
+    <HBox alignment="CENTER_RIGHT">
+        <VBox spacing="10" alignment="TOP_RIGHT" minWidth="200">
+            <HBox spacing="20" alignment="CENTER_RIGHT">
+                <Label text="Total Amount:" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Label fx:id="lblTotalAmount" text="0.00 MAD" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1e40af;"/>
+            </HBox>
+            <Separator/>
+            <Label text="Thank you for your business!" style="-fx-font-style: italic; -fx-text-fill: #6b7280;"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Download PDF (Simulated)" onAction="#handleDownload" styleClass="btn-primary" prefWidth="250"/>
+        <Button text="Close" onAction="#handleClose" styleClass="btn-secondary" prefWidth="100"/>
+    </HBox>
+
+</VBox>
