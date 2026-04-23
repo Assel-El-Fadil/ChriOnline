@@ -1,0 +1,310 @@
+2026-04-10 10:50:45 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 10:50:45 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 10:50:45 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 61013
+2026-04-10 10:50:45 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 10:50:45 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 10:50:52 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 10:50:52 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 10:50:52 INFO  Server.Server - [Server] Client connected: 127.0.0.1:58235  | Active sessions: 0
+2026-04-10 10:50:52 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 10:50:53 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 10:50:59 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:00 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 10:51:00 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-04-10 10:51:04 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:04 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (2/3 phase 0)
+2026-04-10 10:51:07 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:07 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (3/3 phase 0)
+2026-04-10 10:51:07 WARN  Server.security.AuthSecurityManager - [AuthSecurity] IP BLOCKED for 10 minutes: 127.0.0.1
+2026-04-10 10:51:12 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:12 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 54s)
+2026-04-10 10:51:19 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:19 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 47s)
+2026-04-10 10:51:22 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:22 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 45s)
+2026-04-10 10:51:22 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:22 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 44s)
+2026-04-10 10:51:22 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:22 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 44s)
+2026-04-10 10:51:23 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:23 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 44s)
+2026-04-10 10:51:23 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:23 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 43s)
+2026-04-10 10:51:28 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 10:51:28 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 38s)
+2026-04-10 10:51:36 INFO  Main - [Main] Application closing...
+2026-04-10 10:51:36 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:58235
+2026-04-10 10:51:36 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:58235
+2026-04-10 11:23:57 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 11:23:57 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 11:23:57 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 54558
+2026-04-10 11:23:57 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 11:23:57 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 11:24:04 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 11:24:04 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 11:24:04 INFO  Server.Server - [Server] Client connected: 127.0.0.1:65448  | Active sessions: 0
+2026-04-10 11:24:04 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 11:24:04 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 11:24:12 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:24:13 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 11:24:13 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-04-10 11:24:16 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:24:16 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (2/3 phase 0)
+2026-04-10 11:24:19 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:24:20 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (3/3 phase 0)
+2026-04-10 11:24:20 WARN  Server.security.AuthSecurityManager - [AuthSecurity] IP BLOCKED for 10 minutes: 127.0.0.1
+2026-04-10 11:24:23 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:24:23 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 56s)
+2026-04-10 11:32:32 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:32:32 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 1m 47s)
+2026-04-10 11:32:42 INFO  Main - [Main] Application closing...
+2026-04-10 11:32:42 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:65448
+2026-04-10 11:32:42 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:65448
+2026-04-10 11:34:09 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 11:34:09 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 11:34:09 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 64630
+2026-04-10 11:34:09 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 11:34:09 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 11:34:28 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 11:34:28 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 11:34:28 INFO  Server.Server - [Server] Client connected: 127.0.0.1:60837  | Active sessions: 0
+2026-04-10 11:34:28 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 11:34:29 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 11:35:35 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:35:35 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 11:35:36 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-04-10 11:35:38 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:35:38 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (2/3 phase 0)
+2026-04-10 11:35:39 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:35:39 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (3/3 phase 0)
+2026-04-10 11:35:39 WARN  Server.security.AuthSecurityManager - [AuthSecurity] IP BLOCKED for 10 minutes: 127.0.0.1
+2026-04-10 11:35:41 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:35:41 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 57s)
+2026-04-10 11:35:53 INFO  Main - [Main] Application closing...
+2026-04-10 11:35:53 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:60837
+2026-04-10 11:35:53 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:60837
+2026-04-10 11:49:26 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 11:49:26 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 11:49:26 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 54431
+2026-04-10 11:49:26 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 11:49:26 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 11:49:33 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 11:49:33 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 11:49:33 INFO  Server.Server - [Server] Client connected: 127.0.0.1:64298  | Active sessions: 0
+2026-04-10 11:49:33 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 11:49:34 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 11:49:43 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:64298 (10s handshake timeout)
+2026-04-10 11:49:43 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64298
+2026-04-10 11:50:20 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:50:47 INFO  Main - [Main] Application closing...
+2026-04-10 11:50:55 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 11:50:55 INFO  Server.Server - [Server] Client connected: 127.0.0.1:63565  | Active sessions: 0
+2026-04-10 11:50:55 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 11:50:55 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 11:50:56 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 11:51:01 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:51:02 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 11:51:02 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-04-10 11:51:05 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:51:05 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (2/3 phase 0)
+2026-04-10 11:51:07 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:51:07 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (3/3 phase 0)
+2026-04-10 11:51:07 WARN  Server.security.AuthSecurityManager - [AuthSecurity] IP BLOCKED for 10 minutes: 127.0.0.1
+2026-04-10 11:51:09 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 11:51:09 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 58s)
+2026-04-10 11:51:12 INFO  Main - [Main] Application closing...
+2026-04-10 11:51:12 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:63565
+2026-04-10 11:51:12 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:63565
+2026-04-10 12:12:21 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 12:12:21 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 12:12:21 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 60812
+2026-04-10 12:12:21 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 12:12:21 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 12:13:36 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 12:13:36 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 12:13:36 INFO  Server.Server - [Server] Client connected: 127.0.0.1:50852  | Active sessions: 0
+2026-04-10 12:13:36 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 12:13:37 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 12:13:41 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 12:13:42 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 12:13:42 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-04-10 12:13:45 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 12:13:45 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (2/3 phase 0)
+2026-04-10 12:14:00 ERROR Server.handlers.AuthHandler - Error in forgot password for xassil7@gmail.com
+Server.DAO.UserDAO$DAOException: findByUsernameForAuth failed: Unknown column 'id' in 'field list'
+	at Server.DAO.UserDAO.findByEmail(UserDAO.java:289) ~[classes/:?]
+	at Server.service.UserService.getUserByEmail(UserService.java:127) ~[classes/:?]
+	at Server.handlers.AuthHandler.handleForgotPassword(AuthHandler.java:204) ~[classes/:?]
+	at Server.handlers.AuthHandler.handle(AuthHandler.java:58) ~[classes/:?]
+	at Server.ClientHandler.dispatchCommand(ClientHandler.java:163) ~[classes/:?]
+	at Server.ClientHandler.dispatch(ClientHandler.java:147) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:85) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'id' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:968) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at Server.DAO.UserDAO.findByEmail(UserDAO.java:273) ~[classes/:?]
+	... 11 more
+2026-04-10 12:15:26 ERROR Server.handlers.AuthHandler - Error in forgot password for xassil7@gmail.com
+Server.DAO.UserDAO$DAOException: findByUsernameForAuth failed: Unknown column 'id' in 'field list'
+	at Server.DAO.UserDAO.findByEmail(UserDAO.java:289) ~[classes/:?]
+	at Server.service.UserService.getUserByEmail(UserService.java:127) ~[classes/:?]
+	at Server.handlers.AuthHandler.handleForgotPassword(AuthHandler.java:204) ~[classes/:?]
+	at Server.handlers.AuthHandler.handle(AuthHandler.java:58) ~[classes/:?]
+	at Server.ClientHandler.dispatchCommand(ClientHandler.java:163) ~[classes/:?]
+	at Server.ClientHandler.dispatch(ClientHandler.java:147) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:85) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'id' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:968) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at Server.DAO.UserDAO.findByEmail(UserDAO.java:273) ~[classes/:?]
+	... 11 more
+2026-04-10 12:26:07 INFO  Main - [Main] Application closing...
+2026-04-10 12:26:07 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:50852
+2026-04-10 12:26:07 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:50852
+2026-04-10 12:26:19 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 12:26:19 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 12:26:19 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 64832
+2026-04-10 12:26:19 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 12:26:19 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 12:26:38 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 12:26:38 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 12:26:38 INFO  Server.Server - [Server] Client connected: 127.0.0.1:52365  | Active sessions: 0
+2026-04-10 12:26:38 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 12:26:39 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 12:27:08 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:52365 (10s handshake timeout)
+2026-04-10 12:27:08 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:52365
+2026-04-10 12:28:11 INFO  Main - [Main] Application closing...
+2026-04-10 12:28:27 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 12:28:27 INFO  Server.Server - [Server] Client connected: 127.0.0.1:49879  | Active sessions: 0
+2026-04-10 12:28:27 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 12:28:27 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 12:28:28 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 12:28:36 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 12:28:36 ERROR Server.handlers.AuthHandler - Error in forgot password for xassil7@gmail.com
+Server.DAO.UserDAO$DAOException: findByEmail failed: Unknown column 'id' in 'field list'
+	at Server.DAO.UserDAO.findByEmail(UserDAO.java:278) ~[classes/:?]
+	at Server.service.UserService.getUserByEmail(UserService.java:109) ~[classes/:?]
+	at Server.handlers.AuthHandler.handleForgotPassword(AuthHandler.java:204) ~[classes/:?]
+	at Server.handlers.AuthHandler.handle(AuthHandler.java:58) ~[classes/:?]
+	at Server.ClientHandler.dispatchCommand(ClientHandler.java:163) ~[classes/:?]
+	at Server.ClientHandler.dispatch(ClientHandler.java:147) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:85) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'id' in 'field list'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:968) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at Server.DAO.UserDAO.findByEmail(UserDAO.java:272) ~[classes/:?]
+	... 11 more
+2026-04-10 12:29:39 INFO  Main - [Main] Application closing...
+2026-04-10 12:29:39 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:49879
+2026-04-10 12:29:39 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:49879
+2026-04-10 12:29:56 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 12:29:56 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 12:29:56 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 52369
+2026-04-10 12:29:56 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 12:29:56 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 12:30:04 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 12:30:04 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 12:30:04 INFO  Server.Server - [Server] Client connected: 127.0.0.1:52725  | Active sessions: 0
+2026-04-10 12:30:04 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 12:30:05 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 12:30:14 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 12:30:15 INFO  Server.handlers.AuthHandler - [AuthHandler] Password reset OTP sent to xassil7@gmail.com
+2026-04-10 12:30:59 ERROR Server.handlers.AuthHandler - Error resetting password for xassil7@gmail.com
+Server.service.UserService$ValidationException: Password must be at least 6 characters
+	at Server.service.UserService.validatePassword(UserService.java:259) ~[classes/:?]
+	at Server.service.UserService.updatePassword(UserService.java:117) ~[classes/:?]
+	at Server.handlers.AuthHandler.handleResetPassword(AuthHandler.java:243) ~[classes/:?]
+	at Server.handlers.AuthHandler.handle(AuthHandler.java:60) ~[classes/:?]
+	at Server.ClientHandler.dispatchCommand(ClientHandler.java:163) ~[classes/:?]
+	at Server.ClientHandler.dispatch(ClientHandler.java:147) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:85) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-10 12:35:13 INFO  Main - [Main] Application closing...
+2026-04-10 12:35:13 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:52725
+2026-04-10 12:35:13 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:52725
+2026-04-10 12:35:25 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 12:35:25 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 12:35:25 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 56240
+2026-04-10 12:35:25 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 12:35:25 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 12:35:32 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 12:35:32 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 12:35:32 INFO  Server.Server - [Server] Client connected: 127.0.0.1:60210  | Active sessions: 0
+2026-04-10 12:35:32 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 12:35:33 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 12:35:40 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 12:35:41 INFO  Server.handlers.AuthHandler - [AuthHandler] Password reset OTP sent to xassil7@gmail.com
+2026-04-10 12:36:05 ERROR Server.handlers.AuthHandler - Error resetting password for xassil7@gmail.com
+Server.service.UserService$UserNotFoundException: User not found
+	at Server.service.UserService.updatePassword(UserService.java:121) ~[classes/:?]
+	at Server.handlers.AuthHandler.handleResetPassword(AuthHandler.java:243) ~[classes/:?]
+	at Server.handlers.AuthHandler.handle(AuthHandler.java:60) ~[classes/:?]
+	at Server.ClientHandler.dispatchCommand(ClientHandler.java:163) ~[classes/:?]
+	at Server.ClientHandler.dispatch(ClientHandler.java:147) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:85) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-10 12:38:01 INFO  Main - [Main] Application closing...
+2026-04-10 12:38:01 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:60210
+2026-04-10 12:38:01 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:60210
+2026-04-10 12:44:28 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-10 12:44:28 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-10 12:44:28 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 55036
+2026-04-10 12:44:28 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-10 12:44:28 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-10 12:44:37 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-10 12:44:37 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-10 12:44:37 INFO  Server.Server - [Server] Client connected: 127.0.0.1:59450  | Active sessions: 0
+2026-04-10 12:44:37 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-10 12:44:38 INFO  Main - [Main] Login screen loaded successfully
+2026-04-10 12:44:46 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-10 12:44:46 INFO  Server.handlers.AuthHandler - [AuthHandler] Password reset OTP sent to xassil7@gmail.com
+2026-04-10 12:45:46 INFO  Server.handlers.AuthHandler - [AuthHandler] Password reset OTP sent to xassil7@gmail.com
+2026-04-10 12:46:24 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 12:46:24 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-04-10 12:46:30 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-10 12:46:30 INFO  Server.security.AuthSecurityManager - [AuthSecurity] Successful login from IP: 127.0.0.1 - Rate limits reset.
+2026-04-10 12:46:30 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-10 12:46:30 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: Assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-10 12:59:28 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user assel
+2026-04-10 12:59:28 INFO  Server.SessionManager - [SessionManager] Session removed — assel (alive 777s)  | Active sessions: 0
+2026-04-10 13:04:47 INFO  Main - [Main] Application closing...
+2026-04-10 13:04:47 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:59450
+2026-04-10 13:04:47 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:59450

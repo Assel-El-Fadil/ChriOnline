@@ -22,8 +22,25 @@ public class LoginController {
     // ── FXML injections ───────────────────────────────────────────
     @FXML private TextField     usernameField;
     @FXML private PasswordField passwordField;
+    @FXML private TextField     passwordVisibleField;
+    @FXML private Button        togglePasswordBtn;
     @FXML private Label         errorLabel;
     @FXML private Button        loginButton;
+
+    private boolean passwordVisible = false;
+
+    @FXML
+    private void initialize() {
+        // Sync password field <-> visible text field
+        passwordField.textProperty().addListener((obs, o, n) -> {
+            if (!passwordVisibleField.getText().equals(n))
+                passwordVisibleField.setText(n);
+        });
+        passwordVisibleField.textProperty().addListener((obs, o, n) -> {
+            if (!passwordField.getText().equals(n))
+                passwordField.setText(n);
+        });
+    }
 
     // ── Injected by Main before the scene is shown ────────────────
     private SocketClient socketClient;
@@ -51,7 +68,7 @@ public class LoginController {
     @FXML
     private void handleLogin() {
         String username = usernameField.getText().trim();
-        String password = passwordField.getText();
+        String password = passwordVisible ? passwordVisibleField.getText() : passwordField.getText();
 
         // Basic client-side validation
         if (username.isEmpty() || password.isEmpty()) {
@@ -110,6 +127,26 @@ public class LoginController {
         });
 
         new Thread(task).start();
+    }
+
+    @FXML
+    private void handleTogglePassword() {
+        passwordVisible = !passwordVisible;
+        if (passwordVisible) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordVisibleField.setVisible(true);
+            passwordField.setVisible(false);
+            togglePasswordBtn.setText("Hide");
+            passwordVisibleField.requestFocus();
+            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordField.setVisible(true);
+            passwordVisibleField.setVisible(false);
+            togglePasswordBtn.setText("Show");
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
     }
 
     // ──────────────────────────────────────────────────────────────

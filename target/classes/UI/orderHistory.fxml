@@ -48,6 +48,7 @@
                         <TableColumn fx:id="colTotal"    text="Total"      prefWidth="120"/>
                         <TableColumn fx:id="colStatus"   text="Status"     prefWidth="150"/>
                         <TableColumn fx:id="colActions"  text="Actions"    prefWidth="180"/>
+                        <TableColumn fx:id="colFacture"  text="Facture"    prefWidth="120"/>
                     </columns>
                 </TableView>
 

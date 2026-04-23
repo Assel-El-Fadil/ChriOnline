@@ -33,6 +33,7 @@ public class Server {
     private final ProductDAO productDAO;
     private final CartDAO cartDAO;
     private final OrderDAO orderDAO;
+    private final TransactionDAO transactionDAO;
 
     // ── Services ──────────────────────────────────────────────────
     private final UserService userService;
@@ -70,6 +71,7 @@ public class Server {
         this.productDAO = new ProductDAO();
         this.cartDAO = new CartDAO();
         this.orderDAO = new OrderDAO();
+        this.transactionDAO = new TransactionDAO();
 
         this.userService = new UserService(userDAO);
         this.productService = new ProductService(productDAO);
@@ -80,7 +82,7 @@ public class Server {
         this.authHandler = new AuthHandler(userService, cartService, sessionManager);
         this.productHandler = new ProductHandler(productService);
         this.cartHandler = new CartHandler(cartService, productService, sessionManager);
-        this.orderHandler = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService);
+        this.orderHandler = new OrderHandler(orderService, cartService, paymentService, sessionManager, udpServer, productService, transactionDAO);
         this.adminHandler = new AdminHandler(userService, productService, orderService, sessionManager);
         this.userHandler = new UserHandler(userService, sessionManager);
 

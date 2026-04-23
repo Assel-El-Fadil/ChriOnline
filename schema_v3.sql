@@ -182,6 +182,39 @@ CREATE TABLE order_items (
 );
 
 -- ============================================================
+--  TABLE: factures
+-- ============================================================
+CREATE TABLE factures (
+    id             INT           NOT NULL AUTO_INCREMENT,
+    order_id       INT           NOT NULL,
+    invoice_number VARCHAR(50)   NOT NULL,
+    issue_date     TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_invoice_number (invoice_number),
+    CONSTRAINT fk_factures_order
+        FOREIGN KEY (order_id) REFERENCES orders(id)
+        ON DELETE CASCADE
+);
+
+-- ============================================================
+--  TABLE: payment_transactions
+-- ============================================================
+CREATE TABLE payment_transactions (
+    id               INT           NOT NULL AUTO_INCREMENT,
+    user_id          INT           NOT NULL,
+    transaction_uuid VARCHAR(50)   NOT NULL,
+    status           ENUM('PENDING', 'SUCCESS', 'FAILED') NOT NULL DEFAULT 'PENDING',
+    created_at       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_transaction_uuid (transaction_uuid),
+    CONSTRAINT fk_transactions_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+-- ============================================================
 --  SEED DATA
 -- ============================================================
 

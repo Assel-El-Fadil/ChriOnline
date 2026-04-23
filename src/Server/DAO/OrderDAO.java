@@ -137,6 +137,43 @@ public class OrderDAO {
         }
     }
 
+    public List<Shared.DTO.OrderItemDTO> findItemsByOrderId(int orderId) {
+        final String sql =
+                "SELECT oi.id, oi.order_id, oi.product_id, p.name AS product_name, " +
+                        "oi.quantity, oi.unit_price, oi.subtotal " +
+                        "FROM order_items oi " +
+                        "JOIN products p ON oi.product_id = p.id " +
+                        "WHERE oi.order_id = ?";
+
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderId);
+
+            ResultSet rs = ps.executeQuery();
+            List<Shared.DTO.OrderItemDTO> items = new ArrayList<>();
+            while (rs.next()) {
+                items.add(new Shared.DTO.OrderItemDTO(
+                        rs.getInt("id"),
+                        rs.getInt("order_id"),
+                        rs.getInt("product_id"),
+                        rs.getString("product_name"),
+                        rs.getInt("quantity"),
+                        rs.getDouble("unit_price"),
+                        rs.getDouble("subtotal")
+                ));
+            }
+            return items;
+
+        } catch (SQLException e) {
+            throw new DAOException("findItemsByOrderId failed for orderId=" + orderId
+                    + ": " + e.getMessage(), e);
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+    }
+
     // ──────────────────────────────────────────────────────────────
     // PRIVATE HELPERS
     // ──────────────────────────────────────────────────────────────
