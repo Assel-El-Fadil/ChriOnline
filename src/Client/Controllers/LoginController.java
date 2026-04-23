@@ -3,7 +3,11 @@ package Client.Controllers;
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Shared.ResponseBuilder;
+import Shared.Security.RSAKeyPairGenerator;
+import Shared.Security.Signer;
 import javafx.application.Platform;
+import java.security.PrivateKey;
+import java.util.Base64;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -152,6 +156,68 @@ public class LoginController {
     // ──────────────────────────────────────────────────────────────
     // Register button — switch to register screen
     // ──────────────────────────────────────────────────────────────
+    @FXML
+    private void handleAdminRSALogin() {
+        String username = usernameField.getText().trim();
+        if (username.isEmpty()) {
+            showError("Please enter your admin username first.");
+            return;
+        }
+
+        loginButton.setDisable(true);
+        hideError();
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                // 1. Request Challenge
+                String challengeResp = socketClient.sendCommand("ADMIN_CHALLENGE|" + username);
+                if (!ResponseBuilder.isOk(challengeResp)) return challengeResp;
+                
+                String challenge = ResponseBuilder.extractPayload(challengeResp);
+
+                // 2. Sign Challenge locally
+                // Note: Expects admin_private.key in the app root
+                PrivateKey privKey = RSAKeyPairGenerator.loadPrivateKeyFromFile("admin_private.key");
+                byte[] signature = Signer.sign(challenge, privKey);
+                String signatureB64 = Base64.getEncoder().encodeToString(signature);
+
+                // 3. Verify & Login
+                return socketClient.sendCommand("ADMIN_VERIFY|" + username + "|" + signatureB64 + "|" + udpPort);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            String response = task.getValue();
+            if (ResponseBuilder.isOk(response)) {
+                String payload = ResponseBuilder.extractPayload(response);
+                String[] parts = payload.split("\\|", 3);
+                if (parts.length >= 2) {
+                    AppState.setSession(parts[0], username, parts[1], 0);
+                    loadMainWindow();
+                } else {
+                    loginButton.setDisable(false);
+                    showError("Unknown server response.");
+                }
+            } else {
+                loginButton.setDisable(false);
+                showError(ResponseBuilder.extractError(response));
+            }
+        });
+
+        task.setOnFailed(event -> {
+            loginButton.setDisable(false);
+            Throwable e = task.getException();
+            if (e instanceof java.io.FileNotFoundException) {
+                showError("Admin private key not found locally.");
+            } else {
+                showError("RSA Login Failed: " + (e != null ? e.getMessage() : "Unknown error"));
+                if (e != null) e.printStackTrace();
+            }
+        });
+
+        new Thread(task).start();
+    }
     @FXML
     private void handleRegister() {
         try {

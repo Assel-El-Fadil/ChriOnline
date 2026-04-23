@@ -8,8 +8,13 @@ import Server.SessionManager;
 import Shared.Command;
 import Shared.DTO.UserDTO;
 import Shared.ResponseBuilder;
+import Shared.Security.ChallengeGenerator;
+import Shared.Security.RSAKeyPairGenerator;
+import Shared.Security.Verifier;
 
 import java.net.Socket;
+import java.security.PublicKey;
+import java.util.Base64;
 import java.util.UUID;
 
 public class AuthHandler {
@@ -29,10 +34,11 @@ public class AuthHandler {
 
     public String handle(Command cmd, String[] params, Socket clientSocket) {
         switch (cmd) {
-            case REGISTER: return handleRegister(params);
-            case LOGIN:    return handleLogin(params, clientSocket);
-            case LOGOUT:   return handleLogout(params);
-            default:       return ResponseBuilder.error("Unknown auth command");
+            case REGISTER:        return handleRegister(params);
+            case LOGIN:           return handleLogin(params, clientSocket);
+            case LOGOUT:          return handleLogout(params);
+            case ADMIN_CHALLENGE: return handleAdminChallenge(params);
+            default:              return ResponseBuilder.error("Unknown auth command");
         }
     }
 
@@ -138,6 +144,63 @@ public class AuthHandler {
                 + " | udpPort: " + udpPort);
 
         return ResponseBuilder.ok(token + "|" + user.role);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // ADMIN RSA AUTH (Section 8)
+    // ──────────────────────────────────────────────────────────────
+
+    private String handleAdminChallenge(String[] params) {
+        if (params.length < 1) return ResponseBuilder.error("Missing username");
+        String username = params[0].trim();
+
+        // Check if user exists and is admin
+        var authUser = userService.findAuthUserByUsername(username);
+        if (authUser == null || !"ADMIN".equals(authUser.role)) {
+            return ResponseBuilder.error("Admin access denied");
+        }
+
+        return ResponseBuilder.ok(ChallengeGenerator.generateChallenge());
+    }
+
+    public String handleAdminVerify(String username, String signatureB64, String challenge, int udpPort, Socket clientSocket) {
+        // 1. Fetch user (must be admin)
+        var authUser = userService.findAuthUserByUsername(username); 
+        if (authUser == null || !"ADMIN".equals(authUser.role)) {
+            return ResponseBuilder.error("Admin access denied");
+        }
+
+        if (authUser.publicKey == null || authUser.publicKey.isEmpty()) {
+            return ResponseBuilder.error("No public key registered for this admin");
+        }
+
+        // 2. Verify Signature
+        try {
+            byte[] signatureBytes = Base64.getDecoder().decode(signatureB64);
+            PublicKey publicKey = RSAKeyPairGenerator.loadPublicKeyFromString(authUser.publicKey);
+            
+            boolean isValid = Verifier.verify(challenge, signatureBytes, publicKey);
+            if (!isValid) {
+                return ResponseBuilder.error("Invalid signature");
+            }
+
+            // 3. Success -> Create Session (cloned from handleLogin)
+            String token = UUID.randomUUID().toString();
+            String clientIP = clientSocket.getInetAddress().getHostAddress();
+
+            SessionData sessionData = new SessionData(
+                    token, authUser.id, authUser.role, authUser.username, clientIP, udpPort
+            );
+            sessionManager.addSession(token, sessionData);
+            cartService.loadFromDB(token, authUser.id);
+
+            System.out.println("[AuthHandler] ADMIN RSA LOGIN success — user: " + username);
+            return ResponseBuilder.ok(token + "|" + authUser.role);
+
+        } catch (Exception e) {
+            System.err.println("[AuthHandler] RSA Verification error: " + e.getMessage());
+            return ResponseBuilder.error("Verification failed");
+        }
     }
 
     // ──────────────────────────────────────────────────────────────

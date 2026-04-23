@@ -24,10 +24,11 @@ public class UserDAO {
         public final String role;
         public final int active;
         public final String passwordHash;
+        public final String publicKey; // Added for RSA Authentication
 
         public AuthUser(int id, String username, String firstName, String lastName,
                         String email, String address, String profilePhoto,
-                        String role, int active, String passwordHash) {
+                        String role, int active, String passwordHash, String publicKey) {
             this.id           = id;
             this.username     = username;
             this.firstName    = firstName;
@@ -38,6 +39,7 @@ public class UserDAO {
             this.role         = role;
             this.active       = active;
             this.passwordHash = passwordHash;
+            this.publicKey    = publicKey;
         }
     }
 
@@ -197,6 +199,22 @@ public class UserDAO {
         }
     }
 
+    public boolean updatePublicKey(int userId, String publicKeyBase64) {
+        final String sql = "UPDATE users SET public_key = ? WHERE id = ? AND active = 1";
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, publicKeyBase64);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new DAOException("updatePublicKey failed for userId=" + userId + ": " + e.getMessage(), e);
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Read operations
     // ────────────────────────────────────────────────────────────
@@ -204,7 +222,7 @@ public class UserDAO {
     public AuthUser findByUsernameForAuth(String username) {
         final String sql =
                 "SELECT id, first_name, last_name, username, email, address, "
-                        + "       profile_photo, role, active, password_hash "
+                        + "       profile_photo, role, active, password_hash, public_key "
                         + "FROM users "
                         + "WHERE username = ? AND active = 1";
 
@@ -227,7 +245,8 @@ public class UserDAO {
                         rs.getString("profile_photo"),
                         rs.getString("role"),
                         rs.getInt("active"),
-                        rs.getString("password_hash")
+                        rs.getString("password_hash"),
+                        rs.getString("public_key")
                 );
             }
             return null;

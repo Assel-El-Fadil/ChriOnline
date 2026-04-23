@@ -20,6 +20,7 @@ public class ClientHandler implements Runnable {
     private final UserHandler userHandler;
 
     private volatile String currentToken = null;
+    private volatile String pendingChallenge = null; // Used for RSA Login (Section 8)
 
     // ────────────────────────────────────────────────────────────
     // Constructor
@@ -131,6 +132,41 @@ public class ClientHandler implements Runnable {
             case LOGOUT: {
                 String response = authHandler.handle(cmd, params, socket);
                 currentToken = null;
+                return response;
+            }
+
+            case ADMIN_CHALLENGE: {
+                String response = authHandler.handle(cmd, params, socket);
+                if (ResponseBuilder.isOk(response)) {
+                    pendingChallenge = ResponseBuilder.extractPayload(response);
+                }
+                return response;
+            }
+
+            case ADMIN_VERIFY: {
+                // Expecting params: [username, signatureB64, udpPort]
+                if (params.length < 3) return ResponseBuilder.error("Missing parameters");
+                if (pendingChallenge == null) return ResponseBuilder.error("No pending challenge. Request one first.");
+                
+                String username = params[0];
+                String signature = params[1];
+                int udpPort;
+                try {
+                    udpPort = Integer.parseInt(params[2]);
+                } catch (NumberFormatException e) {
+                    return ResponseBuilder.error("Invalid UDP port");
+                }
+
+                String response = authHandler.handleAdminVerify(username, signature, pendingChallenge, udpPort, socket);
+                
+                if (ResponseBuilder.isOk(response)) {
+                    pendingChallenge = null; // Clear challenge after success
+                    String payload = ResponseBuilder.extractPayload(response);
+                    String[] parts = payload.split("\\|", -1);
+                    if (parts.length >= 1) {
+                        currentToken = parts[0];
+                    }
+                }
                 return response;
             }
 
