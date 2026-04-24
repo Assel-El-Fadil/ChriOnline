@@ -12,6 +12,7 @@ CREATE TABLE users (
     profile_photo VARCHAR(255) DEFAULT NULL,
     role          ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
     active        TINYINT(1)   NOT NULL DEFAULT 1,
+    public_key    TEXT         DEFAULT NULL,
     created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),

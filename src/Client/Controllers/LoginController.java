@@ -8,7 +8,11 @@ import Client.session.AppState;
 import Shared.ResponseBuilder;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+import Shared.Security.RSAKeyPairGenerator;
+import Shared.Security.Signer;
 import javafx.application.Platform;
+import java.security.PrivateKey;
+import java.util.Base64;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -188,9 +192,91 @@ public class LoginController {
         new Thread(task).start();
     }
 
+    @FXML
+    private void handleTogglePassword() {
+        passwordVisible = !passwordVisible;
+        if (passwordVisible) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordVisibleField.setVisible(true);
+            passwordField.setVisible(false);
+            togglePasswordBtn.setText("Hide");
+            passwordVisibleField.requestFocus();
+            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordField.setVisible(true);
+            passwordVisibleField.setVisible(false);
+            togglePasswordBtn.setText("Show");
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
+    }
+
     // ──────────────────────────────────────────────────────────────
     // Register button — switch to register screen
     // ──────────────────────────────────────────────────────────────
+    @FXML
+    private void handleAdminRSALogin() {
+        String username = usernameField.getText().trim();
+        if (username.isEmpty()) {
+            showError("Please enter your admin username first.");
+            return;
+        }
+
+        loginButton.setDisable(true);
+        hideError();
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                // 1. Request Challenge
+                String challengeResp = socketClient.sendCommand("ADMIN_CHALLENGE|" + username);
+                if (!ResponseBuilder.isOk(challengeResp)) return challengeResp;
+
+                String challenge = ResponseBuilder.extractPayload(challengeResp);
+
+                // 2. Sign Challenge locally
+                // Note: Expects admin_private.key in the app root
+                PrivateKey privKey = RSAKeyPairGenerator.loadPrivateKeyFromFile("admin_private.key");
+                byte[] signature = Signer.sign(challenge, privKey);
+                String signatureB64 = Base64.getEncoder().encodeToString(signature);
+
+                // 3. Verify & Login
+                return socketClient.sendCommand("ADMIN_VERIFY|" + username + "|" + signatureB64 + "|" + udpPort);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            String response = task.getValue();
+            if (ResponseBuilder.isOk(response)) {
+                String payload = ResponseBuilder.extractPayload(response);
+                String[] parts = payload.split("\\|", 3);
+                if (parts.length >= 2) {
+                    AppState.setSession(parts[0], username, parts[1], 0);
+                    loadMainWindow();
+                } else {
+                    loginButton.setDisable(false);
+                    showError("Unknown server response.");
+                }
+            } else {
+                loginButton.setDisable(false);
+                showError(ResponseBuilder.extractError(response));
+            }
+        });
+
+        task.setOnFailed(event -> {
+            loginButton.setDisable(false);
+            Throwable e = task.getException();
+            if (e instanceof java.io.FileNotFoundException) {
+                showError("Admin private key not found locally.");
+            } else {
+                showError("RSA Login Failed: " + (e != null ? e.getMessage() : "Unknown error"));
+                if (e != null) e.printStackTrace();
+            }
+        });
+
+        new Thread(task).start();
+    }
     @FXML
     private void handleRegister() {
         try {
@@ -212,126 +298,6 @@ public class LoginController {
             showError("Could not load register screen.");
             e.printStackTrace();
         }
-    }
-
-    // ──────────────────────────────────────────────────────────────
-    // Forgot Password Flow
-    // ──────────────────────────────────────────────────────────────
-
-    @FXML
-    private void handleTogglePassword() {
-        passwordVisible = !passwordVisible;
-        if (passwordVisible) {
-            passwordVisibleField.setText(passwordField.getText());
-            passwordVisibleField.setVisible(true);
-            passwordField.setVisible(false);
-            togglePasswordBtn.setText("Hide");
-            passwordVisibleField.requestFocus();
-            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
-        } else {
-            passwordField.setText(passwordVisibleField.getText());
-            passwordField.setVisible(true);
-            passwordVisibleField.setVisible(false);
-            togglePasswordBtn.setText("Show");
-            passwordField.requestFocus();
-            passwordField.positionCaret(passwordField.getText().length());
-        }
-    }
-
-    @FXML
-    private void handleForgotPassword() {
-        TextInputDialog usernameDialog = new TextInputDialog("");
-        usernameDialog.setTitle("Forgot Password");
-        usernameDialog.setHeaderText("Reset your password");
-        usernameDialog.setContentText("Enter your email:");
-
-        Optional<String> emailOpt = usernameDialog.showAndWait();
-        if (emailOpt.isPresent() && !emailOpt.get().trim().isEmpty()) {
-            String email = emailOpt.get().trim();
-
-            Task<String> task = new Task<>() {
-                @Override
-                protected String call() {
-                    return socketClient.sendCommand("FORGOT_PASSWORD|" + email);
-                }
-            };
-
-            task.setOnSucceeded(event -> {
-                String response = task.getValue();
-                if (ResponseBuilder.isOk(response)) {
-                    showResetPasswordDialog(email);
-                } else {
-                    showError(ResponseBuilder.extractError(response));
-                }
-            });
-
-            task.setOnFailed(event -> showError("Cannot reach server."));
-            new Thread(task).start();
-        }
-    }
-
-    private void showResetPasswordDialog(String email) {
-        Dialog<String[]> resetDialog = new Dialog<>();
-        resetDialog.setTitle("Enter OTP");
-        resetDialog.setHeaderText("An OTP was sent to your email. Please enter it below.");
-
-        ButtonType confirmButtonType = new ButtonType("Reset Password", ButtonBar.ButtonData.OK_DONE);
-        resetDialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
-
-        javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField otpField = new TextField();
-        otpField.setPromptText("OTP Code");
-        PasswordField newPasswordField = new PasswordField();
-        newPasswordField.setPromptText("New Password");
-
-        grid.add(new Label("OTP:"), 0, 0);
-        grid.add(otpField, 1, 0);
-        grid.add(new Label("New Password:"), 0, 1);
-        grid.add(newPasswordField, 1, 1);
-
-        resetDialog.getDialogPane().setContent(grid);
-        Platform.runLater(otpField::requestFocus);
-
-        resetDialog.setResultConverter(dialogButton -> {
-            if (dialogButton == confirmButtonType) {
-                return new String[]{otpField.getText(), newPasswordField.getText()};
-            }
-            return null;
-        });
-
-        Optional<String[]> result = resetDialog.showAndWait();
-        result.ifPresent(data -> {
-            String otp = data[0].trim();
-            String newPass = data[1];
-
-            if (otp.isEmpty() || newPass.isEmpty()) {
-                showError("OTP and New Password cannot be empty.");
-                return;
-            }
-
-            Task<String> resetTask = new Task<>() {
-                @Override
-                protected String call() {
-                    return socketClient.sendCommand("RESET_PASSWORD|" + email + "|" + otp + "|" + newPass);
-                }
-            };
-
-            resetTask.setOnSucceeded(e -> {
-                String res = resetTask.getValue();
-                if (ResponseBuilder.isOk(res)) {
-                    showSuccessMessage("Password reset successfully. Please log in.");
-                } else {
-                    showError(ResponseBuilder.extractError(res));
-                }
-            });
-
-            resetTask.setOnFailed(e -> showError("Cannot reach server."));
-            new Thread(resetTask).start();
-        });
     }
 
     // ──────────────────────────────────────────────────────────────

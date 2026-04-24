@@ -93,6 +93,10 @@ public class UserService {
         );
     }
 
+    public AuthUser findAuthUserByUsername(String username) {
+        return userDAO.findByUsernameForAuth(username);
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Lookup
     // ────────────────────────────────────────────────────────────

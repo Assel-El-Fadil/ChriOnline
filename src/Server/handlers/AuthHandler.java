@@ -9,8 +9,13 @@ import Server.SessionManager;
 import Shared.Command;
 import Shared.DTO.UserDTO;
 import Shared.ResponseBuilder;
+import Shared.Security.ChallengeGenerator;
+import Shared.Security.RSAKeyPairGenerator;
+import Shared.Security.Verifier;
 
 import java.net.Socket;
+import java.security.PublicKey;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Random;
@@ -33,7 +38,7 @@ public class AuthHandler {
     private final SessionManager sessionManager;
 
     private static final Logger logger = LogManager.getLogger(AuthHandler.class);
-    
+
     // OTP storage for password reset: email -> OTP
     private final ConcurrentHashMap<String, String> resetOTPs = new ConcurrentHashMap<>();
 
@@ -58,6 +63,7 @@ public class AuthHandler {
                 return handleForgotPassword(params);
             case RESET_PASSWORD:
                 return handleResetPassword(params);
+            case ADMIN_CHALLENGE: return handleAdminChallenge(params);
             default:
                 return ResponseBuilder.error("Unknown auth command");
         }
@@ -161,7 +167,8 @@ public class AuthHandler {
                 user.role,
                 user.username,
                 clientIP,
-                udpPort);
+                udpPort
+        );
         sessionManager.addSession(token, sessionData);
 
         try {
@@ -199,20 +206,20 @@ public class AuthHandler {
             return ResponseBuilder.error("Missing email");
         }
         String email = params[0].trim();
-        
+
         try {
             UserDTO user = userService.getUserByEmail(email);
 
             Random random = new Random();
             int number = 100000 + random.nextInt(900000);
             String otp = String.valueOf(number);
-            
+
             resetOTPs.put(user.username, otp);
-            
+
             // Send email
             sendMail(new InternetAddress(email), "Password Reset OTP", "Your password reset OTP is: " + otp);
             logger.info("[AuthHandler] Password reset OTP sent to " + email);
-            
+
             return ResponseBuilder.ok();
 
         } catch (UserService.UserNotFoundException e) {
