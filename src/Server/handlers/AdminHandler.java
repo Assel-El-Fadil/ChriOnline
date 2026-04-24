@@ -10,8 +10,12 @@ import Shared.DTO.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AdminHandler {
+
+    private static final Logger logger = LogManager.getLogger(AdminHandler.class);
 
     private final UserService userService;
     private final ProductService productService;
@@ -69,6 +73,7 @@ public class AdminHandler {
         try {
             ProductDTO productDTO = new ProductDTO(0, name, description, price, stock, category, 1, photoPath);
             int newId = productService.create(productDTO);
+            logger.info("[AdminHandler] Admin " + requireAdmin(params[0]).getUsername() + " successfully created product: " + name + " (ID: " + newId + ")");
             return ResponseBuilder.ok(String.valueOf(newId));
 
         } catch (ProductService.ValidationException | ProductService.InvalidCategoryException | SQLException e) {
@@ -144,6 +149,7 @@ public class AdminHandler {
 
         try {
             productService.delete(productId);
+            logger.info("[AdminHandler] Admin " + requireAdmin(params[0]).getUsername() + " successfully deleted product ID: " + productId);
             return ResponseBuilder.ok();
 
         } catch (ProductService.ProductNotFoundException e) {
@@ -254,6 +260,7 @@ public class AdminHandler {
 
         try {
             userService.hardDelete(targetUserId);
+            logger.warn("[AdminHandler] Admin " + admin.getUsername() + " hard deleted user ID: " + targetUserId);
             return ResponseBuilder.ok();
         } catch (UserService.UserNotFoundException | IllegalStateException e) {
             return ResponseBuilder.error(e.getMessage());
@@ -282,6 +289,7 @@ public class AdminHandler {
 
         try {
             userService.deactivate(targetUserId);
+            logger.info("[AdminHandler] Admin " + admin.getUsername() + " deactivated user ID: " + targetUserId);
             return ResponseBuilder.ok();
         } catch (UserService.UserNotFoundException e) {
             return ResponseBuilder.error(e.getMessage());
@@ -310,6 +318,7 @@ public class AdminHandler {
 
         try {
             userService.activate(targetUserId);
+            logger.info("[AdminHandler] Admin " + admin.getUsername() + " activated user ID: " + targetUserId);
             return ResponseBuilder.ok();
         } catch (UserService.UserNotFoundException e) {
             return ResponseBuilder.error(e.getMessage());

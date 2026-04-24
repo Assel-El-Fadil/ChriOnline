@@ -1,26 +1,39 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Shared.ResponseBuilder;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Random;
 
 
 public class LoginController {
+    private static final Logger logger = LogManager.getLogger(LoginController.class);
+
 
     // ── FXML injections ───────────────────────────────────────────
-    @FXML private TextField     usernameField;
+    @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private TextField     passwordVisibleField;
     @FXML private Button        togglePasswordBtn;
@@ -44,8 +57,10 @@ public class LoginController {
 
     // ── Injected by Main before the scene is shown ────────────────
     private SocketClient socketClient;
-    private int          udpPort;
-    private Stage        primaryStage;
+    private int udpPort;
+    private Stage primaryStage;
+
+    private int attempts = 3;
 
     // ──────────────────────────────────────────────────────────────
     // Setters — called by Main.java after FXMLLoader.load()
@@ -67,8 +82,10 @@ public class LoginController {
     // ──────────────────────────────────────────────────────────────
     @FXML
     private void handleLogin() {
+        logger.info("handleLogin called");
+
         String username = usernameField.getText().trim();
-        String password = passwordVisible ? passwordVisibleField.getText() : passwordField.getText();
+        String password = passwordField.getText();
 
         // Basic client-side validation
         if (username.isEmpty() || password.isEmpty()) {
@@ -101,11 +118,47 @@ public class LoginController {
                 String payload = ResponseBuilder.extractPayload(response);
                 String[] parts = payload.split("\\|", 3);
 
+                Random random = new Random();
+                int number = 100000 + random.nextInt(900000);
+
+                try{
+                    sendMail(new InternetAddress(parts[2]), "Code de vérification", String.valueOf(number));
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                TextInputDialog dialog = new TextInputDialog("");
+                dialog.setTitle("Vérification");
+                dialog.setHeaderText("Enter The verification code sent to your email for ");
+                dialog.setContentText("Code de vérification:");
+
+                Optional<String> result = dialog.showAndWait();
+                result.ifPresent(qtyStr -> {
+                    try {
+                        int code = Integer.parseInt(qtyStr);
+                        if (code <= 0) {
+                            showError("Quantity must be a positive integer");
+                            return;
+                        }
+
+                        if (code != number) {
+                            showError("Wrong code.");
+                            return;
+                        }
+
+                    } catch (NumberFormatException ex) {
+                        showError("Invalid quantity input");
+                    }
+                });
+
                 if (parts.length >= 2) {
                     String token = parts[0];
                     String role  = parts[1];
                     // userId not yet returned by LOGIN — default 0 until ORDER_HISTORY
                     AppState.setSession(token, username, role, 0);
+                    attempts = 5;
 
                     loadMainWindow();
                 } else {
@@ -116,7 +169,13 @@ public class LoginController {
             } else {
                 // ERR|message
                 loginButton.setDisable(false);
-                showError(ResponseBuilder.extractError(response));
+                String err = ResponseBuilder.extractError(response);
+                if(err.equals("Invalid username or password")){
+                    attempts -= 1;
+                    showError(err + ".Attempts left : " + attempts);
+                    return;
+                }
+                showError(err);
             }
         });
 
@@ -127,26 +186,6 @@ public class LoginController {
         });
 
         new Thread(task).start();
-    }
-
-    @FXML
-    private void handleTogglePassword() {
-        passwordVisible = !passwordVisible;
-        if (passwordVisible) {
-            passwordVisibleField.setText(passwordField.getText());
-            passwordVisibleField.setVisible(true);
-            passwordField.setVisible(false);
-            togglePasswordBtn.setText("Hide");
-            passwordVisibleField.requestFocus();
-            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
-        } else {
-            passwordField.setText(passwordVisibleField.getText());
-            passwordField.setVisible(true);
-            passwordVisibleField.setVisible(false);
-            togglePasswordBtn.setText("Show");
-            passwordField.requestFocus();
-            passwordField.positionCaret(passwordField.getText().length());
-        }
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -173,6 +212,126 @@ public class LoginController {
             showError("Could not load register screen.");
             e.printStackTrace();
         }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Forgot Password Flow
+    // ──────────────────────────────────────────────────────────────
+
+    @FXML
+    private void handleTogglePassword() {
+        passwordVisible = !passwordVisible;
+        if (passwordVisible) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordVisibleField.setVisible(true);
+            passwordField.setVisible(false);
+            togglePasswordBtn.setText("Hide");
+            passwordVisibleField.requestFocus();
+            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordField.setVisible(true);
+            passwordVisibleField.setVisible(false);
+            togglePasswordBtn.setText("Show");
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
+    }
+
+    @FXML
+    private void handleForgotPassword() {
+        TextInputDialog usernameDialog = new TextInputDialog("");
+        usernameDialog.setTitle("Forgot Password");
+        usernameDialog.setHeaderText("Reset your password");
+        usernameDialog.setContentText("Enter your email:");
+
+        Optional<String> emailOpt = usernameDialog.showAndWait();
+        if (emailOpt.isPresent() && !emailOpt.get().trim().isEmpty()) {
+            String email = emailOpt.get().trim();
+
+            Task<String> task = new Task<>() {
+                @Override
+                protected String call() {
+                    return socketClient.sendCommand("FORGOT_PASSWORD|" + email);
+                }
+            };
+
+            task.setOnSucceeded(event -> {
+                String response = task.getValue();
+                if (ResponseBuilder.isOk(response)) {
+                    showResetPasswordDialog(email);
+                } else {
+                    showError(ResponseBuilder.extractError(response));
+                }
+            });
+
+            task.setOnFailed(event -> showError("Cannot reach server."));
+            new Thread(task).start();
+        }
+    }
+
+    private void showResetPasswordDialog(String email) {
+        Dialog<String[]> resetDialog = new Dialog<>();
+        resetDialog.setTitle("Enter OTP");
+        resetDialog.setHeaderText("An OTP was sent to your email. Please enter it below.");
+
+        ButtonType confirmButtonType = new ButtonType("Reset Password", ButtonBar.ButtonData.OK_DONE);
+        resetDialog.getDialogPane().getButtonTypes().addAll(confirmButtonType, ButtonType.CANCEL);
+
+        javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField otpField = new TextField();
+        otpField.setPromptText("OTP Code");
+        PasswordField newPasswordField = new PasswordField();
+        newPasswordField.setPromptText("New Password");
+
+        grid.add(new Label("OTP:"), 0, 0);
+        grid.add(otpField, 1, 0);
+        grid.add(new Label("New Password:"), 0, 1);
+        grid.add(newPasswordField, 1, 1);
+
+        resetDialog.getDialogPane().setContent(grid);
+        Platform.runLater(otpField::requestFocus);
+
+        resetDialog.setResultConverter(dialogButton -> {
+            if (dialogButton == confirmButtonType) {
+                return new String[]{otpField.getText(), newPasswordField.getText()};
+            }
+            return null;
+        });
+
+        Optional<String[]> result = resetDialog.showAndWait();
+        result.ifPresent(data -> {
+            String otp = data[0].trim();
+            String newPass = data[1];
+
+            if (otp.isEmpty() || newPass.isEmpty()) {
+                showError("OTP and New Password cannot be empty.");
+                return;
+            }
+
+            Task<String> resetTask = new Task<>() {
+                @Override
+                protected String call() {
+                    return socketClient.sendCommand("RESET_PASSWORD|" + email + "|" + otp + "|" + newPass);
+                }
+            };
+
+            resetTask.setOnSucceeded(e -> {
+                String res = resetTask.getValue();
+                if (ResponseBuilder.isOk(res)) {
+                    showSuccessMessage("Password reset successfully. Please log in.");
+                } else {
+                    showError(ResponseBuilder.extractError(res));
+                }
+            });
+
+            resetTask.setOnFailed(e -> showError("Cannot reach server."));
+            new Thread(resetTask).start();
+        });
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -213,9 +372,22 @@ public class LoginController {
 
             } catch (Exception e) {
                 showError("Could not load main window.");
-                e.printStackTrace();
+                logger.error("Exception occurred", e);
             }
         });
+    }
+
+    private void sendMail(InternetAddress recepients, String subject, String body)
+            throws IOException, AddressException, MessagingException {
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
+        msg.addRecipient(Message.RecipientType.TO, recepients);
+        msg.setSubject(subject);
+        msg.setText(body);
+        Transport.send(msg);
     }
 
     // ──────────────────────────────────────────────────────────────

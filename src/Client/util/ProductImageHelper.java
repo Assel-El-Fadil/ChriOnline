@@ -1,5 +1,8 @@
 package Client.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.scene.image.Image;
 
 import java.io.File;
@@ -8,6 +11,8 @@ import java.io.File;
  * Loads a product image from a local filesystem path (image_path column).
  */
 public final class ProductImageHelper {
+    private static final Logger logger = LogManager.getLogger(ProductImageHelper.class);
+
 
     private ProductImageHelper() {}
 
@@ -71,10 +76,10 @@ public final class ProductImageHelper {
                 return new Image(fileSrcClient.toURI().toString());
             }
 
-            System.err.println("[ProductImageHelper] Could not find resource: " + path);
+            logger.error("[ProductImageHelper] Could not find resource: " + path);
             return null;
         } catch (Exception e) {
-            System.err.println("[ProductImageHelper] Error loading image " + path + ": " + e.getMessage());
+            logger.error("[ProductImageHelper] Error loading image " + path + ": " + e.getMessage());
             return null;
         }
     }

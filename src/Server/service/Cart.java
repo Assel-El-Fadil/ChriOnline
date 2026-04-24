@@ -1,11 +1,16 @@
 package Server.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Shared.DTO.ProductDTO;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Cart {
+    private static final Logger logger = LogManager.getLogger(Cart.class);
+
 
     private final HashMap<Integer, Integer> items = new HashMap<>();
 
@@ -39,7 +44,7 @@ public class Cart {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             return 0.0;
         }
         return total;

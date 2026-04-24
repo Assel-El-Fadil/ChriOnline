@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Hyperlink?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Client.Controllers.LoginController"
@@ -52,7 +53,7 @@
                                styleClass="login-form-field"/>
                 </VBox>
 
-                <!-- Password field with show/hide toggle -->
+                <!-- Password field -->
                 <VBox spacing="6">
                     <Label text="Password" styleClass="login-field-label"/>
                     <HBox spacing="8" alignment="CENTER_LEFT">
@@ -69,6 +70,7 @@
                                 text="Show"
                                 onAction="#handleTogglePassword"
                                 styleClass="toggle-password-btn"/>
+                        <Hyperlink text="Forgot Password?" onAction="#handleForgotPassword" style="-fx-font-size: 11px; -fx-text-fill: #1e88e5; -fx-border-color: transparent;" focusTraversable="false"/>
                     </HBox>
                 </VBox>
 

@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Client.util.ProductImageHelper;
@@ -22,6 +25,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ProductDetailsController {
+    private static final Logger logger = LogManager.getLogger(ProductDetailsController.class);
+
 
     @FXML private Label   lblName;
     @FXML private Label   lblCategory;
@@ -92,7 +97,7 @@ public class ProductDetailsController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showCartStatus("Could not return to catalog.", true);
         }
     }

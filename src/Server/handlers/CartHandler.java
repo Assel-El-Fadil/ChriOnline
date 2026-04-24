@@ -1,5 +1,8 @@
 package Server.handlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Server.SessionManager;
 import Server.service.Cart;
 import Server.service.CartService;
@@ -11,6 +14,8 @@ import Shared.SessionData;
 import java.util.stream.Collectors;
 
 public class CartHandler {
+    private static final Logger logger = LogManager.getLogger(CartHandler.class);
+
 
     private final CartService cartService;
     private final ProductService productService;
@@ -84,7 +89,7 @@ public class CartHandler {
             return ResponseBuilder.ok(String.valueOf(total));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             return ResponseBuilder.error(e.getMessage());
         }
     }
@@ -115,7 +120,7 @@ public class CartHandler {
             return ResponseBuilder.ok(String.valueOf(newTotal));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             return ResponseBuilder.error(e.getMessage());
         }
     }
@@ -152,14 +157,14 @@ public class CartHandler {
                                 + ",subtotal=" + (product.price * qty);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Exception occurred", e);
                 }
                 return "";
             }).filter(s -> !s.isEmpty()).collect(Collectors.joining(";"));
 
             return ResponseBuilder.ok(payload);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             return ResponseBuilder.error(e.getMessage());
         }
     }
@@ -180,7 +185,7 @@ public class CartHandler {
             cartService.clearCart(token, userId);
             return ResponseBuilder.ok("");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             return ResponseBuilder.error(e.getMessage());
         }
     }

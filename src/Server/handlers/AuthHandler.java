@@ -1,6 +1,7 @@
 
 package Server.handlers;
 
+import Server.security.AuthSecurityManager;
 import Server.service.CartService;
 import Server.service.UserService;
 import Shared.SessionData;
@@ -11,28 +12,54 @@ import Shared.ResponseBuilder;
 
 import java.net.Socket;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Random;
+import java.util.Properties;
+import java.io.IOException;
+
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AuthHandler {
 
-    private final UserService     userService;
-    private final CartService     cartService;
+    private final UserService userService;
+    private final CartService cartService;
     private final SessionManager sessionManager;
+
+    private static final Logger logger = LogManager.getLogger(AuthHandler.class);
+    
+    // OTP storage for password reset: email -> OTP
+    private final ConcurrentHashMap<String, String> resetOTPs = new ConcurrentHashMap<>();
 
     // ──────────────────────────────────────────────────────────────
     // Constructor
     // ──────────────────────────────────────────────────────────────
     public AuthHandler(UserService userService, CartService cartService, SessionManager sessionManager) {
-        this.userService     = userService;
-        this.cartService     = cartService;
+        this.userService = userService;
+        this.cartService = cartService;
         this.sessionManager = sessionManager;
     }
 
     public String handle(Command cmd, String[] params, Socket clientSocket) {
         switch (cmd) {
-            case REGISTER: return handleRegister(params);
-            case LOGIN:    return handleLogin(params, clientSocket);
-            case LOGOUT:   return handleLogout(params);
-            default:       return ResponseBuilder.error("Unknown auth command");
+            case REGISTER:
+                return handleRegister(params);
+            case LOGIN:
+                return handleLogin(params, clientSocket);
+            case LOGOUT:
+                return handleLogout(params);
+            case FORGOT_PASSWORD:
+                return handleForgotPassword(params);
+            case RESET_PASSWORD:
+                return handleResetPassword(params);
+            default:
+                return ResponseBuilder.error("Unknown auth command");
         }
     }
 
@@ -42,14 +69,15 @@ public class AuthHandler {
     private String handleRegister(String[] params) {
 
         if (params.length < 5) {
+            logger.info("[AuthHandler]: Error occurred, Missing parameters");
             return ResponseBuilder.error("Missing parameters");
         }
 
         String firstName = params[0].trim();
-        String lastName  = params[1].trim();
-        String username  = params[2].trim();
-        String password  = params[3];
-        String email     = params[4].trim();
+        String lastName = params[1].trim();
+        String username = params[2].trim();
+        String password = params[3];
+        String email = params[4].trim();
 
         if (firstName.isEmpty()) {
             return ResponseBuilder.error("First name cannot be empty");
@@ -69,7 +97,7 @@ public class AuthHandler {
 
         try {
             int userId = userService.register(firstName, lastName, username, password, email);
-            System.out.println("[AuthHandler] REGISTER success — user: " + username + " id: " + userId);
+            logger.info("[AuthHandler] REGISTER success — user: " + username + " id: " + userId);
             return ResponseBuilder.ok(String.valueOf(userId));
 
         } catch (UserService.ValidationException e) {
@@ -79,7 +107,7 @@ public class AuthHandler {
         } catch (UserService.DuplicateEmailException e) {
             return ResponseBuilder.error("Email already registered");
         } catch (Exception e) {
-            System.err.println("[AuthHandler] REGISTER error: " + e.getMessage());
+            logger.error("[AuthHandler] REGISTER error: " + e.getMessage());
             return ResponseBuilder.error("Registration failed");
         }
     }
@@ -91,6 +119,16 @@ public class AuthHandler {
 
         if (params.length < 3) {
             return ResponseBuilder.error("Missing parameters");
+        }
+
+        String clientIP = clientSocket.getInetAddress().getHostAddress();
+        long blockedSecs = AuthSecurityManager.getInstance().getBlockRemainingSeconds(clientIP);
+        if (blockedSecs > 0) {
+            long mins = blockedSecs / 60;
+            long secs = blockedSecs % 60;
+            logger.warn("[AuthHandler] Blocked IP attempted login: " + clientIP + " (Blocked for " + mins + "m " + secs
+                    + "s)");
+            return ResponseBuilder.error("Too many failed attempts. Try again in " + mins + "m " + secs + "s.");
         }
 
         String username = params[0].trim();
@@ -106,15 +144,16 @@ public class AuthHandler {
         UserDTO user;
         try {
             user = userService.authenticate(username, password);
+            AuthSecurityManager.getInstance().handleSuccessfulLogin(clientIP);
         } catch (UserService.InvalidCredentialsException e) {
+            AuthSecurityManager.getInstance().handleFailedAttempt(clientIP);
             return ResponseBuilder.error("Invalid username or password");
         } catch (Exception e) {
-            System.err.println("[AuthHandler] LOGIN error: " + e.getMessage());
+            logger.error("[AuthHandler] LOGIN error: " + e.getMessage());
             return ResponseBuilder.error("Server error");
         }
 
         String token = UUID.randomUUID().toString();
-        String clientIP = clientSocket.getInetAddress().getHostAddress();
 
         SessionData sessionData = new SessionData(
                 token,
@@ -122,22 +161,21 @@ public class AuthHandler {
                 user.role,
                 user.username,
                 clientIP,
-                udpPort
-        );
+                udpPort);
         sessionManager.addSession(token, sessionData);
 
         try {
             cartService.loadFromDB(token, user.id);
         } catch (Exception e) {
-            System.err.println("[AuthHandler] Could not load cart for user " + user.id + ": " + e.getMessage());
+            logger.error("[AuthHandler] Could not load cart for user " + user.id + ": " + e.getMessage());
         }
 
-        System.out.println("[AuthHandler] LOGIN success — user: " + username
+        logger.info("[AuthHandler] LOGIN success — user: " + username
                 + " | role: " + user.role
                 + " | clientIP: " + clientIP
                 + " | udpPort: " + udpPort);
 
-        return ResponseBuilder.ok(token + "|" + user.role);
+        return ResponseBuilder.ok(token + "|" + user.role + "|" + user.email);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -147,8 +185,81 @@ public class AuthHandler {
         if (params.length < 1) {
             return ResponseBuilder.error("Missing token");
         }
-        sessionManager.removeSession(params[0]);
-        System.out.println("[AuthHandler] LOGOUT — token removed: " + params[0]);
+        String token = params[0];
+        sessionManager.removeSession(token);
+        logger.info("[AuthHandler] LOGOUT — token removed: " + token);
         return ResponseBuilder.ok();
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // FORGOT PASSWORD
+    // ──────────────────────────────────────────────────────────────
+    private String handleForgotPassword(String[] params) {
+        if (params.length < 1) {
+            return ResponseBuilder.error("Missing email");
+        }
+        String email = params[0].trim();
+        
+        try {
+            UserDTO user = userService.getUserByEmail(email);
+
+            Random random = new Random();
+            int number = 100000 + random.nextInt(900000);
+            String otp = String.valueOf(number);
+            
+            resetOTPs.put(user.username, otp);
+            
+            // Send email
+            sendMail(new InternetAddress(email), "Password Reset OTP", "Your password reset OTP is: " + otp);
+            logger.info("[AuthHandler] Password reset OTP sent to " + email);
+            
+            return ResponseBuilder.ok();
+
+        } catch (UserService.UserNotFoundException e) {
+            return ResponseBuilder.error("Internal error.");
+        } catch (Exception e) {
+            logger.error("Error in forgot password for " + email, e);
+            return ResponseBuilder.error("Internal error sending email");
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // RESET PASSWORD
+    // ──────────────────────────────────────────────────────────────
+    private String handleResetPassword(String[] params) {
+        if (params.length < 3) {
+            return ResponseBuilder.error("Missing parameters");
+        }
+        String email = params[0].trim();
+        String otp = params[1].trim();
+        String newPassword = params[2];
+
+        String storedOtp = resetOTPs.get(email);
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            return ResponseBuilder.error("Invalid or expired OTP");
+        }
+
+        try {
+            userService.updatePassword(email, newPassword);
+            resetOTPs.remove(email);
+            logger.info("[AuthHandler] Password reset successful for user " + email);
+            return ResponseBuilder.ok();
+        } catch (Exception e) {
+            logger.error("Error resetting password for " + email, e);
+            return ResponseBuilder.error("Could not reset password");
+        }
+    }
+
+    private void sendMail(InternetAddress recepients, String subject, String body)
+            throws IOException, MessagingException {
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
+        msg.addRecipient(Message.RecipientType.TO, recepients);
+        msg.setSubject(subject);
+        msg.setText(body);
+        Transport.send(msg);
     }
 }

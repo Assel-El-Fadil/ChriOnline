@@ -1,5 +1,8 @@
 package Server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Shared.*;
 import Server.handlers.*;
 
@@ -8,6 +11,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 public class ClientHandler implements Runnable {
+    private static final Logger logger = LogManager.getLogger(ClientHandler.class);
+
 
     private final Socket socket;
     private final SessionManager sessionManager;
@@ -66,34 +71,42 @@ public class ClientHandler implements Runnable {
                     true);
 
             // ── Read-dispatch-respond loop ─────────────────────────
+            boolean firstCommandReceived = false;
             String line;
             while ((line = reader.readLine()) != null) {
 
                 String response;
                 try {
                     ParsedRequest req = RequestParser.parse(line);
+                    if (!firstCommandReceived) {
+                        socket.setSoTimeout(0);
+                        firstCommandReceived = true;
+                    }
                     response = dispatch(req);
 
                 } catch (RequestParser.InvalidRequestException e) {
                     response = ResponseBuilder.error("Unknown command");
-                    System.err.println("[ClientHandler] Bad command from "
+                    logger.error("[ClientHandler] Bad command from "
                             + clientAddress + ": '" + line + "'");
 
                 } catch (Exception e) {
                     response = ResponseBuilder.error("Internal server error");
-                    System.err.println("[ClientHandler] Unexpected error from "
+                    logger.error("[ClientHandler] Unexpected error from "
                             + clientAddress + ": " + e.getMessage());
-                    e.printStackTrace();
+                    logger.error("Exception occurred", e);
                 }
 
                 writer.println(response);
             }
 
-            System.out.println("[ClientHandler] Client disconnected cleanly: "
+            logger.info("[ClientHandler] Client disconnected cleanly: "
                     + clientAddress);
 
+        } catch (java.net.SocketTimeoutException e) {
+            logger.warn("[ClientHandler] Dropped incomplete connection from "
+                    + clientAddress + " (10s handshake timeout)");
         } catch (IOException e) {
-            System.out.println("[ClientHandler] Client disconnected abruptly: "
+            logger.info("[ClientHandler] Client disconnected abruptly: "
                     + clientAddress + " — " + e.getMessage());
         } finally {
             cleanup(reader, writer, clientAddress);
@@ -108,10 +121,45 @@ public class ClientHandler implements Runnable {
         Command cmd = req.getCommand();
         String[] params = req.getParams();
 
+        boolean renewedToken = false;
+        String newSessionToken = null;
+
+        if (currentToken != null) {
+            SessionData session = sessionManager.getSession(currentToken);
+            if (session != null) {
+                session.updateLastActivity();
+                if (session.getAgeSeconds() >= 1800) {
+                    newSessionToken = sessionManager.regenerateToken(currentToken);
+                    if (newSessionToken != null) {
+                        currentToken = newSessionToken;
+                        renewedToken = true;
+                    }
+                }
+            } else {
+                if (cmd != Command.LOGIN && cmd != Command.REGISTER && cmd != Command.LOGOUT
+                        && cmd != Command.FORGOT_PASSWORD && cmd != Command.RESET_PASSWORD) {
+                    currentToken = null;
+                    return ResponseBuilder.error("Session expired");
+                }
+            }
+        }
+
+        String response = dispatchCommand(cmd, params);
+
+        if (renewedToken && ResponseBuilder.isOk(response)) {
+            response = "RENEWED_TOKEN:" + newSessionToken + "|||" + response;
+        }
+
+        return response;
+    }
+
+    private String dispatchCommand(Command cmd, String[] params) {
         switch (cmd) {
 
             // ── Authentication ────────────────────────────────────
             case REGISTER:
+            case FORGOT_PASSWORD:
+            case RESET_PASSWORD:
                 return authHandler.handle(cmd, params, socket);
 
             case LOGIN: {
@@ -246,6 +294,6 @@ public class ClientHandler implements Runnable {
         } catch (IOException ignored) {
         }
 
-        System.out.println("[ClientHandler] Resources released for: " + clientAddress);
+        logger.info("[ClientHandler] Resources released for: " + clientAddress);
     }
 }

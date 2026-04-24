@@ -308,3 +308,53 @@ Server.service.UserService$UserNotFoundException: User not found
 2026-04-10 13:04:47 INFO  Main - [Main] Application closing...
 2026-04-10 13:04:47 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:59450
 2026-04-10 13:04:47 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:59450
+2026-04-23 22:47:43 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-23 22:47:43 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-23 22:47:43 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 51681
+2026-04-23 22:47:43 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-23 22:47:43 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-23 22:48:18 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-23 22:48:18 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-23 22:48:18 INFO  Server.Server - [Server] Client connected: 127.0.0.1:52723  | Active sessions: 0
+2026-04-23 22:48:18 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-23 22:48:19 ERROR Main - [Main] Failed to load login screen: Error resolving onAction='#handleTogglePassword', either the event handler is not in the Namespace or there is an error in the script.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/login.fxml:72
+
+2026-04-23 22:48:19 ERROR Main - Exception occurred
+javafx.fxml.LoadException: Error resolving onAction='#handleTogglePassword', either the event handler is not in the Namespace or there is an error in the script.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/login.fxml:72
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.processEventHandlerAttributes(FXMLLoader.java:623) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader$ValueElement.processEndElement(FXMLLoader.java:783) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processEndElement(FXMLLoader.java:2969) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2654) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Main.start(Main.java:124) ~[classes/:?]
+	at javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:839) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:483) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:456) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:455) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-23 22:48:31 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:52723
+2026-04-23 22:48:31 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:52723
+2026-04-23 22:53:23 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-23 22:53:23 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-23 22:53:23 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 51426
+2026-04-23 22:53:23 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-23 22:53:23 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-23 22:53:36 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-23 22:53:36 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-23 22:53:36 INFO  Server.Server - [Server] Client connected: 127.0.0.1:64391  | Active sessions: 0
+2026-04-23 22:53:36 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-23 22:53:37 INFO  Main - [Main] Login screen loaded successfully
+2026-04-23 22:54:06 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:64391 (10s handshake timeout)
+2026-04-23 22:54:06 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64391
+2026-04-23 23:45:48 INFO  Main - [Main] Application closing...

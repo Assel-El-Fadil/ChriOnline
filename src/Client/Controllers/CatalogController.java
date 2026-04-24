@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Client.util.ProductImageHelper;
@@ -34,6 +37,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CatalogController {
+    private static final Logger logger = LogManager.getLogger(CatalogController.class);
+
 
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private Button              showAllButton;
@@ -125,7 +130,7 @@ public class CatalogController {
                         try {
                             products.add(ProductDTO.fromProtocolString(seg));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            logger.error("Exception occurred", ex);
                         }
                     }
                 }
@@ -208,7 +213,7 @@ public class CatalogController {
         card.getChildren().addAll(imageStack, body);
         card.setCursor(javafx.scene.Cursor.HAND);
         card.setOnMouseClicked(ev -> {
-            System.out.println("[CatalogController] Card clicked for: " + p.name);
+            logger.info("[CatalogController] Card clicked for: " + p.name);
             openProductDetails(p);
         });
 
@@ -257,7 +262,7 @@ public class CatalogController {
             primaryStage.setTitle("ChriOnline — Cart");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Could not open cart.", true);
         }
     }
@@ -276,7 +281,7 @@ public class CatalogController {
             primaryStage.setTitle("ChriOnline — My Profile");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Could not open profile.", true);
         }
     }
@@ -293,7 +298,7 @@ public class CatalogController {
             primaryStage.setTitle("ChriOnline — Order History");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Could not open order history.", true);
         }
     }
@@ -350,7 +355,7 @@ public class CatalogController {
     }
 
     private void openProductDetails(ProductDTO selected) {
-        System.out.println("[CatalogController] Attempting to open details for: " + selected.name);
+        logger.info("[CatalogController] Attempting to open details for: " + selected.name);
 
         // Fallback: If injected primaryStage is null, try to get it from the grid
         Stage targetStage = primaryStage;
@@ -360,7 +365,7 @@ public class CatalogController {
 
         if (socketClient == null || targetStage == null) {
             String msg = "Navigation error: " + (socketClient == null ? "socketClient " : "") + (targetStage == null ? "targetStage " : "") + "is null!";
-            System.err.println("[CatalogController] " + msg);
+            logger.error("[CatalogController] " + msg);
             showStatus(msg, true);
             return;
         }
@@ -382,9 +387,9 @@ public class CatalogController {
 
             targetStage.setTitle("ChriOnline — " + selected.name);
             targetStage.setScene(new Scene(root, 1100, 750));
-            System.out.println("[CatalogController] Navigation successful.");
+            logger.info("[CatalogController] Navigation successful.");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Error opening details: " + e.getMessage(), true);
         }
     }
@@ -396,7 +401,7 @@ public class CatalogController {
                 statusLabel.setTextFill(isError ? Color.RED : Color.GREEN);
                 statusLabel.setVisible(true);
                 statusLabel.setManaged(true);
-                System.out.println("[CatalogController Status] " + (isError ? "ERROR: " : "INFO: ") + message);
+                logger.info("[CatalogController Status] " + (isError ? "ERROR: " : "INFO: ") + message);
             }
         });
     }

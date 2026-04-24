@@ -1,5 +1,13 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+
+import java.util.*;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Shared.DTO.UserDTO;
@@ -13,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -21,10 +30,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class ProfileController {
+    private static final Logger logger = LogManager.getLogger(ProfileController.class);
+
 
     // ── FXML injections ──────────────────────────────────────────
     @FXML private Label avatarLabel;
@@ -167,10 +176,10 @@ public class ProfileController {
                 avatarImageView.setImage(img);
                 avatarLabel.setVisible(false);
 
-                savePhotoToServer("src/Client/assets/images/profiles/" + destName);
+                savePhotoToServer("assets/images/profiles/" + destName);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Exception occurred", e);
                 showStatus("Error copying photo locally", true);
             }
         }
@@ -203,11 +212,47 @@ public class ProfileController {
     @FXML
     private void handleSave() {
         Map<String, String> changes = new LinkedHashMap<>();
+        Random random = new Random();
+        int number = 100000 + random.nextInt(900000);
 
         checkChange(changes, "firstName", firstNameField.getText().trim());
         checkChange(changes, "lastName", lastNameField.getText().trim());
         checkChange(changes, "email", emailField.getText().trim());
         checkChange(changes, "address", addressField.getText().trim());
+
+        if(changes.containsKey("email")){
+            try{
+                sendMail(new InternetAddress(emailField.getText().trim()), "Code de vérification", String.valueOf(number));
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Vérification");
+        dialog.setHeaderText("Enter The verification code sent to your email for ");
+        dialog.setContentText("Code de vérification:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(qtyStr -> {
+            try {
+                int code = Integer.parseInt(qtyStr);
+                if (code <= 0) {
+                    showStatus("Quantity must be a positive integer", true);
+                    return;
+                }
+
+                if (code != number) {
+                    showStatus("No changes to save", true);
+                    return;
+                }
+
+            } catch (NumberFormatException ex) {
+                showStatus("Invalid quantity input", true);
+            }
+        });
 
         if (changes.isEmpty()) {
             showStatus("No changes to save", false);
@@ -265,6 +310,18 @@ public class ProfileController {
         }
     }
 
+    private void sendMail(InternetAddress recepients, String subject, String body) throws IOException, AddressException, MessagingException {
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
+        msg.addRecipient(Message.RecipientType.TO, recepients);
+        msg.setSubject(subject);
+        msg.setText(body);
+        Transport.send(msg);
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Navigation
     // ────────────────────────────────────────────────────────────
@@ -281,7 +338,7 @@ public class ProfileController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
         }
     }
 
@@ -311,7 +368,7 @@ public class ProfileController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Failed to load login screen.", true);
         }
     }

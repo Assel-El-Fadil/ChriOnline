@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.session.AppState;
 import Client.network.SocketClient;
 import Shared.*;
@@ -26,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class AdminController {
+    private static final Logger logger = LogManager.getLogger(AdminController.class);
+
 
     // ── FXML injections ──────────────────────────────────────────
 
@@ -379,7 +384,7 @@ public class AdminController {
                     selectedPhotoPath[0] = "images/" + destName;
                     lblPhotoPath.setText(destName);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.error("Exception occurred", ex);
                     showError("Error copying photo locally");
                 }
             }
@@ -490,7 +495,7 @@ public class AdminController {
                     selectedPhotoPath[0] = "images/" + destName;
                     lblPhotoPath.setText(destName);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.error("Exception occurred", ex);
                     showError("Error copying photo locally");
                 }
             }
@@ -813,7 +818,7 @@ public class AdminController {
             stage.setTitle("ChriOnline");
             stage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showError("Failed to load login screen.");
         }
     }
