@@ -2,7 +2,6 @@ package Client.network;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import javax.crypto.SecretKey;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -56,8 +55,7 @@ public class SocketClient {
         try {
             String messageToSend;
             if (aesKey != null) {
-                byte[] encryptedBytes = AESUtil.encrypt(command.getBytes(StandardCharsets.UTF_8), aesKey);
-                messageToSend = Base64.getEncoder().encodeToString(encryptedBytes);
+                messageToSend = AESUtil.encrypt(command, aesKey);
             } else {
                 messageToSend = command;
             }
@@ -72,9 +70,7 @@ public class SocketClient {
 
             String decryptedResponse;
             if (aesKey != null) {
-                byte[] decodedBytes = Base64.getDecoder().decode(response);
-                byte[] decryptedBytes = AESUtil.decrypt(decodedBytes, aesKey);
-                decryptedResponse = new String(decryptedBytes, StandardCharsets.UTF_8);
+                decryptedResponse = AESUtil.decrypt(response, aesKey);
             } else {
                 decryptedResponse = response;
             }

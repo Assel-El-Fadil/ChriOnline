@@ -54,7 +54,7 @@ public class SecureHandshake {
             byte[] encryptedAesKey = Base64.getDecoder().decode(encryptedAesKeyB64);
 
             // ── Step 3: Decrypt the AES key with RSA private key ─────────
-            Cipher rsaCipher = Cipher.getInstance(CryptoConfig.RSA_ALGORITHM);
+            Cipher rsaCipher = Cipher.getInstance(CryptoConfig.RSA_TRANSFORMATION);
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
             byte[] aesKeyBytes = rsaCipher.doFinal(encryptedAesKey);
 

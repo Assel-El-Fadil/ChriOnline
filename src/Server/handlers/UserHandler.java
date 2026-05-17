@@ -68,7 +68,7 @@ public class UserHandler {
 
         try {
             userService.updateProfile(session.getUserId(), field, value);
-            logger.info("[UserHandler] EDIT_PROFILE success — userId: "
+            logger.info("[UserHandler] EDIT_PROFILE success - userId: "
                     + session.getUserId() + " field: " + field);
             return ResponseBuilder.ok();
 

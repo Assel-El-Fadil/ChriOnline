@@ -28,11 +28,11 @@ public class UDPServer {
     public UDPServer() {
         try {
             this.udpSocket = new DatagramSocket();
-            logger.info("[UDPBroadcaster] Ready — source port: "
+            logger.info("[UDPBroadcaster] Ready - source port: "
                     + udpSocket.getLocalPort());
         } catch (SocketException e) {
             throw new RuntimeException(
-                    "[UDPBroadcaster] FATAL: Could not open UDP socket — "
+                    "[UDPBroadcaster] FATAL: Could not open UDP socket - "
                             + e.getMessage(), e);
         }
     }
@@ -43,7 +43,7 @@ public class UDPServer {
 
     public void notify(String clientIP, int clientUdpPort, String message) {
         if (clientIP == null || clientIP.isBlank() || clientUdpPort <= 0) {
-            logger.error("[UDPBroadcaster] Invalid destination — "
+            logger.error("[UDPBroadcaster] Invalid destination - "
                     + "ip='" + clientIP + "' port=" + clientUdpPort);
             return;
         }
@@ -63,13 +63,13 @@ public class UDPServer {
             udpSocket.send(packet);
 
             logger.info("[UDPBroadcaster] Sent to " + clientIP + ":" + clientUdpPort
-                    + " — " + message);
+                    + " - " + message);
 
         } catch (IOException e) {
 
             logger.error("[UDPBroadcaster] Failed to send to "
                     + clientIP + ":" + clientUdpPort
-                    + " — " + e.getMessage());
+                    + " - " + e.getMessage());
         }
     }
 

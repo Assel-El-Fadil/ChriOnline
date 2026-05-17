@@ -117,7 +117,7 @@ public class AuthHandler {
             sessionManager.addSession(token, sessionData);
             cartService.loadFromDB(token, authUser.id);
 
-            System.out.println("[AuthHandler] ADMIN RSA LOGIN success — user: " + username);
+            System.out.println("[AuthHandler] ADMIN RSA LOGIN success - user: " + username);
             return ResponseBuilder.ok(token + "|" + authUser.role);
 
         } catch (Exception e) {
@@ -170,7 +170,7 @@ public class AuthHandler {
 
         try {
             int userId = userService.register(firstName, lastName, username, password, email);
-            logger.info("[AuthHandler] REGISTER success — user: " + username + " id: " + userId);
+            logger.info("[AuthHandler] REGISTER success - user: " + username + " id: " + userId);
             return ResponseBuilder.ok(String.valueOf(userId));
 
         } catch (UserService.ValidationException e) {
@@ -244,7 +244,7 @@ public class AuthHandler {
             logger.error("[AuthHandler] Could not load cart for user " + user.id + ": " + e.getMessage());
         }
 
-        logger.info("[AuthHandler] LOGIN success — user: " + username
+        logger.info("[AuthHandler] LOGIN success - user: " + username
                 + " | role: " + user.role
                 + " | clientIP: " + clientIP
                 + " | udpPort: " + udpPort);
@@ -261,7 +261,7 @@ public class AuthHandler {
         }
         String token = params[0];
         sessionManager.removeSession(token);
-        logger.info("[AuthHandler] LOGOUT — token removed: " + token);
+        logger.info("[AuthHandler] LOGOUT - token removed: " + token);
         return ResponseBuilder.ok();
     }
 

@@ -310,7 +310,7 @@ public class OrderHandler {
                         + e.getMessage());
             }
 
-            logger.info("[OrderHandler] CHECKOUT success — orderId=" + orderId
+            logger.info("[OrderHandler] CHECKOUT success - orderId=" + orderId
                     + " ref=" + refCode + " total=" + total + " user=" + userId);
 
             udpServer.notify(
@@ -331,7 +331,7 @@ public class OrderHandler {
                 logger.error("[OrderHandler] Rollback failed: " + rollbackEx.getMessage());
             }
             logger.error("[OrderHandler] CHECKOUT DB error: " + e.getMessage());
-            return ResponseBuilder.error("Checkout failed — please try again");
+            return ResponseBuilder.error("Checkout failed - please try again");
 
         } finally {
             ConnectionPool.returnConnection(conn);

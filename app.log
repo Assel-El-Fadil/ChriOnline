@@ -1161,3 +1161,330 @@ javafx.fxml.LoadException: Separator is not a valid type.
 2026-05-17 11:33:14 INFO  Main - [Main] Application closing...
 2026-05-17 11:33:14 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:60702
 2026-05-17 11:33:14 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:60702
+2026-05-17 20:10:06 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:10:06 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:10:06 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:10:06 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:10:06 INFO  Server.UDPServer - [UDPBroadcaster] Ready â€” source port: 60328
+2026-05-17 20:10:06 INFO  Server.Server - [Server] All dependencies wired â€” ready to accept SSL connections.
+2026-05-17 20:10:06 INFO  Server.Server - [Server] Listening on SSL port 8084 â€” waiting for client connections...
+
+2026-05-17 20:10:13 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:10:13 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:52895  | Active sessions: 0
+2026-05-17 20:10:14 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:10:14 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:10:14 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:10:14 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:52895
+2026-05-17 20:10:14 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:10:15 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:10:20 ERROR Server.ClientHandler - [ClientHandler] Decryption failed: Illegal base64 character 3a
+java.lang.IllegalArgumentException: Illegal base64 character 3a
+	at java.base/java.util.Base64$Decoder.decode0(Base64.java:852) ~[?:?]
+	at java.base/java.util.Base64$Decoder.decode(Base64.java:570) ~[?:?]
+	at java.base/java.util.Base64$Decoder.decode(Base64.java:593) ~[?:?]
+	at Server.ClientHandler.decryptMessage(ClientHandler.java:187) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:105) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-05-17 20:10:20 ERROR Server.ClientHandler - [ClientHandler] Unexpected error from 127.0.0.1:52895: Decryption failed
+2026-05-17 20:10:20 ERROR Server.ClientHandler - Exception occurred
+java.lang.RuntimeException: Decryption failed
+	at Server.ClientHandler.decryptMessage(ClientHandler.java:202) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:105) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+Caused by: java.lang.IllegalArgumentException: Illegal base64 character 3a
+	at java.base/java.util.Base64$Decoder.decode0(Base64.java:852) ~[?:?]
+	at java.base/java.util.Base64$Decoder.decode(Base64.java:570) ~[?:?]
+	at java.base/java.util.Base64$Decoder.decode(Base64.java:593) ~[?:?]
+	at Server.ClientHandler.decryptMessage(ClientHandler.java:187) ~[classes/:?]
+	... 6 more
+2026-05-17 20:10:47 INFO  Main - [Main] Application closing...
+2026-05-17 20:10:47 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:52895
+2026-05-17 20:10:47 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:52895
+2026-05-17 20:13:09 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:13:09 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:13:09 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:13:09 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:13:09 INFO  Server.UDPServer - [UDPBroadcaster] Ready â€” source port: 52978
+2026-05-17 20:13:09 INFO  Server.Server - [Server] All dependencies wired â€” ready to accept SSL connections.
+2026-05-17 20:13:09 INFO  Server.Server - [Server] Listening on SSL port 8084 â€” waiting for client connections...
+
+2026-05-17 20:14:56 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:14:57 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:60837  | Active sessions: 0
+2026-05-17 20:14:57 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:14:57 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:14:57 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:14:57 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:60837
+2026-05-17 20:14:57 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:14:59 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:15:03 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-05-17 20:15:03 INFO  Server.SessionManager - [SessionManager] Session added â€” SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 20:15:11 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT â€” token removed: null
+2026-05-17 20:15:17 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:15:17 INFO  Server.SessionManager - [SessionManager] Session added â€” SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-05-17 20:16:17 INFO  Main - [Main] Application closing...
+2026-05-17 20:24:18 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:24:18 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:24:18 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:24:18 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:24:18 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 63463
+2026-05-17 20:24:18 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 20:24:18 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 20:24:35 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:24:35 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:62759  | Active sessions: 0
+2026-05-17 20:24:36 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:24:36 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:24:36 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:24:36 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:62759
+2026-05-17 20:24:36 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:24:37 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:25:00 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 20:25:22 INFO  Main - [Main] Application closing...
+2026-05-17 20:25:32 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:25:33 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:59434  | Active sessions: 0
+2026-05-17 20:25:33 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:25:33 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:25:33 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:59434
+2026-05-17 20:25:33 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:25:33 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:25:34 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:26:04 INFO  Main - [Main] Application closing...
+2026-05-17 20:26:17 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:26:17 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:26:17 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:26:17 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:26:17 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 63084
+2026-05-17 20:26:17 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 20:26:17 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 20:26:25 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:26:25 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:59444  | Active sessions: 0
+2026-05-17 20:26:26 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:26:26 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:26:26 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:26:26 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:59444
+2026-05-17 20:26:26 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:26:27 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:26:30 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 20:27:06 INFO  Main - [Main] Application closing...
+2026-05-17 20:27:43 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:27:43 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:53972  | Active sessions: 0
+2026-05-17 20:27:43 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:27:43 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:27:43 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:53972
+2026-05-17 20:27:43 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:27:43 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:27:44 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:27:51 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:28:40 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:29:27 INFO  Main - [Main] Application closing...
+2026-05-17 20:29:36 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:29:36 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:29:36 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:29:36 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:29:36 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 58120
+2026-05-17 20:29:36 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 20:29:36 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 20:29:44 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:29:44 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:57936  | Active sessions: 0
+2026-05-17 20:29:45 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:29:45 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:29:45 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:57936
+2026-05-17 20:29:45 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:29:45 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:29:46 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:29:49 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 20:30:05 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:30:20 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:30:22 INFO  Main - [Main] Application closing...
+2026-05-17 20:30:47 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:30:48 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:55685  | Active sessions: 0
+2026-05-17 20:30:48 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:30:48 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:30:48 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:55685
+2026-05-17 20:30:48 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:30:48 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:30:49 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:30:55 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:31:15 ERROR Server.handlers.AuthHandler - [AuthHandler] LOGIN error: findByUsernameForAuth failed: Communications link failure
+
+The last packet successfully received from the server was 20,870 milliseconds ago. The last packet sent successfully to the server was 20,871 milliseconds ago.
+2026-05-17 20:31:15 ERROR Server.ClientHandler - [ClientHandler] Unexpected error from 127.0.0.1:57936: findByUsernameForAuth failed: Communications link failure
+
+The last packet successfully received from the server was 85,977 milliseconds ago. The last packet sent successfully to the server was 85,977 milliseconds ago.
+2026-05-17 20:31:15 ERROR Server.ClientHandler - Exception occurred
+Server.DAO.UserDAO$DAOException: findByUsernameForAuth failed: Communications link failure
+
+The last packet successfully received from the server was 85,977 milliseconds ago. The last packet sent successfully to the server was 85,977 milliseconds ago.
+	at Server.DAO.UserDAO.findByUsernameForAuth(UserDAO.java:272) ~[classes/:?]
+	at Server.service.UserService.findAuthUserByUsername(UserService.java:97) ~[classes/:?]
+	at Server.handlers.AuthHandler.handleAdminChallenge(AuthHandler.java:81) ~[classes/:?]
+	at Server.handlers.AuthHandler.handle(AuthHandler.java:66) ~[classes/:?]
+	at Server.ClientHandler.dispatchCommand(ClientHandler.java:247) ~[classes/:?]
+	at Server.ClientHandler.dispatch(ClientHandler.java:210) ~[classes/:?]
+	at Server.ClientHandler.run(ClientHandler.java:114) ~[classes/:?]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+Caused by: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 85,977 milliseconds ago. The last packet sent successfully to the server was 85,977 milliseconds ago.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:174) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:64) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:968) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at Server.DAO.UserDAO.findByUsernameForAuth(UserDAO.java:254) ~[classes/:?]
+	... 11 more
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 85,977 milliseconds ago. The last packet sent successfully to the server was 85,977 milliseconds ago.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[?:?]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:501) ~[?:?]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:485) ~[?:?]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:61) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:104) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:149) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:165) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.readMessage(NativeProtocol.java:582) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.checkErrorMessage(NativeProtocol.java:762) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.sendCommand(NativeProtocol.java:701) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.sendQueryPacket(NativeProtocol.java:1050) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.NativeSession.execSQL(NativeSession.java:660) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:889) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:968) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at Server.DAO.UserDAO.findByUsernameForAuth(UserDAO.java:254) ~[classes/:?]
+	... 11 more
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:318) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346) ~[?:?]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116) ~[?:?]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103) ~[?:?]
+	at com.mysql.cj.protocol.ReadAheadInputStream.fill(ReadAheadInputStream.java:107) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.ReadAheadInputStream.readFromUnderlyingStreamIfNecessary(ReadAheadInputStream.java:150) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.ReadAheadInputStream.read(ReadAheadInputStream.java:180) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at java.base/java.io.FilterInputStream.read(FilterInputStream.java:119) ~[?:?]
+	at com.mysql.cj.protocol.FullReadInputStream.readFully(FullReadInputStream.java:64) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.SimplePacketReader.readHeaderLocal(SimplePacketReader.java:81) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.SimplePacketReader.readHeader(SimplePacketReader.java:63) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.SimplePacketReader.readHeader(SimplePacketReader.java:45) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.TimeTrackingPacketReader.readHeader(TimeTrackingPacketReader.java:52) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.TimeTrackingPacketReader.readHeader(TimeTrackingPacketReader.java:41) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.MultiPacketReader.readHeader(MultiPacketReader.java:54) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.MultiPacketReader.readHeader(MultiPacketReader.java:44) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.readMessage(NativeProtocol.java:576) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.checkErrorMessage(NativeProtocol.java:762) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.sendCommand(NativeProtocol.java:701) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.protocol.a.NativeProtocol.sendQueryPacket(NativeProtocol.java:1050) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.NativeSession.execSQL(NativeSession.java:660) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:889) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeQuery(ClientPreparedStatement.java:968) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at Server.DAO.UserDAO.findByUsernameForAuth(UserDAO.java:254) ~[classes/:?]
+	... 11 more
+2026-05-17 20:31:16 INFO  Server.ClientHandler - [ClientHandler] Client disconnected abruptly: 127.0.0.1:57936 — An established connection was aborted by the software in your host machine
+2026-05-17 20:31:16 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:57936
+2026-05-17 20:33:06 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:33:06 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:33:06 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:33:06 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:33:06 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 56490
+2026-05-17 20:33:06 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 20:33:06 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 20:33:15 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:33:15 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:64969  | Active sessions: 0
+2026-05-17 20:33:15 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:33:15 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:33:15 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:33:15 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:64969
+2026-05-17 20:33:15 ERROR Main - [Main] Cannot bind UDP port 8085: Address already in use: bind
+2026-05-17 20:33:19 INFO  Server.ClientHandler - [ClientHandler] Client disconnected abruptly: 127.0.0.1:64969 — Connection reset
+2026-05-17 20:33:19 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64969
+2026-05-17 20:33:20 INFO  Main - [Main] Application closing...
+2026-05-17 20:33:34 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:33:34 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:64090  | Active sessions: 0
+2026-05-17 20:33:34 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:33:34 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:33:34 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:64090
+2026-05-17 20:33:34 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:33:34 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:33:37 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:34:04 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:64090 (10s handshake timeout)
+2026-05-17 20:34:08 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64090
+2026-05-17 20:34:14 INFO  Main - [Main] Application closing...
+2026-05-17 20:34:32 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:34:32 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:34:32 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:34:32 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:34:32 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 54799
+2026-05-17 20:34:32 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 20:34:32 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 20:34:41 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:34:41 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:57616  | Active sessions: 0
+2026-05-17 20:34:41 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:34:42 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:34:42 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:34:42 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:57616
+2026-05-17 20:34:42 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:34:42 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:34:52 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:34:52 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 20:34:53 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-05-17 20:35:05 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 20:35:08 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 20:35:17 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:35:18 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (2/3 phase 0)
+2026-05-17 20:35:38 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:35:38 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (3/3 phase 0)
+2026-05-17 20:35:38 WARN  Server.security.AuthSecurityManager - [AuthSecurity] IP BLOCKED for 10 minutes: 127.0.0.1
+2026-05-17 20:35:41 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:35:41 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 56s)
+2026-05-17 20:35:53 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:35:53 WARN  Server.handlers.AuthHandler - [AuthHandler] Blocked IP attempted login: 127.0.0.1 (Blocked for 9m 44s)
+2026-05-17 20:35:56 INFO  Main - [Main] Application closing...
+2026-05-17 20:35:56 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:57616
+2026-05-17 20:35:56 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:57616
+2026-05-17 20:36:46 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 20:36:46 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 20:36:46 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 20:36:46 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 20:36:46 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 61593
+2026-05-17 20:36:47 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 20:36:47 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 20:36:56 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 20:36:56 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:55118  | Active sessions: 0
+2026-05-17 20:36:56 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 20:36:56 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 20:36:56 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:55118
+2026-05-17 20:36:56 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 20:36:56 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 20:36:57 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 20:37:01 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:37:01 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 20:37:02 WARN  Server.security.AuthSecurityManager - [AuthSecurity] Failed login attempt from IP: 127.0.0.1 (1/3 phase 0)
+2026-05-17 20:37:06 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 20:37:06 INFO  Server.security.AuthSecurityManager - [AuthSecurity] Successful login from IP: 127.0.0.1 - Rate limits reset.
+2026-05-17 20:37:06 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 20:37:06 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 20:37:26 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: Smartphone Galaxy X12
+2026-05-17 20:37:26 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Smartphone Galaxy X12
+2026-05-17 20:37:26 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-05-17 20:42:22 INFO  Client.Controllers.CatalogController - [CatalogController Status] INFO: Added! Cart total: 898.0 MAD
+2026-05-17 20:42:36 INFO  Client.Controllers.CatalogController - [CatalogController Status] INFO: Added! Cart total: 1898.0 MAD
+2026-05-17 20:43:06 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 20:43:07 INFO  Main - [Main] Application closing...
+2026-05-17 20:43:07 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:55118
+2026-05-17 20:43:07 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:55118

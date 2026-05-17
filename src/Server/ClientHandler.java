@@ -157,21 +157,7 @@ public class ClientHandler implements Runnable {
      */
     private String encryptMessage(String plaintext) {
         try {
-            byte[] iv = new byte[CryptoConfig.GCM_IV_LENGTH];
-            secureRandom.nextBytes(iv);
-
-            Cipher cipher = Cipher.getInstance(CryptoConfig.AES_ALGORITHM);
-            GCMParameterSpec spec = new GCMParameterSpec(CryptoConfig.GCM_TAG_LENGTH, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, aesSessionKey, spec);
-
-            byte[] ciphertext = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
-
-            // Prepend IV to ciphertext
-            byte[] combined = new byte[iv.length + ciphertext.length];
-            System.arraycopy(iv, 0, combined, 0, iv.length);
-            System.arraycopy(ciphertext, 0, combined, iv.length, ciphertext.length);
-
-            return Base64.getEncoder().encodeToString(combined);
+            return Shared.Security.AESUtil.encrypt(plaintext, aesSessionKey);
         } catch (Exception e) {
             logger.error("[ClientHandler] Encryption failed: " + e.getMessage(), e);
             return "ENCRYPTION_ERROR";
@@ -180,23 +166,10 @@ public class ClientHandler implements Runnable {
 
     /**
      * Decrypts an AES-GCM encrypted message.
-     * Expects Base64( IV || ciphertext )
      */
     private String decryptMessage(String encryptedB64) {
         try {
-            byte[] combined = Base64.getDecoder().decode(encryptedB64);
-
-            byte[] iv = new byte[CryptoConfig.GCM_IV_LENGTH];
-            byte[] ciphertext = new byte[combined.length - CryptoConfig.GCM_IV_LENGTH];
-            System.arraycopy(combined, 0, iv, 0, iv.length);
-            System.arraycopy(combined, iv.length, ciphertext, 0, ciphertext.length);
-
-            Cipher cipher = Cipher.getInstance(CryptoConfig.AES_ALGORITHM);
-            GCMParameterSpec spec = new GCMParameterSpec(CryptoConfig.GCM_TAG_LENGTH, iv);
-            cipher.init(Cipher.DECRYPT_MODE, aesSessionKey, spec);
-
-            byte[] plaintext = cipher.doFinal(ciphertext);
-            return new String(plaintext, StandardCharsets.UTF_8);
+            return Shared.Security.AESUtil.decrypt(encryptedB64, aesSessionKey);
         } catch (Exception e) {
             logger.error("[ClientHandler] Decryption failed: " + e.getMessage(), e);
             throw new RuntimeException("Decryption failed", e);

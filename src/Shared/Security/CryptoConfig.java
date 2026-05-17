@@ -17,7 +17,8 @@ public final class CryptoConfig {
     public static final String IV_SEPARATOR    = ":";    // delimiter between Base64(IV) and Base64(ciphertext)
 
     // ── RSA Configuration ───────────────────────────────────────────
-    public static final String RSA_ALGORITHM   = "RSA";
+    public static final String RSA_ALGORITHM         = "RSA";
+    public static final String RSA_TRANSFORMATION    = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
     public static final int    RSA_KEY_SIZE    = 2048;  // bits
 
     // ── KeyStore / TrustStore ───────────────────────────────────────
