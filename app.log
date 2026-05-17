@@ -1488,3 +1488,289 @@ Caused by: java.net.SocketException: Connection reset
 2026-05-17 20:43:07 INFO  Main - [Main] Application closing...
 2026-05-17 20:43:07 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:55118
 2026-05-17 20:43:07 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:55118
+2026-05-17 21:08:43 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:08:43 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:08:43 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:08:43 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:08:43 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 57970
+2026-05-17 21:08:43 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:08:43 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:08:54 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:08:54 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:56974  | Active sessions: 0
+2026-05-17 21:08:55 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:08:55 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:08:55 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:08:55 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:56974
+2026-05-17 21:08:55 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:08:56 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:09:03 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:09:03 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:09:04 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:09:04 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:11:06 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 21:11:07 INFO  Main - [Main] Application closing...
+2026-05-17 21:11:07 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:56974
+2026-05-17 21:11:07 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:56974
+2026-05-17 21:11:15 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:11:16 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:11:16 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:11:16 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:11:16 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 63488
+2026-05-17 21:11:16 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:11:16 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:11:22 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:11:22 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:65502  | Active sessions: 0
+2026-05-17 21:11:23 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:11:23 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:11:23 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:11:23 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:65502
+2026-05-17 21:11:23 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:11:24 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:11:30 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:11:30 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:11:30 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:11:30 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:19:01 INFO  Main - [Main] Application closing...
+2026-05-17 21:19:01 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:65502
+2026-05-17 21:19:01 INFO  Server.SessionManager - [SessionManager] Session removed - assel (alive 450s)  | Active sessions: 0
+2026-05-17 21:19:01 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:65502
+2026-05-17 21:20:11 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:20:11 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:20:11 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:20:11 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:20:11 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 61849
+2026-05-17 21:20:11 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:20:11 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:20:20 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:20:20 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:53305  | Active sessions: 0
+2026-05-17 21:20:21 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:20:21 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:20:21 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:20:21 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:53305
+2026-05-17 21:20:21 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:20:21 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:20:28 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:20:28 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:20:28 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:20:28 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:20:56 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:20:56 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:20:56 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:20:56 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:20:56 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 61285
+2026-05-17 21:20:56 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:20:56 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:21:03 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:21:04 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:53322  | Active sessions: 0
+2026-05-17 21:21:04 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:21:04 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:21:04 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:21:04 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:53322
+2026-05-17 21:21:04 ERROR Main - [Main] Cannot bind UDP port 8085: Address already in use: bind
+2026-05-17 21:21:07 INFO  Server.ClientHandler - [ClientHandler] Client disconnected abruptly: 127.0.0.1:53322 — Connection reset
+2026-05-17 21:21:07 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:53322
+2026-05-17 21:21:08 INFO  Main - [Main] Application closing...
+2026-05-17 21:21:16 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:21:17 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:53329  | Active sessions: 0
+2026-05-17 21:21:17 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:21:17 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:21:17 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:21:17 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:53329
+2026-05-17 21:21:17 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:21:18 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:21:21 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:21:21 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:21:35 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 21:21:40 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:21:40 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-05-17 21:21:40 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:23:43 INFO  Main - [Main] Application closing...
+2026-05-17 21:23:43 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:53329
+2026-05-17 21:23:43 INFO  Server.SessionManager - [SessionManager] Session removed - assel (alive 122s)  | Active sessions: 1
+2026-05-17 21:23:43 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:53329
+2026-05-17 21:25:06 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:25:06 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:25:06 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:25:06 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:25:06 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 57428
+2026-05-17 21:25:06 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:25:06 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:25:14 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:25:14 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:57394  | Active sessions: 0
+2026-05-17 21:25:14 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:25:15 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:25:15 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:25:15 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:57394
+2026-05-17 21:25:15 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:25:15 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:25:34 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:25:34 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:25:34 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:25:34 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:25:50 INFO  Main - [Main] Application closing...
+2026-05-17 21:25:50 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:57394
+2026-05-17 21:25:50 INFO  Server.SessionManager - [SessionManager] Session removed - assel (alive 15s)  | Active sessions: 0
+2026-05-17 21:25:50 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:57394
+2026-05-17 21:27:25 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:27:25 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:27:25 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:27:25 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:27:25 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 64208
+2026-05-17 21:27:25 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:27:25 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:27:35 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:27:35 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:52014  | Active sessions: 0
+2026-05-17 21:27:35 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:27:35 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:27:35 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:52014
+2026-05-17 21:27:35 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:27:35 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:27:36 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:27:41 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:27:42 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:27:42 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:27:42 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:28:27 INFO  Main - [Main] Application closing...
+2026-05-17 21:28:27 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:52014
+2026-05-17 21:28:27 INFO  Server.SessionManager - [SessionManager] Session removed - assel (alive 45s)  | Active sessions: 0
+2026-05-17 21:28:27 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:52014
+2026-05-17 21:29:33 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:29:33 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:29:33 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:29:33 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:29:33 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 49975
+2026-05-17 21:29:33 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:29:33 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:29:40 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 21:29:40 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:54098  | Active sessions: 0
+2026-05-17 21:29:40 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:29:41 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:29:41 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:54098
+2026-05-17 21:29:41 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 21:29:41 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 21:29:41 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 21:29:49 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:29:49 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:29:50 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 21:29:50 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:29:51 INFO  Shared.Security.EmailUtil - [EmailUtil] Successfully sent email to xassil7@gmail.com
+2026-05-17 21:30:08 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: USB-C Hub 7-in-1
+2026-05-17 21:30:08 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: USB-C Hub 7-in-1
+2026-05-17 21:30:08 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-05-17 21:31:03 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 21:31:09 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-05-17 21:31:11 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 21:31:12 INFO  Main - [Main] Application closing...
+2026-05-17 21:31:12 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:54098
+2026-05-17 21:31:12 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:54098
+2026-05-17 21:53:27 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:53:27 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:53:27 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:53:27 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:53:27 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 54888
+2026-05-17 21:53:27 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:53:27 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:53:37 INFO  AdminMain - [Main] Loaded server host from config: localhost
+2026-05-17 21:53:37 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:52294  | Active sessions: 0
+2026-05-17 21:53:37 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:53:37 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:53:37 INFO  AdminMain - [Main] Connected to server localhost:8084
+2026-05-17 21:53:37 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:52294
+2026-05-17 21:53:38 INFO  AdminMain - [Main] UDP listener started on port 8086
+2026-05-17 21:53:38 INFO  AdminMain - [Main] Admin Login screen loaded successfully
+2026-05-17 21:53:43 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:53:43 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8086, age=0s}  | Active sessions: 1
+2026-05-17 21:54:11 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 21:54:25 INFO  AdminMain - [Main] Application closing...
+2026-05-17 21:54:25 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:52294
+2026-05-17 21:54:25 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:52294
+2026-05-17 21:57:38 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 21:57:38 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 21:57:38 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 21:57:38 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 21:57:38 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 65090
+2026-05-17 21:57:38 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 21:57:38 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 21:57:43 INFO  AdminMain - [Main] Loaded server host from config: localhost
+2026-05-17 21:57:44 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:59387  | Active sessions: 0
+2026-05-17 21:57:44 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:57:44 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:57:44 INFO  AdminMain - [Main] Connected to server localhost:8084
+2026-05-17 21:57:44 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:59387
+2026-05-17 21:57:44 INFO  AdminMain - [Main] UDP listener started on port 8086
+2026-05-17 21:57:45 INFO  AdminMain - [Main] Admin Login screen loaded successfully
+2026-05-17 21:57:48 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 21:57:49 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8086, age=0s}  | Active sessions: 1
+2026-05-17 21:58:20 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 21:58:27 INFO  AdminMain - [Main] Application closing...
+2026-05-17 21:58:27 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:59387
+2026-05-17 21:58:27 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:59387
+2026-05-17 21:58:37 INFO  ClientMain - [Main] Loaded server host from config: localhost
+2026-05-17 21:58:37 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:59409  | Active sessions: 1
+2026-05-17 21:58:37 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 21:58:37 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 21:58:37 INFO  ClientMain - [Main] Connected to server localhost:8084
+2026-05-17 21:58:37 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:59409
+2026-05-17 21:58:37 INFO  ClientMain - [Main] UDP listener started on port 8085
+2026-05-17 21:58:38 INFO  ClientMain - [Main] Login screen loaded successfully
+2026-05-17 21:58:44 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 21:58:44 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-05-17 21:58:44 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 21:58:46 INFO  Shared.Security.EmailUtil - [EmailUtil] Successfully sent email to xassil7@gmail.com
+2026-05-17 21:59:19 INFO  ClientMain - [Main] Application closing...
+2026-05-17 21:59:19 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:59409
+2026-05-17 21:59:19 INFO  Server.SessionManager - [SessionManager] Session removed - assel (alive 34s)  | Active sessions: 1
+2026-05-17 21:59:19 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:59409
+2026-05-17 22:27:11 INFO  Server.Server - [Server] KeyStore loaded: keystore.jks
+2026-05-17 22:27:11 INFO  Server.Server - [Server] SSLServerSocket bound to port 8084 (TLS enabled)
+2026-05-17 22:27:11 INFO  Server.Server - [Server] RSA KeyPair loaded for secure handshake
+2026-05-17 22:27:11 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 22:27:11 INFO  Server.UDPServer - [UDPBroadcaster] Ready - source port: 50738
+2026-05-17 22:27:11 INFO  Server.Server - [Server] All dependencies wired - ready to accept SSL connections.
+2026-05-17 22:27:11 INFO  Server.Server - [Server] Listening on SSL port 8084 - waiting for client connections...
+
+2026-05-17 22:27:17 INFO  AdminMain - [Main] Loaded server host from config: localhost
+2026-05-17 22:27:18 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:65171  | Active sessions: 0
+2026-05-17 22:27:18 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 22:27:18 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 22:27:18 INFO  AdminMain - [Main] Connected to server localhost:8084
+2026-05-17 22:27:18 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:65171
+2026-05-17 22:27:18 INFO  AdminMain - [Main] UDP listener started on port 8086
+2026-05-17 22:27:19 INFO  AdminMain - [Main] Admin Login screen loaded successfully
+2026-05-17 22:27:23 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized - 5 connections ready.
+2026-05-17 22:27:24 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8086, age=0s}  | Active sessions: 1
+2026-05-17 22:27:55 INFO  Server.handlers.AdminHandler - [AdminHandler] Admin admin deactivated user ID: 3
+2026-05-17 22:28:00 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 22:28:05 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8086, age=0s}  | Active sessions: 2
+2026-05-17 22:28:10 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 22:28:11 INFO  AdminMain - [Main] Application closing...
+2026-05-17 22:28:11 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:65171
+2026-05-17 22:28:11 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:65171
+2026-05-17 22:28:20 INFO  ClientMain - [Main] Loaded server host from config: localhost
+2026-05-17 22:28:20 INFO  Server.Server - [Server] SSL client connected: 127.0.0.1:55042  | Active sessions: 2
+2026-05-17 22:28:20 INFO  Server.security.SecureHandshake - [SecureHandshake] Sent RSA public key to client
+2026-05-17 22:28:20 INFO  Server.security.SecureHandshake - [SecureHandshake] AES session key established successfully (256-bit)
+2026-05-17 22:28:20 INFO  Server.ClientHandler - [ClientHandler] AES session established with 127.0.0.1:55042
+2026-05-17 22:28:20 INFO  ClientMain - [Main] Connected to server localhost:8084
+2026-05-17 22:28:20 INFO  ClientMain - [Main] UDP listener started on port 8085
+2026-05-17 22:28:21 INFO  ClientMain - [Main] Login screen loaded successfully
+2026-05-17 22:28:26 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 22:28:27 INFO  Server.SessionManager - [SessionManager] Session added - SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 3
+2026-05-17 22:28:27 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success - user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 22:28:29 INFO  Shared.Security.EmailUtil - [EmailUtil] Successfully sent email to xassil7@gmail.com
+2026-05-17 22:28:50 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: Laptop ProBook 450
+2026-05-17 22:28:50 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Laptop ProBook 450
+2026-05-17 22:28:50 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-05-17 22:29:11 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT - token removed: null
+2026-05-17 22:29:13 INFO  ClientMain - [Main] Application closing...
+2026-05-17 22:29:13 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:55042
+2026-05-17 22:29:13 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:55042

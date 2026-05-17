@@ -1,10 +1,10 @@
-package Client.Controllers;
+package Admin.Controllers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import Client.session.AppState;
-import Client.network.SocketClient;
+import Admin.session.AdminAppState;
+import Admin.network.AdminSocket;
 import Shared.*;
 import Shared.DTO.OrderDTO;
 import Shared.DTO.ProductDTO;
@@ -107,7 +107,7 @@ public class AdminController {
     private Label lblUsersStatus;
 
     // ── Internal state ────────────────────────────────────────────
-    private SocketClient socketClient;
+    private AdminSocket socketClient;
 
     private final ObservableList<ProductDTO> productList = FXCollections.observableArrayList();
     private final ObservableList<OrderDTO> orderList = FXCollections.observableArrayList();
@@ -122,7 +122,7 @@ public class AdminController {
             "ELECTRONIQUES", "VETEMENTS", "ELECTROMENAGER",
             "BEAUTE_ET_COSMETIQUES", "JEUX_VIDEO", "SANTE", "FITNESS");
 
-    public void setSocketClient(SocketClient socketClient) {
+    public void setAdminSocket(AdminSocket socketClient) {
         this.socketClient = socketClient;
         // Load all three tabs immediately after socketClient is injected
         loadProducts();
@@ -428,7 +428,7 @@ public class AdminController {
         // Build the command
         // ADMIN_ADD_PRODUCT|token|name|category|price|stock|description|photoPath
         String photoPathStr = selectedPhotoPath[0] != null ? selectedPhotoPath[0] : "";
-        String command = "ADMIN_ADD_PRODUCT|" + AppState.getToken()
+        String command = "ADMIN_ADD_PRODUCT|" + AdminAppState.getToken()
                 + "|" + name
                 + "|" + category
                 + "|" + priceStr
@@ -556,7 +556,7 @@ public class AdminController {
             @Override
             protected String call() {
                 for (java.util.Map.Entry<String, String> entry : changes.entrySet()) {
-                    String cmd = "ADMIN_EDIT_PRODUCT|" + AppState.getToken()
+                    String cmd = "ADMIN_EDIT_PRODUCT|" + AdminAppState.getToken()
                             + "|" + selected.id
                             + "|" + entry.getKey()
                             + "|" + entry.getValue();
@@ -598,7 +598,7 @@ public class AdminController {
             return;
 
         // ADMIN_DELETE_PRODUCT|token|productId
-        String command = "ADMIN_DELETE_PRODUCT|" + AppState.getToken()
+        String command = "ADMIN_DELETE_PRODUCT|" + AdminAppState.getToken()
                 + "|" + selected.id;
 
         runAdminCommand(command, lblProductsStatus,
@@ -615,7 +615,7 @@ public class AdminController {
         Task<String> task = new Task<>() {
             @Override
             protected String call() {
-                return socketClient.sendCommand("ADMIN_LIST_ORDERS|" + AppState.getToken());
+                return socketClient.sendCommand("ADMIN_LIST_ORDERS|" + AdminAppState.getToken());
             }
         };
 
@@ -659,7 +659,7 @@ public class AdminController {
             return;
 
         // ADMIN_UPDATE_STATUS|token|orderId|newStatus
-        String command = "ADMIN_UPDATE_STATUS|" + AppState.getToken()
+        String command = "ADMIN_UPDATE_STATUS|" + AdminAppState.getToken()
                 + "|" + selected.id
                 + "|" + result.get();
 
@@ -677,7 +677,7 @@ public class AdminController {
         Task<String> task = new Task<>() {
             @Override
             protected String call() {
-                return socketClient.sendCommand("ADMIN_LIST_USERS|" + AppState.getToken());
+                return socketClient.sendCommand("ADMIN_LIST_USERS|" + AdminAppState.getToken());
             }
         };
 
@@ -712,7 +712,7 @@ public class AdminController {
             return;
 
         // Prevent deleting the currently logged-in admin
-        if (selected.username.equals(AppState.getUsername())) {
+        if (selected.username.equals(AdminAppState.getUsername())) {
             showError("You cannot delete your own account.");
             return;
         }
@@ -729,7 +729,7 @@ public class AdminController {
             return;
 
         // ADMIN_HARD_DELETE_USER|token|userId
-        String command = "ADMIN_HARD_DELETE_USER|" + AppState.getToken()
+        String command = "ADMIN_HARD_DELETE_USER|" + AdminAppState.getToken()
                 + "|" + selected.id;
 
         runAdminCommand(command, lblUsersStatus,
@@ -742,7 +742,7 @@ public class AdminController {
             return;
 
         // Prevent deactivating the currently logged-in admin
-        if (selected.username.equals(AppState.getUsername())) {
+        if (selected.username.equals(AdminAppState.getUsername())) {
             showError("You cannot deactivate your own account.");
             return;
         }
@@ -757,7 +757,7 @@ public class AdminController {
             return;
 
         // ADMIN_DEACTIVATE_USER|token|userId
-        String command = "ADMIN_DEACTIVATE_USER|" + AppState.getToken()
+        String command = "ADMIN_DEACTIVATE_USER|" + AdminAppState.getToken()
                 + "|" + selected.id;
 
         runAdminCommand(command, lblUsersStatus,
@@ -769,7 +769,7 @@ public class AdminController {
         if (selected == null)
             return;
 
-        if (selected.username.equals(AppState.getUsername())) {
+        if (selected.username.equals(AdminAppState.getUsername())) {
             showError("You cannot activate your own account from here.");
             return;
         }
@@ -784,7 +784,7 @@ public class AdminController {
             return;
 
         // ADMIN_ACTIVATE_USER|token|userId
-        String command = "ADMIN_ACTIVATE_USER|" + AppState.getToken()
+        String command = "ADMIN_ACTIVATE_USER|" + AdminAppState.getToken()
                 + "|" + selected.id;
 
         runAdminCommand(command, lblUsersStatus,
@@ -797,25 +797,25 @@ public class AdminController {
             Task<Void> task = new Task<>() {
                 @Override
                 protected Void call() {
-                    socketClient.sendCommand("LOGOUT|" + AppState.getToken());
+                    socketClient.sendCommand("LOGOUT|" + AdminAppState.getToken());
                     return null;
                 }
             };
             new Thread(task).start();
         }
 
-        AppState.clear();
+        AdminAppState.clear();
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/adminLogin.fxml"));
             Parent root = loader.load();
-            Client.Controllers.LoginController lc = loader.getController();
-            lc.setSocketClient(socketClient);
-            lc.setUdpPort(8085);
+            Admin.Controllers.AdminLoginController lc = loader.getController();
+            lc.setAdminSocket(socketClient);
+            lc.setUdpPort(8086);
             Stage stage = (Stage) btnRefreshUsers.getScene().getWindow();
             lc.setPrimaryStage(stage);
 
-            stage.setTitle("ChriOnline");
+            stage.setTitle("ChriOnline Admin");
             stage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
             logger.error("Exception occurred", e);

@@ -19,15 +19,7 @@ import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Random;
-import java.util.Properties;
-import java.io.IOException;
 
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,7 +55,8 @@ public class AuthHandler {
                 return handleForgotPassword(params);
             case RESET_PASSWORD:
                 return handleResetPassword(params);
-            case ADMIN_CHALLENGE: return handleAdminChallenge(params);
+            case ADMIN_CHALLENGE:
+                return handleAdminChallenge(params);
             default:
                 return ResponseBuilder.error("Unknown auth command");
         }
@@ -74,7 +67,8 @@ public class AuthHandler {
     // ──────────────────────────────────────────────────────────────
 
     private String handleAdminChallenge(String[] params) {
-        if (params.length < 1) return ResponseBuilder.error("Missing username");
+        if (params.length < 1)
+            return ResponseBuilder.error("Missing username");
         String username = params[0].trim();
 
         // Check if user exists and is admin
@@ -86,7 +80,8 @@ public class AuthHandler {
         return ResponseBuilder.ok(ChallengeGenerator.generateChallenge());
     }
 
-    public String handleAdminVerify(String username, String signatureB64, String challenge, int udpPort, Socket clientSocket) {
+    public String handleAdminVerify(String username, String signatureB64, String challenge, int udpPort,
+            Socket clientSocket) {
         // 1. Fetch user (must be admin)
         var authUser = userService.findAuthUserByUsername(username);
         if (authUser == null || !"ADMIN".equals(authUser.role)) {
@@ -112,8 +107,7 @@ public class AuthHandler {
             String clientIP = clientSocket.getInetAddress().getHostAddress();
 
             SessionData sessionData = new SessionData(
-                    token, authUser.id, authUser.role, authUser.username, clientIP, udpPort
-            );
+                    token, authUser.id, authUser.role, authUser.username, clientIP, udpPort);
             sessionManager.addSession(token, sessionData);
             cartService.loadFromDB(token, authUser.id);
 
@@ -234,8 +228,7 @@ public class AuthHandler {
                 user.role,
                 user.username,
                 clientIP,
-                udpPort
-        );
+                udpPort);
         sessionManager.addSession(token, sessionData);
 
         try {
@@ -284,7 +277,7 @@ public class AuthHandler {
             resetOTPs.put(email, otp);
 
             // Send email
-            sendMail(new InternetAddress(email), "Password Reset OTP", "Your password reset OTP is: " + otp);
+            Shared.Security.EmailUtil.sendMail(email, "Password Reset OTP", "Your password reset OTP is: " + otp);
             logger.info("[AuthHandler] Password reset OTP sent to " + email);
 
             return ResponseBuilder.ok();
@@ -324,16 +317,4 @@ public class AuthHandler {
         }
     }
 
-    private void sendMail(InternetAddress recepients, String subject, String body)
-            throws IOException, MessagingException {
-        Properties properties = new Properties();
-        Session session = Session.getDefaultInstance(properties, null);
-
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
-        msg.addRecipient(Message.RecipientType.TO, recepients);
-        msg.setSubject(subject);
-        msg.setText(body);
-        Transport.send(msg);
-    }
 }

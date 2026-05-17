@@ -1,7 +1,7 @@
 import Client.network.NotificationCallback;
-import Client.network.SocketClient;
+import Admin.network.AdminSocket;
 import Client.network.UDPListener;
-import Client.Controllers.LoginController;
+import Admin.Controllers.AdminLoginController;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -22,19 +22,19 @@ import javafx.scene.control.TextInputDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Main extends Application implements NotificationCallback {
-    private static final Logger logger = LogManager.getLogger(Main.class);
+public class AdminMain extends Application implements NotificationCallback {
+    private static final Logger logger = LogManager.getLogger(AdminMain.class);
 
 
     private static String SERVER_HOST = "127.0.0.1";
     private static final int    SERVER_PORT  = 8084;    // TCP port
-    private static final int    UDP_PORT     = 8085;    // UDP listen port
+    private static final int    UDP_PORT     = 8086;    // UDP listen port (8086 to avoid collision with client)
     private static final String CONFIG_FILE = "server_config.properties";
 
-    private SocketClient socketClient;
+    private AdminSocket socketClient;
     private UDPListener  udpListener;
     private Thread       udpThread;
-    private LoginController loginController;
+    private AdminLoginController adminLoginController;
 
     private void loadConfig() {
         Properties props = new Properties();
@@ -59,7 +59,7 @@ public class Main extends Application implements NotificationCallback {
     }
 
     private boolean tryConnect() {
-        socketClient = new SocketClient(SERVER_HOST, SERVER_PORT);
+        socketClient = new AdminSocket(SERVER_HOST, SERVER_PORT);
         try {
             socketClient.connect();
             logger.info("[Main] Connected to server " + SERVER_HOST + ":" + SERVER_PORT);
@@ -120,18 +120,18 @@ public class Main extends Application implements NotificationCallback {
         logger.info("[Main] UDP listener started on port " + UDP_PORT);
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/adminLogin.fxml"));
             Parent root = loader.load();
-            loginController = loader.getController();
-            loginController.setSocketClient(socketClient);
-            loginController.setUdpPort(UDP_PORT);
-            loginController.setPrimaryStage(primaryStage);
+            adminLoginController = loader.getController();
+            adminLoginController.setSocketClient(socketClient);
+            adminLoginController.setUdpPort(UDP_PORT);
+            adminLoginController.setPrimaryStage(primaryStage);
 
             primaryStage.setScene(new Scene(root, 1100, 750));
-            primaryStage.setTitle("ChriOnline");
+            primaryStage.setTitle("ChriOnline Admin");
             primaryStage.show();
 
-            logger.info("[Main] Login screen loaded successfully");
+            logger.info("[Main] Admin Login screen loaded successfully");
         } catch (Exception e) {
             logger.error("[Main] Failed to load login screen: " + e.getMessage());
             logger.error("Exception occurred", e);
@@ -161,7 +161,7 @@ public class Main extends Application implements NotificationCallback {
             System.exit(0);
         });
 
-        primaryStage.setTitle("ChriOnline");
+        primaryStage.setTitle("ChriOnline Admin");
         primaryStage.show();
     }
 
@@ -178,7 +178,7 @@ public class Main extends Application implements NotificationCallback {
         });
     }
 
-    public SocketClient getSocketClient() {
+    public AdminSocket getAdminSocket() {
         return socketClient;
     }
 
