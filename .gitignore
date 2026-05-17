@@ -2,6 +2,6 @@
 *.iml
 out/
 target/
-target/class/
+target/classes/
 *.class
 server_config.properties
