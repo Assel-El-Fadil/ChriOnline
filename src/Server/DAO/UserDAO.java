@@ -199,6 +199,24 @@ public class UserDAO {
         }
     }
 
+    public boolean updatePassword(String email, String newPasswordHash) {
+        final String sql = "UPDATE users SET password_hash = ? WHERE email = ? AND active = 1";
+
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newPasswordHash);
+            ps.setString(2, email);
+            return ps.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            throw new DAOException("updatePassword failed for email =" + email + ": " + e.getMessage(), e);
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+    }
+
     public boolean updatePublicKey(int userId, String publicKeyBase64) {
         final String sql = "UPDATE users SET public_key = ? WHERE id = ? AND active = 1";
         Connection conn = null;
@@ -252,6 +270,31 @@ public class UserDAO {
             return null;
         } catch (SQLException e) {
             throw new DAOException("findByUsernameForAuth failed: " + e.getMessage(), e);
+        } finally {
+            ConnectionPool.returnConnection(conn);
+        }
+    }
+
+    public UserDTO findByEmail(String email) {
+        final String sql =
+                "SELECT id, first_name, last_name, username, email, address, profile_photo, role, active "
+                        + "FROM users "
+                        + "WHERE email = ?  AND active = 1";
+
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getConnection();
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapToDTO(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new DAOException("findByEmail failed: " + e.getMessage(), e);
         } finally {
             ConnectionPool.returnConnection(conn);
         }

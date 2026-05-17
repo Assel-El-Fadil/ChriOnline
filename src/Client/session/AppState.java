@@ -18,6 +18,10 @@ public class AppState {
         return token;
     }
 
+    public static void updateToken(String newToken) {
+        AppState.token = newToken;
+    }
+
     public static int getUserId() {
         return userId;
     }

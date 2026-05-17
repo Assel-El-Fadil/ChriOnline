@@ -1,5 +1,8 @@
 package Server.handlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Server.SessionManager;
 import Server.service.UserService;
 import Shared.DTO.UserDTO;
@@ -7,6 +10,8 @@ import Shared.ResponseBuilder;
 import Shared.SessionData;
 
 public class UserHandler {
+    private static final Logger logger = LogManager.getLogger(UserHandler.class);
+
 
     private final UserService userService;
     private final SessionManager sessionManager;
@@ -38,7 +43,7 @@ public class UserHandler {
         } catch (UserService.UserNotFoundException e) {
             return ResponseBuilder.error(e.getMessage());
         } catch (Exception e) {
-            System.err.println("[UserHandler] GET_PROFILE error: " + e.getMessage());
+            logger.error("[UserHandler] GET_PROFILE error: " + e.getMessage());
             return ResponseBuilder.error("Could not load profile");
         }
     }
@@ -63,7 +68,7 @@ public class UserHandler {
 
         try {
             userService.updateProfile(session.getUserId(), field, value);
-            System.out.println("[UserHandler] EDIT_PROFILE success — userId: "
+            logger.info("[UserHandler] EDIT_PROFILE success — userId: "
                     + session.getUserId() + " field: " + field);
             return ResponseBuilder.ok();
 
@@ -74,7 +79,7 @@ public class UserHandler {
         } catch (UserService.UserNotFoundException e) {
             return ResponseBuilder.error(e.getMessage());
         } catch (Exception e) {
-            System.err.println("[UserHandler] EDIT_PROFILE error: " + e.getMessage());
+            logger.error("[UserHandler] EDIT_PROFILE error: " + e.getMessage());
             return ResponseBuilder.error("Could not update profile");
         }
     }

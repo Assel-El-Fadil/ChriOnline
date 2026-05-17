@@ -57,7 +57,7 @@
     </top>
 
     <center>
-        <VBox spacing="20" style="-fx-padding: 24;">
+        <VBox fx:id="parallaxBg" spacing="20" style="-fx-padding: 24;">
             <VBox styleClass="content-section" VBox.vgrow="ALWAYS" spacing="16">
 
                 <HBox alignment="CENTER_LEFT" spacing="16">

@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.Hyperlink?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Client.Controllers.LoginController"
@@ -19,82 +20,80 @@
             prefWidth="1100"
             prefHeight="750">
 
-    <!-- ─── Top Header (same as catalog / cart) ─── -->
-    <top>
-        <VBox>
-            <HBox alignment="CENTER_LEFT" spacing="20" styleClass="top-header">
-                <Label text="ChriOnline" styleClass="logo-text"/>
-                <Region HBox.hgrow="ALWAYS"/>
-            </HBox>
-        </VBox>
-    </top>
-
-    <!-- ─── Center: login form card ─── -->
     <center>
-        <StackPane style="-fx-padding: 30 60;">
-            <VBox styleClass="content-section" spacing="18" maxWidth="420">
-                <padding>
-                    <Insets top="28" right="32" bottom="28" left="32"/>
-                </padding>
+        <HBox>
+            <!-- Left Branding Pane -->
+            <VBox styleClass="auth-brand-sidebar" alignment="CENTER_LEFT" spacing="20" prefWidth="450" HBox.hgrow="SOMETIMES">
+                <Label text="ChriOnline" styleClass="auth-brand-title"/>
+                <Label text="The premier destination for all your shopping needs. Discover the latest trends, unmissable offers, and secure checkouts all in one place." styleClass="auth-brand-subtitle" wrapText="true"/>
+            </VBox>
 
-                <!-- Title -->
-                <VBox spacing="4">
-                    <Label text="Welcome Back" styleClass="section-title" style="-fx-padding: 0;"/>
-                    <Label text="Sign in to continue shopping"
-                           styleClass="login-welcome-subtitle"/>
-                </VBox>
+            <!-- Right Login Form Pane -->
+            <StackPane HBox.hgrow="ALWAYS" style="-fx-background-color: white;">
+                <VBox styleClass="content-section" spacing="20" maxWidth="450" style="-fx-effect: none; -fx-padding: 40;">
+                    
+                    <!-- Title -->
+                    <VBox spacing="6">
+                        <Label text="Welcome Back" styleClass="section-title" style="-fx-padding: 0; -fx-font-size: 28px;"/>
+                        <Label text="Sign in to continue shopping" styleClass="login-welcome-subtitle" style="-fx-font-size: 15px;"/>
+                    </VBox>
 
-                <!-- Username field -->
-                <VBox spacing="6">
-                    <Label text="Username" styleClass="login-field-label"/>
-                    <TextField fx:id="usernameField"
-                               promptText="Enter your username"
-                               styleClass="login-form-field"/>
-                </VBox>
+                    <!-- Username field -->
+                    <VBox spacing="8">
+                        <Label text="Username" styleClass="login-field-label"/>
+                        <TextField fx:id="usernameField"
+                                   promptText="Enter your username"
+                                   styleClass="login-form-field"/>
+                    </VBox>
 
-                <!-- Password field with show/hide toggle -->
-                <VBox spacing="6">
-                    <Label text="Password" styleClass="login-field-label"/>
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <StackPane HBox.hgrow="ALWAYS">
-                            <PasswordField fx:id="passwordField"
+                    <!-- Password field -->
+                    <VBox spacing="8">
+                        <Label text="Password" styleClass="login-field-label"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <StackPane HBox.hgrow="ALWAYS">
+                                <PasswordField fx:id="passwordField"
+                                               promptText="Enter your password"
+                                               styleClass="login-form-field"/>
+                                <TextField fx:id="passwordVisibleField"
                                            promptText="Enter your password"
-                                           styleClass="login-form-field"/>
-                            <TextField fx:id="passwordVisibleField"
-                                       promptText="Enter your password"
-                                       styleClass="login-form-field"
-                                       visible="false"/>
-                        </StackPane>
-                        <Button fx:id="togglePasswordBtn"
-                                text="Show"
-                                onAction="#handleTogglePassword"
-                                styleClass="toggle-password-btn"/>
+                                           styleClass="login-form-field"
+                                           visible="false"/>
+                            </StackPane>
+                            <Button fx:id="togglePasswordBtn"
+                                    text="Show"
+                                    onAction="#handleTogglePassword"
+                                    styleClass="toggle-password-btn"/>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT">
+                            <Hyperlink text="Forgot Password?" onAction="#handleForgotPassword" style="-fx-font-size: 13px; -fx-text-fill: #3B82F6; -fx-border-color: transparent; -fx-padding: 4 0 0 0;" focusTraversable="false"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Error label -->
+                    <Label fx:id="errorLabel"
+                           styleClass="login-error-label"
+                           visible="false"
+                           wrapText="true"/>
+
+                    <!-- Buttons -->
+                    <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                        <Button text="Admin RSA Login"
+                                onAction="#handleAdminRSALogin"
+                                styleClass="btn-secondary"
+                                style="-fx-text-fill: #e67e22;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Register"
+                                onAction="#handleRegister"
+                                styleClass="btn-secondary"/>
+                        <Button fx:id="loginButton"
+                                text="Login"
+                                onAction="#handleLogin"
+                                defaultButton="true"
+                                styleClass="btn-primary"
+                                style="-fx-padding: 10 24;"/>
                     </HBox>
                 </VBox>
-
-                <!-- Error label — hidden by default -->
-                <Label fx:id="errorLabel"
-                       styleClass="login-error-label"
-                       visible="false"
-                       wrapText="true"/>
-
-                <!-- Buttons -->
-                <HBox spacing="12" alignment="CENTER_RIGHT">
-                    <Button text="Admin RSA Login"
-                            onAction="#handleAdminRSALogin"
-                            styleClass="btn-secondary"
-                            style="-fx-text-fill: #e67e22;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Button text="Register"
-                            onAction="#handleRegister"
-                            styleClass="btn-secondary"/>
-                    <Button fx:id="loginButton"
-                            text="Login"
-                            onAction="#handleLogin"
-                            defaultButton="true"
-                            styleClass="btn-primary"/>
-                </HBox>
-            </VBox>
-        </StackPane>
+            </StackPane>
+        </HBox>
     </center>
 </BorderPane>

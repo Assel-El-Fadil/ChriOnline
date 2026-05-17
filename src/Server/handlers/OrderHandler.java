@@ -1,5 +1,8 @@
 package Server.handlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Server.DAO.ConnectionPool;
 import Server.SessionManager;
 import Server.UDPServer;
@@ -23,6 +26,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OrderHandler {
+    private static final Logger logger = LogManager.getLogger(OrderHandler.class);
+
 
     private final Map<String, PendingCheckout> pendingCheckouts = new ConcurrentHashMap<>();
 
@@ -278,17 +283,17 @@ public class OrderHandler {
                     udpServer.notify(clientIP, clientPort, msg);
                 }
             } catch (Exception e) {
-                System.err.println("[OrderHandler] UDP notification failed: " + e.getMessage());
+                logger.error("[OrderHandler] UDP notification failed: " + e.getMessage());
             }
 
             try {
                 cartService.clearCart(token, userId);
             } catch (SQLException e) {
-                System.err.println("[OrderHandler] Cart clear failed after commit: "
+                logger.error("[OrderHandler] Cart clear failed after commit: "
                         + e.getMessage());
             }
 
-            System.out.println("[OrderHandler] CHECKOUT success — orderId=" + orderId
+            logger.info("[OrderHandler] CHECKOUT success — orderId=" + orderId
                     + " ref=" + refCode + " total=" + total + " user=" + userId);
 
             udpServer.notify(
@@ -306,9 +311,9 @@ public class OrderHandler {
                     conn.setAutoCommit(true);
                 }
             } catch (SQLException rollbackEx) {
-                System.err.println("[OrderHandler] Rollback failed: " + rollbackEx.getMessage());
+                logger.error("[OrderHandler] Rollback failed: " + rollbackEx.getMessage());
             }
-            System.err.println("[OrderHandler] CHECKOUT DB error: " + e.getMessage());
+            logger.error("[OrderHandler] CHECKOUT DB error: " + e.getMessage());
             return ResponseBuilder.error("Checkout failed — please try again");
 
         } finally {

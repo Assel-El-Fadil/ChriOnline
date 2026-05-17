@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.session.AppState;
 import Client.network.SocketClient;
 import Shared.*;
@@ -26,47 +29,82 @@ import java.util.List;
 import java.util.Optional;
 
 public class AdminController {
+    private static final Logger logger = LogManager.getLogger(AdminController.class);
+
 
     // ── FXML injections ──────────────────────────────────────────
 
     // Products tab
-    @FXML private TableView<ProductDTO> productsTable;
-    @FXML private TableColumn<ProductDTO, String> colProductId;
-    @FXML private TableColumn<ProductDTO, String> colProductName;
-    @FXML private TableColumn<ProductDTO, String> colProductCategory;
-    @FXML private TableColumn<ProductDTO, String> colProductPrice;
-    @FXML private TableColumn<ProductDTO, String> colProductStock;
-    @FXML private Button btnAddProduct;
-    @FXML private Button btnEditProduct;
-    @FXML private Button btnDeleteProduct;
-    @FXML private Button btnRefreshProducts;
-    @FXML private Label  lblProductsStatus;
+    @FXML
+    private TableView<ProductDTO> productsTable;
+    @FXML
+    private TableColumn<ProductDTO, String> colProductId;
+    @FXML
+    private TableColumn<ProductDTO, String> colProductName;
+    @FXML
+    private TableColumn<ProductDTO, String> colProductCategory;
+    @FXML
+    private TableColumn<ProductDTO, String> colProductPrice;
+    @FXML
+    private TableColumn<ProductDTO, String> colProductStock;
+    @FXML
+    private Button btnAddProduct;
+    @FXML
+    private Button btnEditProduct;
+    @FXML
+    private Button btnDeleteProduct;
+    @FXML
+    private Button btnRefreshProducts;
+    @FXML
+    private Label lblProductsStatus;
 
     // Orders tab
-    @FXML private TableView<OrderDTO> ordersTable;
-    @FXML private TableColumn<OrderDTO, String> colOrderId;
-    @FXML private TableColumn<OrderDTO, String> colOrderRef;
-    @FXML private TableColumn<OrderDTO, String> colOrderUserId;
-    @FXML private TableColumn<OrderDTO, String> colOrderStatus;
-    @FXML private TableColumn<OrderDTO, String> colOrderTotal;
-    @FXML private TableColumn<OrderDTO, String> colOrderDate;
-    @FXML private Button btnUpdateStatus;
-    @FXML private Button btnRefreshOrders;
-    @FXML private Label  lblOrdersStatus;
+    @FXML
+    private TableView<OrderDTO> ordersTable;
+    @FXML
+    private TableColumn<OrderDTO, String> colOrderId;
+    @FXML
+    private TableColumn<OrderDTO, String> colOrderRef;
+    @FXML
+    private TableColumn<OrderDTO, String> colOrderUserId;
+    @FXML
+    private TableColumn<OrderDTO, String> colOrderStatus;
+    @FXML
+    private TableColumn<OrderDTO, String> colOrderTotal;
+    @FXML
+    private TableColumn<OrderDTO, String> colOrderDate;
+    @FXML
+    private Button btnUpdateStatus;
+    @FXML
+    private Button btnRefreshOrders;
+    @FXML
+    private Label lblOrdersStatus;
 
     // Users tab
-    @FXML private TableView<UserDTO> usersTable;
-    @FXML private TableColumn<UserDTO, String> colUserId;
-    @FXML private TableColumn<UserDTO, String> colUserUsername;
-    @FXML private TableColumn<UserDTO, String> colUserFullName;
-    @FXML private TableColumn<UserDTO, String> colUserEmail;
-    @FXML private TableColumn<UserDTO, String> colUserRole;
-    @FXML private TableColumn<UserDTO, String> colUserActive;
-    @FXML private Button btnDeactivateUser;
-    @FXML private Button btnActivateUser;
-    @FXML private Button btnDeleteUser;
-    @FXML private Button btnRefreshUsers;
-    @FXML private Label lblUsersStatus;
+    @FXML
+    private TableView<UserDTO> usersTable;
+    @FXML
+    private TableColumn<UserDTO, String> colUserId;
+    @FXML
+    private TableColumn<UserDTO, String> colUserUsername;
+    @FXML
+    private TableColumn<UserDTO, String> colUserFullName;
+    @FXML
+    private TableColumn<UserDTO, String> colUserEmail;
+    @FXML
+    private TableColumn<UserDTO, String> colUserRole;
+    @FXML
+    private TableColumn<UserDTO, String> colUserActive;
+    @FXML
+    private Button btnDeactivateUser;
+    @FXML
+    private Button btnActivateUser;
+    @FXML
+    private Button btnDeleteUser;
+    @FXML
+    private Button btnRefreshUsers;
+    @FXML
+    private Label lblUsersStatus;
 
     // ── Internal state ────────────────────────────────────────────
     private SocketClient socketClient;
@@ -76,14 +114,13 @@ public class AdminController {
     private final ObservableList<UserDTO> userList = FXCollections.observableArrayList();
 
     // Valid order statuses for the update dialog
-    private static final List<String> ORDER_STATUSES =
-            List.of("PENDING", "VALIDATED", "SHIPPED", "DELIVERED", "CANCELLED");
+    private static final List<String> ORDER_STATUSES = List.of("PENDING", "VALIDATED", "SHIPPED", "DELIVERED",
+            "CANCELLED");
 
     // Valid product categories matching the DB ENUM
     private static final List<String> CATEGORIES = List.of(
             "ELECTRONIQUES", "VETEMENTS", "ELECTROMENAGER",
             "BEAUTE_ET_COSMETIQUES", "JEUX_VIDEO", "SANTE", "FITNESS");
-
 
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
@@ -94,7 +131,7 @@ public class AdminController {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Initialization — called by FXMLLoader after FXML is loaded
+    // Initialization — called by FXMLLoader after FXML is loaded
     // ────────────────────────────────────────────────────────────
 
     @FXML
@@ -106,14 +143,15 @@ public class AdminController {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Table setup
+    // Table setup
     // ────────────────────────────────────────────────────────────
 
     private void setupProductsTable() {
         colProductId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().id)));
         colProductName.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().name));
         colProductCategory.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().category));
-        colProductPrice.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f MAD", c.getValue().price)));
+        colProductPrice
+                .setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f MAD", c.getValue().price)));
         colProductStock.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().stock)));
 
         // Colour low-stock rows orange, zero-stock rows red
@@ -142,7 +180,8 @@ public class AdminController {
         colOrderRef.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().referenceCode));
         colOrderUserId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().userId)));
         colOrderStatus.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().status));
-        colOrderTotal.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f MAD", c.getValue().totalAmount)));
+        colOrderTotal.setCellValueFactory(
+                c -> new SimpleStringProperty(String.format("%.2f MAD", c.getValue().totalAmount)));
         colOrderDate.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().createdAt)));
 
         // Colour-code order rows by status
@@ -150,7 +189,10 @@ public class AdminController {
             @Override
             protected void updateItem(OrderDTO item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null || empty) { setStyle(""); return; }
+                if (item == null || empty) {
+                    setStyle("");
+                    return;
+                }
                 switch (item.status) {
                     case "PENDING" -> setStyle("-fx-background-color: #FEF9E7;");
                     case "VALIDATED" -> setStyle("-fx-background-color: #EAF2FB;");
@@ -167,12 +209,13 @@ public class AdminController {
     }
 
     private void setupUsersTable() {
-        colUserId      .setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().id)));
+        colUserId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().id)));
         colUserUsername.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().username));
         colUserFullName.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFullName()));
-        colUserEmail   .setCellValueFactory(c -> new SimpleStringProperty(c.getValue().email));
-        colUserRole    .setCellValueFactory(c -> new SimpleStringProperty(c.getValue().role));
-        colUserActive  .setCellValueFactory(c -> new SimpleStringProperty(c.getValue().active == 1 ? "Active" : "Deactivated"));
+        colUserEmail.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().email));
+        colUserRole.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().role));
+        colUserActive.setCellValueFactory(
+                c -> new SimpleStringProperty(c.getValue().active == 1 ? "Active" : "Deactivated"));
 
         // Highlight deactivated accounts
         usersTable.setRowFactory(tv -> new TableRow<>() {
@@ -196,16 +239,16 @@ public class AdminController {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Button wiring
+    // Button wiring
     // ────────────────────────────────────────────────────────────
 
     private void wireButtons() {
         btnRefreshProducts.setOnAction(e -> loadProducts());
-        btnRefreshOrders  .setOnAction(e -> loadOrders());
-        btnRefreshUsers   .setOnAction(e -> loadUsers());
+        btnRefreshOrders.setOnAction(e -> loadOrders());
+        btnRefreshUsers.setOnAction(e -> loadUsers());
 
-        btnAddProduct   .setOnAction(e -> showAddProductDialog());
-        btnEditProduct  .setOnAction(e -> showEditProductDialog());
+        btnAddProduct.setOnAction(e -> showAddProductDialog());
+        btnEditProduct.setOnAction(e -> showEditProductDialog());
         btnDeleteProduct.setOnAction(e -> handleDeleteProduct());
 
         btnUpdateStatus.setOnAction(e -> showUpdateStatusDialog());
@@ -215,7 +258,7 @@ public class AdminController {
         btnDeleteUser.setOnAction(e -> handleDeleteUser());
 
         // Enable Edit/Delete product only when a row is selected
-        btnEditProduct  .disableProperty().bind(
+        btnEditProduct.disableProperty().bind(
                 productsTable.getSelectionModel().selectedItemProperty().isNull());
         btnDeleteProduct.disableProperty().bind(
                 productsTable.getSelectionModel().selectedItemProperty().isNull());
@@ -235,21 +278,27 @@ public class AdminController {
         usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 if (newVal.active == 0) {
-                    btnDeactivateUser.setVisible(false);  btnDeactivateUser.setManaged(false);
-                    btnActivateUser.setVisible(true);     btnActivateUser.setManaged(true);
+                    btnDeactivateUser.setVisible(false);
+                    btnDeactivateUser.setManaged(false);
+                    btnActivateUser.setVisible(true);
+                    btnActivateUser.setManaged(true);
                 } else {
-                    btnDeactivateUser.setVisible(true);   btnDeactivateUser.setManaged(true);
-                    btnActivateUser.setVisible(false);    btnActivateUser.setManaged(false);
+                    btnDeactivateUser.setVisible(true);
+                    btnDeactivateUser.setManaged(true);
+                    btnActivateUser.setVisible(false);
+                    btnActivateUser.setManaged(false);
                 }
             } else {
-                btnDeactivateUser.setVisible(true);   btnDeactivateUser.setManaged(true);
-                btnActivateUser.setVisible(false);    btnActivateUser.setManaged(false);
+                btnDeactivateUser.setVisible(true);
+                btnDeactivateUser.setManaged(true);
+                btnActivateUser.setVisible(false);
+                btnActivateUser.setManaged(false);
             }
         });
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Products — network calls
+    // Products — network calls
     // ────────────────────────────────────────────────────────────
 
     private void loadProducts() {
@@ -299,41 +348,43 @@ public class AdminController {
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
 
-        TextField    tfName        = new TextField();
+        TextField tfName = new TextField();
         ComboBox<String> cbCategory = new ComboBox<>(
                 FXCollections.observableArrayList(CATEGORIES));
-        TextField    tfPrice       = new TextField();
-        TextField    tfStock       = new TextField();
-        TextArea     taDescription = new TextArea();
+        TextField tfPrice = new TextField();
+        TextField tfStock = new TextField();
+        TextArea taDescription = new TextArea();
         taDescription.setPrefRowCount(3);
         taDescription.setWrapText(true);
 
         Button btnPhoto = new Button("Select Photo...");
         Label lblPhotoPath = new Label("No photo selected");
-        final String[] selectedPhotoPath = {null};
+        final String[] selectedPhotoPath = { null };
 
         btnPhoto.setOnAction(ev -> {
             javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
             fileChooser.setTitle("Select Product Photo");
             fileChooser.getExtensionFilters().addAll(
-                    new javafx.stage.FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new javafx.stage.FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             java.io.File selectedFile = fileChooser.showOpenDialog(null);
             if (selectedFile != null) {
                 try {
-                    java.io.File destDir = new java.io.File("src/Client/assets/images/products");
-                    if (!destDir.exists()) destDir.mkdirs();
+                    java.io.File destDir = new java.io.File("src/resources/images");
+                    if (!destDir.exists())
+                        destDir.mkdirs();
                     String ext = "";
                     String n = selectedFile.getName();
                     int i = n.lastIndexOf('.');
-                    if (i > 0) ext = n.substring(i);
+                    if (i > 0)
+                        ext = n.substring(i);
                     String destName = "prod_" + System.currentTimeMillis() + ext;
                     java.io.File destFile = new java.io.File(destDir, destName);
-                    java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                    selectedPhotoPath[0] = "assets/images/products/" + destName;
+                    java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(),
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    selectedPhotoPath[0] = "images/" + destName;
                     lblPhotoPath.setText(destName);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.error("Exception occurred", ex);
                     showError("Error copying photo locally");
                 }
             }
@@ -344,22 +395,29 @@ public class AdminController {
 
         cbCategory.getSelectionModel().selectFirst();
 
-        grid.add(new Label("Name:"),        0, 0); grid.add(tfName,        1, 0);
-        grid.add(new Label("Category:"),    0, 1); grid.add(cbCategory,    1, 1);
-        grid.add(new Label("Price (MAD):"), 0, 2); grid.add(tfPrice,       1, 2);
-        grid.add(new Label("Stock:"),       0, 3); grid.add(tfStock,       1, 3);
-        grid.add(new Label("Description:"), 0, 4); grid.add(taDescription, 1, 4);
-        grid.add(new Label("Photo:"),       0, 5); grid.add(photoBox,      1, 5);
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(tfName, 1, 0);
+        grid.add(new Label("Category:"), 0, 1);
+        grid.add(cbCategory, 1, 1);
+        grid.add(new Label("Price (MAD):"), 0, 2);
+        grid.add(tfPrice, 1, 2);
+        grid.add(new Label("Stock:"), 0, 3);
+        grid.add(tfStock, 1, 3);
+        grid.add(new Label("Description:"), 0, 4);
+        grid.add(taDescription, 1, 4);
+        grid.add(new Label("Photo:"), 0, 5);
+        grid.add(photoBox, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
 
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+        if (result.isEmpty() || result.get() != ButtonType.OK)
+            return;
 
-        String name        = tfName.getText().trim();
-        String category    = cbCategory.getValue();
-        String priceStr    = tfPrice.getText().trim();
-        String stockStr    = tfStock.getText().trim();
+        String name = tfName.getText().trim();
+        String category = cbCategory.getValue();
+        String priceStr = tfPrice.getText().trim();
+        String stockStr = tfStock.getText().trim();
         String description = taDescription.getText().trim();
 
         if (name.isBlank() || priceStr.isBlank() || stockStr.isBlank()) {
@@ -384,7 +442,8 @@ public class AdminController {
 
     private void showEditProductDialog() {
         ProductDTO selected = productsTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Edit Product");
@@ -396,43 +455,47 @@ public class AdminController {
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
 
-        TextField    tfName        = new TextField(selected.name);
+        TextField tfName = new TextField(selected.name);
         ComboBox<String> cbCategory = new ComboBox<>(FXCollections.observableArrayList(CATEGORIES));
-        if (CATEGORIES.contains(selected.category)) cbCategory.setValue(selected.category);
-        else cbCategory.getSelectionModel().selectFirst();
-        
-        TextField    tfPrice       = new TextField(String.valueOf(selected.price));
-        TextField    tfStock       = new TextField(String.valueOf(selected.stock));
-        TextArea     taDescription = new TextArea(selected.description != null ? selected.description : "");
+        if (CATEGORIES.contains(selected.category))
+            cbCategory.setValue(selected.category);
+        else
+            cbCategory.getSelectionModel().selectFirst();
+
+        TextField tfPrice = new TextField(String.valueOf(selected.price));
+        TextField tfStock = new TextField(String.valueOf(selected.stock));
+        TextArea taDescription = new TextArea(selected.description != null ? selected.description : "");
         taDescription.setPrefRowCount(3);
         taDescription.setWrapText(true);
 
         Button btnPhoto = new Button("Change Photo...");
         Label lblPhotoPath = new Label(selected.imagePath != null ? selected.imagePath : "No photo");
-        final String[] selectedPhotoPath = {selected.imagePath};
+        final String[] selectedPhotoPath = { selected.imagePath };
 
         btnPhoto.setOnAction(ev -> {
             javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
             fileChooser.setTitle("Select Product Photo");
             fileChooser.getExtensionFilters().addAll(
-                    new javafx.stage.FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new javafx.stage.FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             java.io.File selectedFile = fileChooser.showOpenDialog(null);
             if (selectedFile != null) {
                 try {
-                    java.io.File destDir = new java.io.File("src/Client/assets/images/products");
-                    if (!destDir.exists()) destDir.mkdirs();
+                    java.io.File destDir = new java.io.File("src/resources/images");
+                    if (!destDir.exists())
+                        destDir.mkdirs();
                     String ext = "";
                     String n = selectedFile.getName();
                     int i = n.lastIndexOf('.');
-                    if (i > 0) ext = n.substring(i);
+                    if (i > 0)
+                        ext = n.substring(i);
                     String destName = "prod_" + System.currentTimeMillis() + ext;
                     java.io.File destFile = new java.io.File(destDir, destName);
-                    java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                    selectedPhotoPath[0] = "assets/images/products/" + destName;
+                    java.nio.file.Files.copy(selectedFile.toPath(), destFile.toPath(),
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    selectedPhotoPath[0] = "images/" + destName;
                     lblPhotoPath.setText(destName);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.error("Exception occurred", ex);
                     showError("Error copying photo locally");
                 }
             }
@@ -441,20 +504,27 @@ public class AdminController {
         javafx.scene.layout.HBox photoBox = new javafx.scene.layout.HBox(10, btnPhoto, lblPhotoPath);
         photoBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        grid.add(new Label("Name:"),        0, 0); grid.add(tfName,        1, 0);
-        grid.add(new Label("Category:"),    0, 1); grid.add(cbCategory,    1, 1);
-        grid.add(new Label("Price (MAD):"), 0, 2); grid.add(tfPrice,       1, 2);
-        grid.add(new Label("Stock:"),       0, 3); grid.add(tfStock,       1, 3);
-        grid.add(new Label("Description:"), 0, 4); grid.add(taDescription, 1, 4);
-        grid.add(new Label("Photo:"),       0, 5); grid.add(photoBox,      1, 5);
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(tfName, 1, 0);
+        grid.add(new Label("Category:"), 0, 1);
+        grid.add(cbCategory, 1, 1);
+        grid.add(new Label("Price (MAD):"), 0, 2);
+        grid.add(tfPrice, 1, 2);
+        grid.add(new Label("Stock:"), 0, 3);
+        grid.add(tfStock, 1, 3);
+        grid.add(new Label("Description:"), 0, 4);
+        grid.add(taDescription, 1, 4);
+        grid.add(new Label("Photo:"), 0, 5);
+        grid.add(photoBox, 1, 5);
 
         dialog.getDialogPane().setContent(grid);
 
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+        if (result.isEmpty() || result.get() != ButtonType.OK)
+            return;
 
         java.util.Map<String, String> changes = new java.util.LinkedHashMap<>();
-        
+
         String newName = tfName.getText().trim();
         String newCat = cbCategory.getValue();
         String newPrice = tfPrice.getText().trim();
@@ -462,12 +532,18 @@ public class AdminController {
         String newDesc = taDescription.getText().trim();
         String newPhoto = selectedPhotoPath[0];
 
-        if (!newName.equals(selected.name)) changes.put("name", newName);
-        if (!newCat.equals(selected.category)) changes.put("category", newCat);
-        if (!newPrice.equals(String.valueOf(selected.price))) changes.put("price", newPrice);
-        if (!newStock.equals(String.valueOf(selected.stock))) changes.put("stock", newStock);
-        if (!newDesc.equals(selected.description != null ? selected.description : "")) changes.put("description", newDesc);
-        if (newPhoto != null && !newPhoto.equals(selected.imagePath)) changes.put("imagePath", newPhoto);
+        if (!newName.equals(selected.name))
+            changes.put("name", newName);
+        if (!newCat.equals(selected.category))
+            changes.put("category", newCat);
+        if (!newPrice.equals(String.valueOf(selected.price)))
+            changes.put("price", newPrice);
+        if (!newStock.equals(String.valueOf(selected.stock)))
+            changes.put("stock", newStock);
+        if (!newDesc.equals(selected.description != null ? selected.description : ""))
+            changes.put("description", newDesc);
+        if (newPhoto != null && !newPhoto.equals(selected.imagePath))
+            changes.put("imagePath", newPhoto);
 
         if (changes.isEmpty()) {
             setStatus(lblProductsStatus, "No changes to save", false);
@@ -485,7 +561,8 @@ public class AdminController {
                             + "|" + entry.getKey()
                             + "|" + entry.getValue();
                     String response = socketClient.sendCommand(cmd);
-                    if (!ResponseBuilder.isOk(response)) return response;
+                    if (!ResponseBuilder.isOk(response))
+                        return response;
                 }
                 return "OK";
             }
@@ -506,7 +583,8 @@ public class AdminController {
 
     private void handleDeleteProduct() {
         ProductDTO selected = productsTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Delete Product");
@@ -516,7 +594,8 @@ public class AdminController {
                         + "It cannot be deleted if it is in an active cart.");
 
         Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+        if (result.isEmpty() || result.get() != ButtonType.OK)
+            return;
 
         // ADMIN_DELETE_PRODUCT|token|productId
         String command = "ADMIN_DELETE_PRODUCT|" + AppState.getToken()
@@ -527,7 +606,7 @@ public class AdminController {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Orders — network calls
+    // Orders — network calls
     // ────────────────────────────────────────────────────────────
 
     private void loadOrders() {
@@ -566,7 +645,8 @@ public class AdminController {
 
     private void showUpdateStatusDialog() {
         OrderDTO selected = ordersTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(
                 selected.status, ORDER_STATUSES);
@@ -575,7 +655,8 @@ public class AdminController {
         dialog.setContentText("Select new status:");
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isEmpty() || result.get().equals(selected.status)) return;
+        if (result.isEmpty() || result.get().equals(selected.status))
+            return;
 
         // ADMIN_UPDATE_STATUS|token|orderId|newStatus
         String command = "ADMIN_UPDATE_STATUS|" + AppState.getToken()
@@ -587,7 +668,7 @@ public class AdminController {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Users — network calls
+    // Users — network calls
     // ────────────────────────────────────────────────────────────
 
     private void loadUsers() {
@@ -627,7 +708,8 @@ public class AdminController {
 
     private void handleDeleteUser() {
         UserDTO selected = usersTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         // Prevent deleting the currently logged-in admin
         if (selected.username.equals(AppState.getUsername())) {
@@ -643,7 +725,8 @@ public class AdminController {
                         + "This will fail if the user has any order history.");
 
         Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+        if (result.isEmpty() || result.get() != ButtonType.OK)
+            return;
 
         // ADMIN_HARD_DELETE_USER|token|userId
         String command = "ADMIN_HARD_DELETE_USER|" + AppState.getToken()
@@ -655,7 +738,8 @@ public class AdminController {
 
     private void handleDeactivateUser() {
         UserDTO selected = usersTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         // Prevent deactivating the currently logged-in admin
         if (selected.username.equals(AppState.getUsername())) {
@@ -669,7 +753,8 @@ public class AdminController {
         confirm.setContentText("This will prevent the user from logging in.");
 
         Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+        if (result.isEmpty() || result.get() != ButtonType.OK)
+            return;
 
         // ADMIN_DEACTIVATE_USER|token|userId
         String command = "ADMIN_DEACTIVATE_USER|" + AppState.getToken()
@@ -681,7 +766,8 @@ public class AdminController {
 
     private void handleActivateUser() {
         UserDTO selected = usersTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         if (selected.username.equals(AppState.getUsername())) {
             showError("You cannot activate your own account from here.");
@@ -694,7 +780,8 @@ public class AdminController {
         confirm.setContentText("This will restore the user's ability to log in.");
 
         Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isEmpty() || result.get() != ButtonType.OK) return;
+        if (result.isEmpty() || result.get() != ButtonType.OK)
+            return;
 
         // ADMIN_ACTIVATE_USER|token|userId
         String command = "ADMIN_ACTIVATE_USER|" + AppState.getToken()
@@ -702,44 +789,6 @@ public class AdminController {
 
         runAdminCommand(command, lblUsersStatus,
                 "User activated successfully", this::loadUsers);
-    }
-
-    // ────────────────────────────────────────────────────────────
-    //  Shared helpers
-    // ────────────────────────────────────────────────────────────
-
-    private void runAdminCommand(String command, Label statusLabel,
-                                 String successMessage, Runnable onSuccess) {
-        Task<String> task = new Task<>() {
-            @Override
-            protected String call() {
-                return socketClient.sendCommand(command);
-            }
-        };
-
-        task.setOnSucceeded(e -> {
-            String response = task.getValue();
-            if (ResponseBuilder.isOk(response)) {
-                setStatus(statusLabel, successMessage, false);
-                onSuccess.run();  // refresh the table
-            } else {
-                setStatus(statusLabel,
-                        ResponseBuilder.extractError(response), true);
-            }
-        });
-
-        task.setOnFailed(e -> setStatus(statusLabel,
-                "Network error — command failed", true));
-
-        new Thread(task).start();
-    }
-
-    private void setStatus(Label label, String message, boolean isError) {
-        Platform.runLater(() -> {
-            label.setText(message);
-            label.setStyle(isError ? "-fx-text-fill: #DC2626; -fx-font-weight: bold;"
-                    : "-fx-text-fill: #10B981; -fx-font-weight: bold;");
-        });
     }
 
     @FXML
@@ -769,9 +818,48 @@ public class AdminController {
             stage.setTitle("ChriOnline");
             stage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showError("Failed to load login screen.");
         }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    // Shared helpers
+    // ────────────────────────────────────────────────────────────
+
+    private void runAdminCommand(String command, Label statusLabel,
+            String successMessage, Runnable onSuccess) {
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() {
+                return socketClient.sendCommand(command);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            String response = task.getValue();
+            if (ResponseBuilder.isOk(response)) {
+                setStatus(statusLabel, successMessage, false);
+                onSuccess.run(); // refresh the table
+            } else {
+                setStatus(statusLabel,
+                        ResponseBuilder.extractError(response), true);
+            }
+        });
+
+        task.setOnFailed(e -> setStatus(statusLabel,
+                "Network error — command failed", true));
+
+        new Thread(task).start();
+    }
+
+    private void setStatus(Label label, String message, boolean isError) {
+        Platform.runLater(() -> {
+            label.setText(message);
+            label.setStyle(isError
+                    ? "-fx-text-fill: #922B21; -fx-font-weight: bold;"
+                    : "-fx-text-fill: #1E6B3A;");
+        });
     }
 
     private void showError(String message) {

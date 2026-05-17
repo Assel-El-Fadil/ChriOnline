@@ -47,64 +47,65 @@
                                styleClass="login-welcome-subtitle"/>
                     </VBox>
 
-                    <!-- ── Order Summary section ────────────────────────────────── -->
-                    <VBox spacing="12">
-                        <Label text="Order Summary" styleClass="login-field-label"/>
-                        <TableView fx:id="summaryTable" prefHeight="220" styleClass="table-view">
-                            <columns>
-                                <TableColumn fx:id="colName"      text="Product"    prefWidth="400"/>
-                                <TableColumn fx:id="colQty"       text="Qty"        prefWidth="80"/>
-                                <TableColumn fx:id="colUnitPrice" text="Unit Price" prefWidth="120"/>
-                                <TableColumn fx:id="colSubtotal"  text="Subtotal"   prefWidth="120"/>
-                            </columns>
-                        </TableView>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="12">
-                            <Label text="Total Amount:" styleClass="cart-total-caption"/>
-                            <Label fx:id="totalLabel" text="0.00 MAD" styleClass="cart-total-value"/>
-                        </HBox>
-                    </VBox>
-
-                    <Separator/>
-
-                    <!-- ── Payment section ──────────────────────────────────────── -->
-                    <VBox spacing="16">
-                        <Label text="Payment Details" styleClass="login-field-label"/>
-                        
-                        <VBox spacing="12" maxWidth="500">
-                            <!-- Card Number -->
-                            <VBox spacing="6">
-                                <Label text="Card Number" styleClass="login-field-label"/>
-                                <TextField fx:id="cardNumberField"
-                                           promptText="16 digits"
-                                           styleClass="login-form-field"/>
-                            </VBox>
-
-                            <!-- Card Holder -->
-                            <VBox spacing="6">
-                                <Label text="Card Holder" styleClass="login-field-label"/>
-                                <TextField fx:id="cardHolderField"
-                                           promptText="Full name on card"
-                                           styleClass="login-form-field"/>
-                            </VBox>
-
-                            <!-- Expiry + CVV on same row -->
-                            <HBox spacing="12">
-                                <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                    <Label text="Expiry (MM/YY)" styleClass="login-field-label"/>
-                                    <TextField fx:id="expiryField"
-                                               promptText="MM/YY"
-                                               styleClass="login-form-field"/>
-                                </VBox>
-                                <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                    <Label text="CVV" styleClass="login-field-label"/>
-                                    <TextField fx:id="cvvField"
-                                               promptText="3 digits"
-                                               styleClass="login-form-field"/>
-                                </VBox>
+                    <HBox spacing="40">
+                        <!-- Left: Order Summary -->
+                        <VBox spacing="12" HBox.hgrow="ALWAYS">
+                            <Label text="Order Summary" styleClass="login-field-label"/>
+                            <TableView fx:id="summaryTable" prefHeight="220" styleClass="table-view" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="colName"      text="Product"    prefWidth="300"/>
+                                    <TableColumn fx:id="colQty"       text="Qty"        prefWidth="60"/>
+                                    <TableColumn fx:id="colUnitPrice" text="Unit Price" prefWidth="100"/>
+                                    <TableColumn fx:id="colSubtotal"  text="Subtotal"   prefWidth="100"/>
+                                </columns>
+                            </TableView>
+                            <HBox alignment="CENTER_RIGHT" spacing="12" style="-fx-padding: 10 0 0 0; -fx-border-color: #E5E7EB; -fx-border-width: 1 0 0 0;">
+                                <Label text="Total Amount:" styleClass="cart-total-caption"/>
+                                <Label fx:id="totalLabel" text="0.00 MAD" styleClass="cart-total-value"/>
                             </HBox>
                         </VBox>
-                    </VBox>
+
+                        <Separator orientation="VERTICAL"/>
+
+                        <!-- Right: Payment section -->
+                        <VBox spacing="16" prefWidth="400" minWidth="400">
+                            <Label text="Payment Details" styleClass="login-field-label"/>
+                            
+                            <VBox spacing="12">
+                                <!-- Card Number -->
+                                <VBox spacing="6">
+                                    <Label text="Card Number" styleClass="login-field-label"/>
+                                    <TextField fx:id="cardNumberField"
+                                               promptText="16 digits"
+                                               styleClass="login-form-field"/>
+                                </VBox>
+
+                                <!-- Card Holder -->
+                                <VBox spacing="6">
+                                    <Label text="Card Holder" styleClass="login-field-label"/>
+                                    <TextField fx:id="cardHolderField"
+                                               promptText="Full name on card"
+                                               styleClass="login-form-field"/>
+                                </VBox>
+
+                                <!-- Expiry + CVV on same row -->
+                                <HBox spacing="12">
+                                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                        <Label text="Expiry (MM/YY)" styleClass="login-field-label"/>
+                                        <TextField fx:id="expiryField"
+                                                   promptText="MM/YY"
+                                                   styleClass="login-form-field"/>
+                                    </VBox>
+                                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                        <Label text="CVV" styleClass="login-field-label"/>
+                                        <TextField fx:id="cvvField"
+                                                   promptText="3 digits"
+                                                   styleClass="login-form-field"/>
+                                    </VBox>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                    </HBox>
 
                     <!-- Error label — hidden by default -->
                     <Label fx:id="errorLabel"

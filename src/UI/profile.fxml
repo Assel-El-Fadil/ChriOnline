@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -40,7 +39,6 @@
     <center>
         <VBox spacing="20" style="-fx-padding: 40 80;" alignment="TOP_CENTER">
 
-            <!-- Profile Card -->
             <VBox styleClass="content-section" spacing="24" maxWidth="700">
 
                 <!-- Section Header -->
@@ -52,7 +50,6 @@
                            visible="false"/>
                 </HBox>
 
-                <!-- Avatar + Name Row -->
                 <HBox spacing="20" alignment="CENTER_LEFT">
                     <VBox alignment="CENTER" spacing="8">
                         <StackPane>
@@ -81,36 +78,35 @@
                     </VBox>
                 </HBox>
 
-                <!-- Editable Fields -->
                 <VBox spacing="16">
 
                     <HBox spacing="16">
-                        <VBox spacing="4" HBox.hgrow="ALWAYS">
-                            <Label text="First Name" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                            <TextField fx:id="firstNameField" styleClass="search-bar"
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="First Name" styleClass="login-field-label"/>
+                            <TextField fx:id="firstNameField" styleClass="login-form-field"
                                        style="-fx-pref-width: 999;"/>
                         </VBox>
-                        <VBox spacing="4" HBox.hgrow="ALWAYS">
-                            <Label text="Last Name" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                            <TextField fx:id="lastNameField" styleClass="search-bar"
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Last Name" styleClass="login-field-label"/>
+                            <TextField fx:id="lastNameField" styleClass="login-form-field"
                                        style="-fx-pref-width: 999;"/>
                         </VBox>
                     </HBox>
 
-                    <VBox spacing="4">
-                        <Label text="Username" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                        <TextField fx:id="usernameField" styleClass="search-bar"
+                    <VBox spacing="6">
+                        <Label text="Username" styleClass="login-field-label"/>
+                        <TextField fx:id="usernameField" styleClass="login-form-field"
                                    editable="false" style="-fx-opacity: 0.6;"/>
                     </VBox>
 
-                    <VBox spacing="4">
-                        <Label text="Email" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                        <TextField fx:id="emailField" styleClass="search-bar"/>
+                    <VBox spacing="6">
+                        <Label text="Email" styleClass="login-field-label"/>
+                        <TextField fx:id="emailField" styleClass="login-form-field"/>
                     </VBox>
 
-                    <VBox spacing="4">
-                        <Label text="Address" style="-fx-font-weight: bold; -fx-text-fill: #374151;"/>
-                        <TextField fx:id="addressField" styleClass="search-bar" promptText="Not set"/>
+                    <VBox spacing="6">
+                        <Label text="Address" styleClass="login-field-label"/>
+                        <TextField fx:id="addressField" styleClass="login-form-field" promptText="Not set"/>
                     </VBox>
 
                 </VBox>

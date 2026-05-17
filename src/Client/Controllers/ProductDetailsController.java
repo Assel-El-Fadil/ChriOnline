@@ -1,10 +1,14 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Client.util.ProductImageHelper;
 import Shared.DTO.ProductDTO;
 import Shared.ResponseBuilder;
+import Client.util.AnimationUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -22,6 +26,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ProductDetailsController {
+    private static final Logger logger = LogManager.getLogger(ProductDetailsController.class);
+
 
     @FXML private Label   lblName;
     @FXML private Label   lblCategory;
@@ -50,6 +56,16 @@ public class ProductDetailsController {
         if (cartStatusLabel != null) {
             cartStatusLabel.setVisible(false);
             cartStatusLabel.setText("");
+        }
+        
+        // Add 3D mouse parallax effect to the product image
+        if (imgProduct != null) {
+            AnimationUtils.makeMouseParallax(imgProduct);
+        }
+        
+        // Add pulsing to cart button
+        if (addToCartButton != null) {
+            AnimationUtils.makePulsingOnHover(addToCartButton);
         }
     }
 
@@ -92,7 +108,7 @@ public class ProductDetailsController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showCartStatus("Could not return to catalog.", true);
         }
     }

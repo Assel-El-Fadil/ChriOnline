@@ -1,11 +1,16 @@
 package Server.DAO;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
 public class ConnectionPool {
+    private static final Logger logger = LogManager.getLogger(ConnectionPool.class);
+
 
     private static final int POOL_SIZE = 5;
 
@@ -30,7 +35,7 @@ public class ConnectionPool {
                                 + (i + 1) + "/" + POOL_SIZE + " — " + e.getMessage(), e);
             }
         }
-        System.out.println("[ConnectionPool] Initialized — " + POOL_SIZE + " connections ready.");
+        logger.info("[ConnectionPool] Initialized — " + POOL_SIZE + " connections ready.");
     }
 
     public static Connection getConnection() {
@@ -49,7 +54,7 @@ public class ConnectionPool {
 
             try {
                 if (conn == null || conn.isClosed() || !conn.isValid(2)) {
-                    System.out.println("[ConnectionPool] Stale connection detected — replacing.");
+                    logger.info("[ConnectionPool] Stale connection detected — replacing.");
                     conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 }
             } catch (SQLException e) {
@@ -70,14 +75,14 @@ public class ConnectionPool {
                     conn.setAutoCommit(true);
                 }
             } catch (SQLException e) {
-                System.err.println(
+                logger.error(
                         "[ConnectionPool] Could not reset auto-commit — discarding connection: "
                                 + e.getMessage());
                 try {
                     conn.close();
                     conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 } catch (SQLException ex) {
-                    System.err.println(
+                    logger.error(
                             "[ConnectionPool] Could not replace discarded connection: "
                                     + ex.getMessage());
                     pool.notifyAll();
