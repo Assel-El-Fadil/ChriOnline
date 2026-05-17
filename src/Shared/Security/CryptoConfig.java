@@ -13,6 +13,8 @@ public final class CryptoConfig {
     public static final int    AES_KEY_SIZE    = 256;   // bits
     public static final int    GCM_IV_LENGTH   = 12;    // bytes (96 bits, NIST recommended)
     public static final int    GCM_TAG_LENGTH  = 128;   // bits
+    public static final String HMAC_ALGORITHM  = "HmacSHA256";
+    public static final String IV_SEPARATOR    = ":";    // delimiter between Base64(IV) and Base64(ciphertext)
 
     // ── RSA Configuration ───────────────────────────────────────────
     public static final String RSA_ALGORITHM   = "RSA";
