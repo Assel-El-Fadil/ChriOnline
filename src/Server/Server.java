@@ -7,12 +7,17 @@ import Server.DAO.*;
 import Server.service.*;
 import Server.handlers.*;
 import Server.service.PaymentService;
+import Server.security.SecureHandshake;
+import Shared.Security.CryptoConfig;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.security.KeyPair;
+import java.security.KeyStore;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,12 +25,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.time.Instant;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+
 public class Server {
     private static final Logger logger = LogManager.getLogger(Server.class);
 
 
     // ── Network configuration ─────────────────────────────────────
-    private static final int TCP_PORT = 8084;
+    private static final int TCP_PORT = CryptoConfig.SSL_PORT;
     private static final int THREAD_POOL_SIZE = 20;
     private static final int MAX_CONNECTIONS_PER_MINUTE = 10;
     private static final int HANDSHAKE_TIMEOUT_MS = 30_000;
@@ -34,8 +44,11 @@ public class Server {
     private final ConcurrentHashMap<String, long[]> ipConnections = new ConcurrentHashMap<>();
 
     // ── Core server infrastructure ────────────────────────────────
-    private final ServerSocket serverSocket;
+    private final SSLServerSocket serverSocket;
     private final ExecutorService pool;
+
+    // ── RSA KeyPair for application-layer handshake ────────────────
+    private final KeyPair serverKeyPair;
 
     // ── Server-wide singletons ─
     private final SessionManager sessionManager;
@@ -67,10 +80,28 @@ public class Server {
     //  Constructor
     // ────────────────────────────────────────────────────────────
 
-    public Server() throws IOException {
+    public Server() throws Exception {
 
-        this.serverSocket = new ServerSocket(TCP_PORT);
-        logger.info("[Server] Bound to TCP port " + TCP_PORT);
+        // ── Load KeyStore and create SSLServerSocket ──────────────
+        KeyStore keyStore = KeyStore.getInstance(CryptoConfig.KEYSTORE_TYPE);
+        try (FileInputStream fis = new FileInputStream(CryptoConfig.KEYSTORE_PATH)) {
+            keyStore.load(fis, CryptoConfig.KEYSTORE_PASSWORD.toCharArray());
+        }
+        logger.info("[Server] KeyStore loaded: " + CryptoConfig.KEYSTORE_PATH);
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(keyStore, CryptoConfig.KEYSTORE_PASSWORD.toCharArray());
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(kmf.getKeyManagers(), null, null);
+
+        SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+        this.serverSocket = (SSLServerSocket) ssf.createServerSocket(TCP_PORT);
+        logger.info("[Server] SSLServerSocket bound to port " + TCP_PORT + " (TLS enabled)");
+
+        // ── Load RSA KeyPair for application-layer handshake ─────
+        this.serverKeyPair = SecureHandshake.loadKeyPairFromKeyStore();
+        logger.info("[Server] RSA KeyPair loaded for secure handshake");
 
         this.pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         logger.info("[Server] Thread pool ready ("
@@ -99,7 +130,7 @@ public class Server {
         this.adminHandler = new AdminHandler(userService, productService, orderService, sessionManager);
         this.userHandler = new UserHandler(userService, sessionManager);
 
-        logger.info("[Server] All dependencies wired — ready to accept connections.");
+        logger.info("[Server] All dependencies wired — ready to accept SSL connections.");
     }
 
     // ────────────────────────────────────────────────────────────
@@ -107,7 +138,7 @@ public class Server {
     // ────────────────────────────────────────────────────────────
 
     public void start() {
-        logger.info("[Server] Listening — waiting for client connections...\n");
+        logger.info("[Server] Listening on SSL port " + TCP_PORT + " — waiting for client connections...\n");
 
         while (!serverSocket.isClosed()) {
             try {
@@ -124,7 +155,7 @@ public class Server {
 
                 clientSocket.setSoTimeout(HANDSHAKE_TIMEOUT_MS);
 
-                logger.info("[Server] Client connected: " + clientAddress
+                logger.info("[Server] SSL client connected: " + clientAddress
                         + "  | Active sessions: "
                         + sessionManager.getActiveSessionCount());
 
@@ -137,7 +168,8 @@ public class Server {
                         cartHandler,
                         orderHandler,
                         adminHandler,
-                        userHandler
+                        userHandler,
+                        serverKeyPair
                 );
 
                 pool.submit(handler);
@@ -225,12 +257,8 @@ public class Server {
                     + " is already in use. Is another instance running?");
             System.exit(1);
             return;
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("[Server] FATAL: Could not start — " + e.getMessage());
-            System.exit(1);
-            return;
-        } catch (RuntimeException e) {
-            logger.error("[Server] FATAL: Startup error — " + e.getMessage());
             System.exit(1);
             return;
         }

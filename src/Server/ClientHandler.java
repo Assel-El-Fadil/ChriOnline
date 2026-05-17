@@ -5,10 +5,18 @@ import org.apache.logging.log4j.Logger;
 
 import Shared.*;
 import Server.handlers.*;
+import Server.security.SecureHandshake;
+import Shared.Security.CryptoConfig;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 public class ClientHandler implements Runnable {
     private static final Logger logger = LogManager.getLogger(ClientHandler.class);
@@ -23,9 +31,14 @@ public class ClientHandler implements Runnable {
     private final OrderHandler orderHandler;
     private final AdminHandler adminHandler;
     private final UserHandler userHandler;
+    private final KeyPair serverKeyPair;
 
     private volatile String currentToken = null;
     private volatile String pendingChallenge = null; // Used for RSA Login (Section 8)
+
+    // ── AES session key (established via handshake) ──────────────
+    private SecretKey aesSessionKey = null;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     // ────────────────────────────────────────────────────────────
     // Constructor
@@ -39,7 +52,8 @@ public class ClientHandler implements Runnable {
             CartHandler cartHandler,
             OrderHandler orderHandler,
             AdminHandler adminHandler,
-            UserHandler userHandler) {
+            UserHandler userHandler,
+            KeyPair serverKeyPair) {
         this.socket = socket;
         this.sessionManager = sessionManager;
         this.udpServer = udpServer;
@@ -49,6 +63,7 @@ public class ClientHandler implements Runnable {
         this.orderHandler = orderHandler;
         this.adminHandler = adminHandler;
         this.userHandler = userHandler;
+        this.serverKeyPair = serverKeyPair;
     }
 
     // ────────────────────────────────────────────────────────────
@@ -71,6 +86,14 @@ public class ClientHandler implements Runnable {
                     new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8),
                     true);
 
+            // ── Application-layer AES handshake ─────────────────────
+            aesSessionKey = SecureHandshake.perform(reader, writer, serverKeyPair);
+            if (aesSessionKey == null) {
+                logger.error("[ClientHandler] AES handshake failed for " + clientAddress + ". Dropping connection.");
+                return;
+            }
+            logger.info("[ClientHandler] AES session established with " + clientAddress);
+
             // ── Read-dispatch-respond loop ─────────────────────────
             boolean firstCommandReceived = false;
             String line;
@@ -78,7 +101,10 @@ public class ClientHandler implements Runnable {
 
                 String response;
                 try {
-                    ParsedRequest req = RequestParser.parse(line);
+                    // Decrypt the incoming message
+                    String decryptedLine = decryptMessage(line);
+
+                    ParsedRequest req = RequestParser.parse(decryptedLine);
                     if (!firstCommandReceived) {
                         socket.setSoTimeout(0);
                         firstCommandReceived = true;
@@ -97,7 +123,9 @@ public class ClientHandler implements Runnable {
                     logger.error("Exception occurred", e);
                 }
 
-                writer.println(response);
+                // Encrypt the outgoing response
+                String encryptedResponse = encryptMessage(response);
+                writer.println(encryptedResponse);
             }
 
             logger.info("[ClientHandler] Client disconnected cleanly: "
@@ -111,6 +139,62 @@ public class ClientHandler implements Runnable {
                     + clientAddress + " — " + e.getMessage());
         } finally {
             cleanup(reader, writer, clientAddress);
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    // AES-GCM Encryption / Decryption helpers
+    // ────────────────────────────────────────────────────────────
+
+    /**
+     * Encrypts a plaintext message using AES-GCM.
+     * Format: Base64( IV || ciphertext )
+     */
+    private String encryptMessage(String plaintext) {
+        try {
+            byte[] iv = new byte[CryptoConfig.GCM_IV_LENGTH];
+            secureRandom.nextBytes(iv);
+
+            Cipher cipher = Cipher.getInstance(CryptoConfig.AES_ALGORITHM);
+            GCMParameterSpec spec = new GCMParameterSpec(CryptoConfig.GCM_TAG_LENGTH, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, aesSessionKey, spec);
+
+            byte[] ciphertext = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
+
+            // Prepend IV to ciphertext
+            byte[] combined = new byte[iv.length + ciphertext.length];
+            System.arraycopy(iv, 0, combined, 0, iv.length);
+            System.arraycopy(ciphertext, 0, combined, iv.length, ciphertext.length);
+
+            return Base64.getEncoder().encodeToString(combined);
+        } catch (Exception e) {
+            logger.error("[ClientHandler] Encryption failed: " + e.getMessage(), e);
+            return "ENCRYPTION_ERROR";
+        }
+    }
+
+    /**
+     * Decrypts an AES-GCM encrypted message.
+     * Expects Base64( IV || ciphertext )
+     */
+    private String decryptMessage(String encryptedB64) {
+        try {
+            byte[] combined = Base64.getDecoder().decode(encryptedB64);
+
+            byte[] iv = new byte[CryptoConfig.GCM_IV_LENGTH];
+            byte[] ciphertext = new byte[combined.length - CryptoConfig.GCM_IV_LENGTH];
+            System.arraycopy(combined, 0, iv, 0, iv.length);
+            System.arraycopy(combined, iv.length, ciphertext, 0, ciphertext.length);
+
+            Cipher cipher = Cipher.getInstance(CryptoConfig.AES_ALGORITHM);
+            GCMParameterSpec spec = new GCMParameterSpec(CryptoConfig.GCM_TAG_LENGTH, iv);
+            cipher.init(Cipher.DECRYPT_MODE, aesSessionKey, spec);
+
+            byte[] plaintext = cipher.doFinal(ciphertext);
+            return new String(plaintext, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            logger.error("[ClientHandler] Decryption failed: " + e.getMessage(), e);
+            throw new RuntimeException("Decryption failed", e);
         }
     }
 

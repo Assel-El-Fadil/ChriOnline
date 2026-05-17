@@ -1,6 +1,10 @@
 package Server;
 import Shared.SessionData;
+import Shared.Security.CryptoConfig;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -16,6 +20,9 @@ public class SessionManager {
     // 10 minutes in seconds
     private static final long MAX_IDLE_TIME_SECONDS = 10 * 60;
 
+    // Tokens are hashed (SHA-256) before being used as map keys.
+    // This means raw tokens never appear in memory as HashMap keys,
+    // protecting against memory-dump attacks.
     private final ConcurrentHashMap<String, SessionData> sessions = new ConcurrentHashMap<>();
     private final ScheduledExecutorService cleanupExecutor = Executors.newSingleThreadScheduledExecutor();
 
@@ -24,16 +31,40 @@ public class SessionManager {
     }
     
     private void cleanupIdleSessions() {
-        sessions.forEach((token, session) -> {
+        sessions.forEach((hashedToken, session) -> {
             if (session.getIdleSeconds() > MAX_IDLE_TIME_SECONDS) {
                 logger.warn("[SessionManager] AFK Timeout: Removing idle session for user " + session.getUsername());
-                removeSession(token);
+                sessions.remove(hashedToken);
             }
         });
     }
 
     public void stopCleanup() {
         cleanupExecutor.shutdownNow();
+    }
+
+    // ────────────────────────────────────────────────────────────
+    //  Token hashing — SHA-256
+    // ────────────────────────────────────────────────────────────
+
+    /**
+     * Hashes a raw token using SHA-256 so the plaintext token
+     * never appears as a key in the sessions map.
+     */
+    private String hashToken(String rawToken) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(CryptoConfig.TOKEN_HASH_ALGORITHM);
+            byte[] hash = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
+            // Convert to hex string
+            StringBuilder sb = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // SHA-256 is guaranteed to be available in every JVM
+            throw new RuntimeException("SHA-256 not available", e);
+        }
     }
 
     // ────────────────────────────────────────────────────────────
@@ -45,7 +76,8 @@ public class SessionManager {
             throw new IllegalArgumentException(
                     "SessionManager.addSession: token and data must not be null");
         }
-        sessions.put(token, data);
+        String hashedKey = hashToken(token);
+        sessions.put(hashedKey, data);
         logger.info("[SessionManager] Session added — " + data
                 + "  | Active sessions: " + sessions.size());
     }
@@ -53,7 +85,8 @@ public class SessionManager {
     public void removeSession(String token) {
         if (token == null || token.isBlank()) return;
 
-        SessionData removed = sessions.remove(token);
+        String hashedKey = hashToken(token);
+        SessionData removed = sessions.remove(hashedKey);
         if (removed != null) {
             logger.info("[SessionManager] Session removed — "
                     + removed.getUsername()
@@ -63,7 +96,8 @@ public class SessionManager {
     }
 
     public String regenerateToken(String oldToken) {
-        SessionData data = sessions.remove(oldToken);
+        String oldHashedKey = hashToken(oldToken);
+        SessionData data = sessions.remove(oldHashedKey);
         if (data == null) {
             return null;
         }
@@ -79,7 +113,8 @@ public class SessionManager {
         );
         newData.updateLastActivity();
 
-        sessions.put(newToken, newData);
+        String newHashedKey = hashToken(newToken);
+        sessions.put(newHashedKey, newData);
         logger.info("[SessionManager] Token regenerated for user " + data.getUsername());
         return newToken;
     }
@@ -90,7 +125,7 @@ public class SessionManager {
 
     public SessionData getSession(String token) {
         if (token == null || token.isBlank()) return null;
-        return sessions.get(token);
+        return sessions.get(hashToken(token));
     }
 
     public int getUserId(String token) {
