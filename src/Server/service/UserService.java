@@ -3,22 +3,24 @@ package Server.service;
 import Server.DAO.UserDAO;
 import Server.DAO.UserDAO.AuthUser;
 import Shared.DTO.UserDTO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class UserService {
 
     // ── Validation constants ─────────────────────────────────────
-    private static final int     USERNAME_MIN     = 3;
-    private static final int     USERNAME_MAX     = 50;
-    private static final int     PASSWORD_MIN     = 6;
-    private static final int     NAME_MAX         = 50;
-    private static final int     EMAIL_MAX        = 150;
-    private static final int     ADDRESS_MAX      = 255;
+    private static final int USERNAME_MIN = 3;
+    private static final int USERNAME_MAX = 50;
+    private static final int PASSWORD_MIN = 6;
+    private static final int NAME_MAX = 50;
+    private static final int EMAIL_MAX = 150;
+    private static final int ADDRESS_MAX = 255;
+
+    private static final Logger logger = LogManager.getLogger(UserService.class);
 
     // Alphanumeric + underscore — no spaces
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
@@ -56,6 +58,7 @@ public class UserService {
                     firstName, lastName, username, passwordHash, email, null);
 
         } catch (UserDAO.DuplicateUsernameException e) {
+
             throw new DuplicateUsernameException(e.getMessage());
         } catch (UserDAO.DuplicateEmailException e) {
             throw new DuplicateEmailException(e.getMessage());
@@ -73,7 +76,7 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        if (!hashPassword(password).equals(authUser.passwordHash)) {
+        if (!checkPassword(password, authUser.passwordHash)) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
@@ -90,6 +93,10 @@ public class UserService {
         );
     }
 
+    public AuthUser findAuthUserByUsername(String username) {
+        return userDAO.findByUsernameForAuth(username);
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Lookup
     // ────────────────────────────────────────────────────────────
@@ -102,34 +109,42 @@ public class UserService {
         return user;
     }
 
+    public UserDTO getUserByEmail(String email) {
+        UserDTO authUser = userDAO.findByEmail(email);
+        if (authUser == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        return authUser;
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        validatePassword(newPassword);
+        String passwordHash = hashPassword(newPassword);
+        boolean updated = userDAO.updatePassword(email, passwordHash);
+        if (!updated) {
+            throw new UserNotFoundException("User not found");
+        }
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Profile update
     // ────────────────────────────────────────────────────────────
 
-    /**
-     * Maps user-facing field names (as sent by the client protocol)
-     * to the actual database column names, validates the new value,
-     * then delegates to UserDAO.updateProfile().
-     */
     public void updateProfile(int userId, String field, String value) {
-        // Map client field name → DB column name
         String column = switch (field) {
-            case "firstName"    -> "first_name";
-            case "lastName"     -> "last_name";
-            case "email"        -> "email";
-            case "address"      -> "address";
+            case "firstName" -> "first_name";
+            case "lastName" -> "last_name";
+            case "email" -> "email";
+            case "address" -> "address";
             case "profilePhoto" -> "profile_photo";
-            default -> throw new ValidationException(
-                    "Unknown editable field: " + field);
+            default -> throw new ValidationException("Unknown editable field: " + field);
         };
 
-        // Validate the new value using existing validators where applicable
         switch (field) {
-            case "firstName"    -> validateFirstName(value);
-            case "lastName"     -> validateLastName(value);
-            case "email"        -> validateEmail(value);
-            case "address"      -> validateAddress(value);
-            // profilePhoto — no validation beyond length, just pass through
+            case "firstName" -> validateFirstName(value);
+            case "lastName" -> validateLastName(value);
+            case "email" -> validateEmail(value);
+            case "address" -> validateAddress(value);
         }
 
         try {
@@ -183,21 +198,11 @@ public class UserService {
     // ────────────────────────────────────────────────────────────
 
     public String hashPassword(String plainTextPassword) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(
-                    plainTextPassword.getBytes(StandardCharsets.UTF_8));
+        return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+    }
 
-            StringBuilder hex = new StringBuilder();
-            for (byte b : hashBytes) {
-                hex.append(String.format("%02x", b));
-            }
-            return hex.toString();
-
-        } catch (NoSuchAlgorithmException e) {
-            // SHA-256 is guaranteed in every JVM — never happens
-            throw new RuntimeException("SHA-256 algorithm not available", e);
-        }
+    public boolean checkPassword(String plainTextPassword, String hashedPassword) {
+        return BCrypt.checkpw(plainTextPassword, hashedPassword);
     }
 
     // ────────────────────────────────────────────────────────────

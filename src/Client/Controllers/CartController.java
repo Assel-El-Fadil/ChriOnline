@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Shared.DTO.CartItemDTO;
@@ -20,6 +23,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class CartController {
+    private static final Logger logger = LogManager.getLogger(CartController.class);
+
 
     // ── FXML injections ───────────────────────────────────────────
     @FXML private TableView<CartItemDTO>              cartTable;
@@ -65,7 +70,7 @@ public class CartController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showError("Could not return to catalog.");
         }
     }
@@ -144,7 +149,7 @@ public class CartController {
                             try {
                                 cartItems.add(CartItemDTO.fromProtocolString(part));
                             } catch (Exception e) {
-                                System.err.println("[CartController] Parse error: " + e.getMessage());
+                                logger.error("[CartController] Parse error: " + e.getMessage());
                             }
                         }
                     }
@@ -242,7 +247,7 @@ public class CartController {
                     cc.setPrimaryStage(primaryStage);
                     primaryStage.setScene(new Scene(cartRoot, 1100, 750));
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    logger.error("Exception occurred", ex);
                 }
             });
 
@@ -256,14 +261,14 @@ public class CartController {
                     primaryStage.setTitle("ChriOnline — Order History");
                     primaryStage.setScene(new Scene(historyRoot, 1100, 750));
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    logger.error("Exception occurred", ex);
                 }
             });
 
             primaryStage.setTitle("ChriOnline — Checkout");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showError("Could not open checkout page.");
         }
     }

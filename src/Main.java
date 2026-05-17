@@ -19,7 +19,12 @@ import java.util.Optional;
 import java.util.Properties;
 import javafx.scene.control.TextInputDialog;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Main extends Application implements NotificationCallback {
+    private static final Logger logger = LogManager.getLogger(Main.class);
+
 
     private static String SERVER_HOST = "127.0.0.1";
     private static final int    SERVER_PORT  = 8084;    // TCP port
@@ -36,9 +41,9 @@ public class Main extends Application implements NotificationCallback {
         try (FileInputStream in = new FileInputStream(CONFIG_FILE)) {
             props.load(in);
             SERVER_HOST = props.getProperty("server.host", "127.0.0.1");
-            System.out.println("[Main] Loaded server host from config: " + SERVER_HOST);
+            logger.info("[Main] Loaded server host from config: " + SERVER_HOST);
         } catch (IOException e) {
-            System.out.println("[Main] No config file found, using default: " + SERVER_HOST);
+            logger.info("[Main] No config file found, using default: " + SERVER_HOST);
             saveConfig();
         }
     }
@@ -49,7 +54,7 @@ public class Main extends Application implements NotificationCallback {
         try (FileOutputStream out = new FileOutputStream(CONFIG_FILE)) {
             props.store(out, "ChriOnline Server Configuration");
         } catch (IOException e) {
-            System.err.println("[Main] Could not save config file: " + e.getMessage());
+            logger.error("[Main] Could not save config file: " + e.getMessage());
         }
     }
 
@@ -57,10 +62,10 @@ public class Main extends Application implements NotificationCallback {
         socketClient = new SocketClient(SERVER_HOST, SERVER_PORT);
         try {
             socketClient.connect();
-            System.out.println("[Main] Connected to server " + SERVER_HOST + ":" + SERVER_PORT);
+            logger.info("[Main] Connected to server " + SERVER_HOST + ":" + SERVER_PORT);
             return true;
         } catch (Exception e) {
-            System.err.println("[Main] Connection failed to " + SERVER_HOST);
+            logger.error("[Main] Connection failed to " + SERVER_HOST);
             return false;
         }
     }
@@ -98,7 +103,7 @@ public class Main extends Application implements NotificationCallback {
         try {
             udpListener = new UDPListener(UDP_PORT, this);
         } catch (SocketException e) {
-            System.err.println("[Main] Cannot bind UDP port " + UDP_PORT + ": " + e.getMessage());
+            logger.error("[Main] Cannot bind UDP port " + UDP_PORT + ": " + e.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("UDP Error");
             alert.setHeaderText("Cannot open UDP port " + UDP_PORT);
@@ -112,7 +117,7 @@ public class Main extends Application implements NotificationCallback {
         udpThread.setDaemon(true);
         udpThread.setName("UDP-Client-Listener");
         udpThread.start();
-        System.out.println("[Main] UDP listener started on port " + UDP_PORT);
+        logger.info("[Main] UDP listener started on port " + UDP_PORT);
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
@@ -126,10 +131,10 @@ public class Main extends Application implements NotificationCallback {
             primaryStage.setTitle("ChriOnline");
             primaryStage.show();
 
-            System.out.println("[Main] Login screen loaded successfully");
+            logger.info("[Main] Login screen loaded successfully");
         } catch (Exception e) {
-            System.err.println("[Main] Failed to load login screen: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("[Main] Failed to load login screen: " + e.getMessage());
+            logger.error("Exception occurred", e);
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("UI Error");
             alert.setHeaderText("Cannot load login screen");
@@ -143,7 +148,7 @@ public class Main extends Application implements NotificationCallback {
         }
 
         primaryStage.setOnCloseRequest(event -> {
-            System.out.println("[Main] Application closing...");
+            logger.info("[Main] Application closing...");
 
             if (udpListener != null) {
                 udpListener.stop();
@@ -162,7 +167,7 @@ public class Main extends Application implements NotificationCallback {
 
     @Override
     public void onOrderConfirmed(String refCode, String total) {
-        System.out.println("[UDP] Order confirmed — ref: " + refCode + " | total: " + total);
+        logger.info("[UDP] Order confirmed — ref: " + refCode + " | total: " + total);
 
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

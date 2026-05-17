@@ -39,6 +39,16 @@ public class SocketClient {
                 connected = false;
                 throw new NetworkException("Connection lost");
             }
+            // Transparently handle server-side session token regeneration
+            if (response.startsWith("RENEWED_TOKEN:")) {
+                int sep = response.indexOf("|||");
+                if (sep != -1) {
+                    String newToken = response.substring("RENEWED_TOKEN:".length(), sep);
+                    String actualResponse = response.substring(sep + 3);
+                    Client.session.AppState.updateToken(newToken);
+                    return actualResponse;
+                }
+            }
             return response;
         } catch (IOException e) {
             connected = false;

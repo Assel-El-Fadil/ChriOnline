@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Shared.DTO.OrderDTO;
@@ -20,6 +23,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class OrderHistoryController {
+    private static final Logger logger = LogManager.getLogger(OrderHistoryController.class);
+
 
     @FXML private TableView<OrderDTO> ordersTable;
     @FXML private TableColumn<OrderDTO, String> colRef;
@@ -153,7 +158,7 @@ public class OrderHistoryController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
         }
     }
 
@@ -173,7 +178,7 @@ public class OrderHistoryController {
             primaryStage.setTitle("ChriOnline — Track Order #" + order.referenceCode);
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Could not open progress page.", true);
         }
     }

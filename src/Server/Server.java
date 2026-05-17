@@ -1,5 +1,8 @@
 package Server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Server.DAO.*;
 import Server.service.*;
 import Server.handlers.*;
@@ -13,12 +16,22 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.time.Instant;
 
 public class Server {
+    private static final Logger logger = LogManager.getLogger(Server.class);
+
 
     // ── Network configuration ─────────────────────────────────────
     private static final int TCP_PORT = 8084;
     private static final int THREAD_POOL_SIZE = 20;
+    private static final int MAX_CONNECTIONS_PER_MINUTE = 10;
+    private static final int HANDSHAKE_TIMEOUT_MS = 30_000;
+
+    // ── IP Rate limiter — records first-connection timestamp + count ──
+    private final ConcurrentHashMap<String, long[]> ipConnections = new ConcurrentHashMap<>();
 
     // ── Core server infrastructure ────────────────────────────────
     private final ServerSocket serverSocket;
@@ -57,10 +70,10 @@ public class Server {
     public Server() throws IOException {
 
         this.serverSocket = new ServerSocket(TCP_PORT);
-        System.out.println("[Server] Bound to TCP port " + TCP_PORT);
+        logger.info("[Server] Bound to TCP port " + TCP_PORT);
 
         this.pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        System.out.println("[Server] Thread pool ready ("
+        logger.info("[Server] Thread pool ready ("
                 + THREAD_POOL_SIZE + " threads)");
 
         this.sessionManager = new SessionManager();
@@ -86,7 +99,7 @@ public class Server {
         this.adminHandler = new AdminHandler(userService, productService, orderService, sessionManager);
         this.userHandler = new UserHandler(userService, sessionManager);
 
-        System.out.println("[Server] All dependencies wired — ready to accept connections.");
+        logger.info("[Server] All dependencies wired — ready to accept connections.");
     }
 
     // ────────────────────────────────────────────────────────────
@@ -94,15 +107,24 @@ public class Server {
     // ────────────────────────────────────────────────────────────
 
     public void start() {
-        System.out.println("[Server] Listening — waiting for client connections...\n");
+        logger.info("[Server] Listening — waiting for client connections...\n");
 
         while (!serverSocket.isClosed()) {
             try {
                 Socket clientSocket = serverSocket.accept();
 
-                String clientAddress = clientSocket.getInetAddress().getHostAddress()
-                        + ":" + clientSocket.getPort();
-                System.out.println("[Server] Client connected: " + clientAddress
+                String clientIP = clientSocket.getInetAddress().getHostAddress();
+                String clientAddress = clientIP + ":" + clientSocket.getPort();
+
+                if (isRateLimited(clientIP)) {
+                    logger.warn("[Server] TCP Flood: Too many connections from " + clientIP + ". Dropping.");
+                    clientSocket.close();
+                    continue;
+                }
+
+                clientSocket.setSoTimeout(HANDSHAKE_TIMEOUT_MS);
+
+                logger.info("[Server] Client connected: " + clientAddress
                         + "  | Active sessions: "
                         + sessionManager.getActiveSessionCount());
 
@@ -122,16 +144,37 @@ public class Server {
 
             } catch (SocketException e) {
                 if (serverSocket.isClosed()) {
-                    System.out.println("[Server] Server socket closed — exiting accept loop.");
+                    logger.info("[Server] Server socket closed — exiting accept loop.");
                     break;
                 }
 
-                System.err.println("[Server] SocketException in accept loop: " + e.getMessage());
+                logger.error("[Server] SocketException in accept loop: " + e.getMessage());
 
             } catch (IOException e) {
-                System.err.println("[Server] IOException accepting connection: " + e.getMessage());
+                logger.error("[Server] IOException accepting connection: " + e.getMessage());
             }
         }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    //  TCP Rate Limiter helper
+    // ────────────────────────────────────────────────────────────
+
+    private boolean isRateLimited(String ip) {
+        long now = Instant.now().toEpochMilli();
+        long windowMs = 60_000L; // 1 minute window
+
+        ipConnections.compute(ip, (k, v) -> {
+            if (v == null || now - v[0] > windowMs) {
+                // Reset window: [windowStart, count]
+                return new long[]{now, 1};
+            }
+            v[1]++;
+            return v;
+        });
+
+        long[] data = ipConnections.get(ip);
+        return data != null && data[1] > MAX_CONNECTIONS_PER_MINUTE;
     }
 
     // ────────────────────────────────────────────────────────────
@@ -139,15 +182,14 @@ public class Server {
     // ────────────────────────────────────────────────────────────
 
     public void shutdown() {
-        System.out.println("\n[Server] Shutdown initiated...");
+        logger.info("\n[Server] Shutdown initiated...");
 
-        // Step 1 — Close the server socket (unblocks accept())
         try {
             if (!serverSocket.isClosed()) {
                 serverSocket.close();
             }
         } catch (IOException e) {
-            System.err.println("[Server] Error closing server socket: " + e.getMessage());
+            logger.error("[Server] Error closing server socket: " + e.getMessage());
         }
 
         sessionManager.clearAll();
@@ -158,7 +200,7 @@ public class Server {
         try {
             boolean finished = pool.awaitTermination(10, TimeUnit.SECONDS);
             if (!finished) {
-                System.out.println("[Server] Timeout — forcing pool shutdown.");
+                logger.info("[Server] Timeout — forcing pool shutdown.");
                 pool.shutdownNow();
             }
         } catch (InterruptedException e) {
@@ -166,7 +208,7 @@ public class Server {
             Thread.currentThread().interrupt();
         }
 
-        System.out.println("[Server] Shutdown complete.");
+        logger.info("[Server] Shutdown complete.");
     }
 
     // ────────────────────────────────────────────────────────────
@@ -179,25 +221,19 @@ public class Server {
         try {
             server = new Server();
         } catch (BindException e) {
-            System.err.println("[Server] FATAL: Port " + TCP_PORT
+            logger.error("[Server] FATAL: Port " + TCP_PORT
                     + " is already in use. Is another instance running?");
             System.exit(1);
             return;
         } catch (IOException e) {
-            System.err.println("[Server] FATAL: Could not start — " + e.getMessage());
+            logger.error("[Server] FATAL: Could not start — " + e.getMessage());
             System.exit(1);
             return;
         } catch (RuntimeException e) {
-            System.err.println("[Server] FATAL: Startup error — " + e.getMessage());
+            logger.error("[Server] FATAL: Startup error — " + e.getMessage());
             System.exit(1);
             return;
         }
-
-        // Register shutdown hook — runs on Ctrl+C
-        final Server serverRef = server;
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            serverRef.shutdown();
-        }, "shutdown-hook"));
 
         server.start();
     }

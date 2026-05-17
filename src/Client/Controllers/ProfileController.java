@@ -1,5 +1,13 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+
+import java.util.*;
+
 import Client.network.SocketClient;
 import Client.session.AppState;
 import Shared.DTO.UserDTO;
@@ -13,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -21,16 +30,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class ProfileController {
+    private static final Logger logger = LogManager.getLogger(ProfileController.class);
+
 
     // ── FXML injections ──────────────────────────────────────────
-    @FXML private Label     avatarLabel;
-    @FXML private Label     fullNameLabel;
-    @FXML private Label     roleLabel;
-    @FXML private Label     statusLabel;
+    @FXML private Label avatarLabel;
+    @FXML private Label fullNameLabel;
+    @FXML private Label roleLabel;
+    @FXML private Label statusLabel;
     @FXML private javafx.scene.image.ImageView avatarImageView;
 
     @FXML private TextField firstNameField;
@@ -39,13 +48,12 @@ public class ProfileController {
     @FXML private TextField emailField;
     @FXML private TextField addressField;
 
-    @FXML private Button    saveButton;
+    @FXML private Button saveButton;
 
     // ── Dependencies ─────────────────────────────────────────────
     private SocketClient socketClient;
-    private Stage        primaryStage;
+    private Stage primaryStage;
 
-    // Snapshot of original values before editing — used to detect changes
     private final Map<String, String> originalValues = new LinkedHashMap<>();
 
     // ── Setters ──────────────────────────────────────────────────
@@ -92,7 +100,6 @@ public class ProfileController {
 
     private void populateFields(UserDTO user) {
         Platform.runLater(() -> {
-            // Avatar logic — use image if present, otherwise initial
             if (user.profilePhoto != null && !user.profilePhoto.isBlank()) {
                 Image img = Client.util.ProductImageHelper.loadLocalImage(user.profilePhoto);
                 if (img != null) {
@@ -114,7 +121,6 @@ public class ProfileController {
             emailField.setText(user.email != null ? user.email : "");
             addressField.setText(user.address != null ? user.address : "");
 
-            // Snapshot original values
             snapshotOriginals();
         });
     }
@@ -150,13 +156,11 @@ public class ProfileController {
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
         if (selectedFile != null) {
             try {
-                // Ensure directory exists
                 File destDir = new File("src/Client/assets/images/profiles");
                 if (!destDir.exists()) {
                     destDir.mkdirs();
                 }
 
-                // Create a unique filename based on the current time
                 String ext = "";
                 String name = selectedFile.getName();
                 int i = name.lastIndexOf('.');
@@ -168,16 +172,14 @@ public class ProfileController {
 
                 Files.copy(selectedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                // Quick preview update on client side
                 Image img = new Image(destFile.toURI().toString());
                 avatarImageView.setImage(img);
                 avatarLabel.setVisible(false);
 
-                // Automatically save it to the server
-                savePhotoToServer("src/Client/assets/images/profiles/" + destName);
+                savePhotoToServer("assets/images/profiles/" + destName);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Exception occurred", e);
                 showStatus("Error copying photo locally", true);
             }
         }
@@ -209,24 +211,57 @@ public class ProfileController {
 
     @FXML
     private void handleSave() {
-        // Collect changed fields
         Map<String, String> changes = new LinkedHashMap<>();
+        Random random = new Random();
+        int number = 100000 + random.nextInt(900000);
 
         checkChange(changes, "firstName", firstNameField.getText().trim());
         checkChange(changes, "lastName", lastNameField.getText().trim());
         checkChange(changes, "email", emailField.getText().trim());
         checkChange(changes, "address", addressField.getText().trim());
 
+        if(changes.containsKey("email")){
+            try{
+                sendMail(new InternetAddress(emailField.getText().trim()), "Code de vérification", String.valueOf(number));
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Vérification");
+        dialog.setHeaderText("Enter The verification code sent to your email for ");
+        dialog.setContentText("Code de vérification:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(qtyStr -> {
+            try {
+                int code = Integer.parseInt(qtyStr);
+                if (code <= 0) {
+                    showStatus("Quantity must be a positive integer", true);
+                    return;
+                }
+
+                if (code != number) {
+                    showStatus("No changes to save", true);
+                    return;
+                }
+
+            } catch (NumberFormatException ex) {
+                showStatus("Invalid quantity input", true);
+            }
+        });
+
         if (changes.isEmpty()) {
             showStatus("No changes to save", false);
             return;
         }
 
-        // Disable button while saving
         saveButton.setDisable(true);
         showStatus("Saving...", false);
 
-        // Send each changed field as a separate EDIT_PROFILE command
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
@@ -241,7 +276,7 @@ public class ProfileController {
 
                     String response = socketClient.sendCommand(cmd);
                     if (!ResponseBuilder.isOk(response)) {
-                        return response; // Return first error
+                        return response;
                     }
                 }
                 return "OK";
@@ -252,8 +287,7 @@ public class ProfileController {
             String response = task.getValue();
             if ("OK".equals(response) || ResponseBuilder.isOk(response)) {
                 showStatus("Profile updated successfully!", false);
-                snapshotOriginals(); // Update snapshot to new values
-                // Refresh header display
+                snapshotOriginals();
                 fullNameLabel.setText(firstNameField.getText() + " " + lastNameField.getText());
             } else {
                 showStatus(ResponseBuilder.extractError(response), true);
@@ -276,6 +310,18 @@ public class ProfileController {
         }
     }
 
+    private void sendMail(InternetAddress recepients, String subject, String body) throws IOException, AddressException, MessagingException {
+        Properties properties = new Properties();
+        Session session = Session.getDefaultInstance(properties, null);
+
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
+        msg.addRecipient(Message.RecipientType.TO, recepients);
+        msg.setSubject(subject);
+        msg.setText(body);
+        Transport.send(msg);
+    }
+
     // ────────────────────────────────────────────────────────────
     //  Navigation
     // ────────────────────────────────────────────────────────────
@@ -292,7 +338,7 @@ public class ProfileController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
         }
     }
 
@@ -322,7 +368,7 @@ public class ProfileController {
             primaryStage.setTitle("ChriOnline");
             primaryStage.setScene(new Scene(root, 1100, 750));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
             showStatus("Failed to load login screen.", true);
         }
     }

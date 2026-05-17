@@ -1,5 +1,8 @@
 package Client.Controllers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Client.network.SocketClient;
 import Shared.ResponseBuilder;
 import javafx.concurrent.Task;
@@ -14,11 +17,18 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class RegisterController {
+    private static final Logger logger = LogManager.getLogger(RegisterController.class);
+
 
     @FXML private TextField     firstNameField;
     @FXML private TextField     lastNameField;
     @FXML private TextField     usernameField;
     @FXML private PasswordField passwordField;
+    @FXML private TextField     passwordVisibleField;
+    @FXML private Button        togglePasswordBtn;
+    @FXML private PasswordField confirmPasswordField;
+    @FXML private TextField     confirmPasswordVisibleField;
+    @FXML private Button        toggleConfirmPasswordBtn;
     @FXML private TextField     emailField;
     @FXML private Label         errorLabel;
     @FXML private Button        registerButton;
@@ -27,9 +37,30 @@ public class RegisterController {
     private int          udpPort;
     private Stage        primaryStage;
 
-    // ──────────────────────────────────────────────────────────────
-    // Setters
-    // ──────────────────────────────────────────────────────────────
+    private boolean passwordVisible = false;
+    private boolean confirmPasswordVisible = false;
+
+    @FXML
+    private void initialize() {
+        passwordField.textProperty().addListener((obs, o, n) -> {
+            if (!passwordVisibleField.getText().equals(n))
+                passwordVisibleField.setText(n);
+        });
+        passwordVisibleField.textProperty().addListener((obs, o, n) -> {
+            if (!passwordField.getText().equals(n))
+                passwordField.setText(n);
+        });
+
+        confirmPasswordField.textProperty().addListener((obs, o, n) -> {
+            if (!confirmPasswordVisibleField.getText().equals(n))
+                confirmPasswordVisibleField.setText(n);
+        });
+        confirmPasswordVisibleField.textProperty().addListener((obs, o, n) -> {
+            if (!confirmPasswordField.getText().equals(n))
+                confirmPasswordField.setText(n);
+        });
+    }
+
     public void setSocketClient(SocketClient socketClient) {
         this.socketClient = socketClient;
     }
@@ -42,15 +73,53 @@ public class RegisterController {
         this.primaryStage = primaryStage;
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Register button handler
-    // ──────────────────────────────────────────────────────────────
+    @FXML
+    private void handleTogglePassword() {
+        passwordVisible = !passwordVisible;
+        if (passwordVisible) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordVisibleField.setVisible(true);
+            passwordField.setVisible(false);
+            togglePasswordBtn.setText("Hide");
+            passwordVisibleField.requestFocus();
+            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordField.setVisible(true);
+            passwordVisibleField.setVisible(false);
+            togglePasswordBtn.setText("Show");
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
+    }
+
+    @FXML
+    private void handleToggleConfirmPassword() {
+        confirmPasswordVisible = !confirmPasswordVisible;
+        if (confirmPasswordVisible) {
+            confirmPasswordVisibleField.setText(confirmPasswordField.getText());
+            confirmPasswordVisibleField.setVisible(true);
+            confirmPasswordField.setVisible(false);
+            toggleConfirmPasswordBtn.setText("Hide");
+            confirmPasswordVisibleField.requestFocus();
+            confirmPasswordVisibleField.positionCaret(confirmPasswordVisibleField.getText().length());
+        } else {
+            confirmPasswordField.setText(confirmPasswordVisibleField.getText());
+            confirmPasswordField.setVisible(true);
+            confirmPasswordVisibleField.setVisible(false);
+            toggleConfirmPasswordBtn.setText("Show");
+            confirmPasswordField.requestFocus();
+            confirmPasswordField.positionCaret(confirmPasswordField.getText().length());
+        }
+    }
+
     @FXML
     private void handleRegister() {
         String firstName = firstNameField.getText().trim();
         String lastName  = lastNameField.getText().trim();
         String username  = usernameField.getText().trim();
-        String password  = passwordField.getText();
+        String password  = passwordVisible ? passwordVisibleField.getText() : passwordField.getText();
+        String confirmPw = confirmPasswordVisible ? confirmPasswordVisibleField.getText() : confirmPasswordField.getText();
         String email     = emailField.getText().trim();
 
         if (firstName.isBlank()) {
@@ -67,6 +136,10 @@ public class RegisterController {
         }
         if (password.length() < 6) {
             showError("Password must be at least 6 characters.");
+            return;
+        }
+        if (!password.equals(confirmPw)) {
+            showError("Passwords do not match.");
             return;
         }
         if (!email.contains("@")) {
@@ -105,17 +178,12 @@ public class RegisterController {
         new Thread(task).start();
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Back to Login button
-    // ──────────────────────────────────────────────────────────────
     @FXML
     private void handleBackToLogin() {
         loadLoginScreen(null);
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Load login screen
-    // ──────────────────────────────────────────────────────────────
+
     private void loadLoginScreen(String successMessage) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -137,13 +205,10 @@ public class RegisterController {
 
         } catch (Exception e) {
             showError("Could not load login screen.");
-            e.printStackTrace();
+            logger.error("Exception occurred", e);
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // UI helpers
-    // ──────────────────────────────────────────────────────────────
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");

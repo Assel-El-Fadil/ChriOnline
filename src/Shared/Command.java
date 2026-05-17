@@ -6,6 +6,8 @@ public enum Command {
     REGISTER,       // REGISTER|firstName|lastName|username|password|email
     LOGIN,          // LOGIN|username|password|udpPort
     LOGOUT,         //LOGOUT|token
+    FORGOT_PASSWORD, // FORGOT_PASSWORD|username
+    RESET_PASSWORD,  // RESET_PASSWORD|username|otp|newPassword
     GET_PRODUCTS,
     GET_PRODUCT,
     GET_CATEGORIES,
@@ -30,7 +32,9 @@ public enum Command {
     GET_ORDER_STATUS,   // GET_ORDER_STATUS|token|orderId
     GET_ORDER_ITEMS,    // GET_ORDER_ITEMS|token|orderId
     CHECKOUT_INIT,      // CHECKOUT_INIT|token|method|card|holder|expiry|cvv
-    CHECKOUT_CONFIRM;   // CHECKOUT_CONFIRM|token|code
+    CHECKOUT_CONFIRM,   // CHECKOUT_CONFIRM|token|code
+    ADMIN_CHALLENGE,    // ADMIN_CHALLENGE|username
+    ADMIN_VERIFY;       // ADMIN_VERIFY|username|signature|udpPort
 
     public static Command fromString(String commandToken) throws InvalidRequestException {
         if (commandToken == null) {

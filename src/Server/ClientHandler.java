@@ -1,5 +1,8 @@
 package Server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import Shared.*;
 import Server.handlers.*;
 
@@ -8,6 +11,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 public class ClientHandler implements Runnable {
+    private static final Logger logger = LogManager.getLogger(ClientHandler.class);
+
 
     private final Socket socket;
     private final SessionManager sessionManager;
@@ -20,6 +25,7 @@ public class ClientHandler implements Runnable {
     private final UserHandler userHandler;
 
     private volatile String currentToken = null;
+    private volatile String pendingChallenge = null; // Used for RSA Login (Section 8)
 
     // ────────────────────────────────────────────────────────────
     // Constructor
@@ -59,43 +65,49 @@ public class ClientHandler implements Runnable {
 
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(
-                            socket.getInputStream(), StandardCharsets.UTF_8));
+                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
             writer = new PrintWriter(
-                    new OutputStreamWriter(
-                            socket.getOutputStream(), StandardCharsets.UTF_8),
+                    new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8),
                     true);
 
             // ── Read-dispatch-respond loop ─────────────────────────
+            boolean firstCommandReceived = false;
             String line;
             while ((line = reader.readLine()) != null) {
 
                 String response;
                 try {
                     ParsedRequest req = RequestParser.parse(line);
+                    if (!firstCommandReceived) {
+                        socket.setSoTimeout(0);
+                        firstCommandReceived = true;
+                    }
                     response = dispatch(req);
 
                 } catch (RequestParser.InvalidRequestException e) {
                     response = ResponseBuilder.error("Unknown command");
-                    System.err.println("[ClientHandler] Bad command from "
+                    logger.error("[ClientHandler] Bad command from "
                             + clientAddress + ": '" + line + "'");
 
                 } catch (Exception e) {
                     response = ResponseBuilder.error("Internal server error");
-                    System.err.println("[ClientHandler] Unexpected error from "
+                    logger.error("[ClientHandler] Unexpected error from "
                             + clientAddress + ": " + e.getMessage());
-                    e.printStackTrace();
+                    logger.error("Exception occurred", e);
                 }
 
                 writer.println(response);
             }
 
-            System.out.println("[ClientHandler] Client disconnected cleanly: "
+            logger.info("[ClientHandler] Client disconnected cleanly: "
                     + clientAddress);
 
+        } catch (java.net.SocketTimeoutException e) {
+            logger.warn("[ClientHandler] Dropped incomplete connection from "
+                    + clientAddress + " (10s handshake timeout)");
         } catch (IOException e) {
-            System.out.println("[ClientHandler] Client disconnected abruptly: "
+            logger.info("[ClientHandler] Client disconnected abruptly: "
                     + clientAddress + " — " + e.getMessage());
         } finally {
             cleanup(reader, writer, clientAddress);
@@ -110,10 +122,45 @@ public class ClientHandler implements Runnable {
         Command cmd = req.getCommand();
         String[] params = req.getParams();
 
+        boolean renewedToken = false;
+        String newSessionToken = null;
+
+        if (currentToken != null) {
+            SessionData session = sessionManager.getSession(currentToken);
+            if (session != null) {
+                session.updateLastActivity();
+                if (session.getAgeSeconds() >= 1800) {
+                    newSessionToken = sessionManager.regenerateToken(currentToken);
+                    if (newSessionToken != null) {
+                        currentToken = newSessionToken;
+                        renewedToken = true;
+                    }
+                }
+            } else {
+                if (cmd != Command.LOGIN && cmd != Command.REGISTER && cmd != Command.LOGOUT
+                        && cmd != Command.FORGOT_PASSWORD && cmd != Command.RESET_PASSWORD) {
+                    currentToken = null;
+                    return ResponseBuilder.error("Session expired");
+                }
+            }
+        }
+
+        String response = dispatchCommand(cmd, params);
+
+        if (renewedToken && ResponseBuilder.isOk(response)) {
+            response = "RENEWED_TOKEN:" + newSessionToken + "|||" + response;
+        }
+
+        return response;
+    }
+
+    private String dispatchCommand(Command cmd, String[] params) {
         switch (cmd) {
 
             // ── Authentication ────────────────────────────────────
             case REGISTER:
+            case FORGOT_PASSWORD:
+            case RESET_PASSWORD:
                 return authHandler.handle(cmd, params, socket);
 
             case LOGIN: {
@@ -131,6 +178,41 @@ public class ClientHandler implements Runnable {
             case LOGOUT: {
                 String response = authHandler.handle(cmd, params, socket);
                 currentToken = null;
+                return response;
+            }
+
+            case ADMIN_CHALLENGE: {
+                String response = authHandler.handle(cmd, params, socket);
+                if (ResponseBuilder.isOk(response)) {
+                    pendingChallenge = ResponseBuilder.extractPayload(response);
+                }
+                return response;
+            }
+
+            case ADMIN_VERIFY: {
+                // Expecting params: [username, signatureB64, udpPort]
+                if (params.length < 3) return ResponseBuilder.error("Missing parameters");
+                if (pendingChallenge == null) return ResponseBuilder.error("No pending challenge. Request one first.");
+                
+                String username = params[0];
+                String signature = params[1];
+                int udpPort;
+                try {
+                    udpPort = Integer.parseInt(params[2]);
+                } catch (NumberFormatException e) {
+                    return ResponseBuilder.error("Invalid UDP port");
+                }
+
+                String response = authHandler.handleAdminVerify(username, signature, pendingChallenge, udpPort, socket);
+                
+                if (ResponseBuilder.isOk(response)) {
+                    pendingChallenge = null; // Clear challenge after success
+                    String payload = ResponseBuilder.extractPayload(response);
+                    String[] parts = payload.split("\\|", -1);
+                    if (parts.length >= 1) {
+                        currentToken = parts[0];
+                    }
+                }
                 return response;
             }
 
@@ -248,6 +330,6 @@ public class ClientHandler implements Runnable {
         } catch (IOException ignored) {
         }
 
-        System.out.println("[ClientHandler] Resources released for: " + clientAddress);
+        logger.info("[ClientHandler] Resources released for: " + clientAddress);
     }
 }
