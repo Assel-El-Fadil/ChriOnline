@@ -8,12 +8,8 @@ import Client.session.AppState;
 import Shared.ResponseBuilder;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
-import Shared.Security.RSAKeyPairGenerator;
-import Shared.Security.Signer;
 import Client.util.AnimationUtils;
 import javafx.application.Platform;
-import java.security.PrivateKey;
-import java.util.Base64;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -136,11 +132,9 @@ public class LoginController {
                 Random random = new Random();
                 int number = 100000 + random.nextInt(900000);
 
-                try{
-                    sendMail(new InternetAddress(parts[2]), "Code de vérification", String.valueOf(number));
-                } catch (MessagingException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
+                try {
+                    Shared.Security.EmailUtil.sendMail(parts[2], "Code de vérification", String.valueOf(number));
+                } catch (MessagingException | IOException e) {
                     throw new RuntimeException(e);
                 }
 
@@ -223,71 +217,7 @@ public class LoginController {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // Register button — switch to register screen
-    // ──────────────────────────────────────────────────────────────
-    @FXML
-    private void handleAdminRSALogin() {
-        String username = usernameField.getText().trim();
-        if (username.isEmpty()) {
-            showError("Please enter your admin username first.");
-            return;
-        }
 
-        loginButton.setDisable(true);
-        hideError();
-
-        Task<String> task = new Task<>() {
-            @Override
-            protected String call() throws Exception {
-                // 1. Request Challenge
-                String challengeResp = socketClient.sendCommand("ADMIN_CHALLENGE|" + username);
-                if (!ResponseBuilder.isOk(challengeResp)) return challengeResp;
-
-                String challenge = ResponseBuilder.extractPayload(challengeResp);
-
-                // 2. Sign Challenge locally
-                // Note: Expects admin_private.key in the app root
-                PrivateKey privKey = RSAKeyPairGenerator.loadPrivateKeyFromFile("admin_private.key");
-                byte[] signature = Signer.sign(challenge, privKey);
-                String signatureB64 = Base64.getEncoder().encodeToString(signature);
-
-                // 3. Verify & Login
-                return socketClient.sendCommand("ADMIN_VERIFY|" + username + "|" + signatureB64 + "|" + udpPort);
-            }
-        };
-
-        task.setOnSucceeded(event -> {
-            String response = task.getValue();
-            if (ResponseBuilder.isOk(response)) {
-                String payload = ResponseBuilder.extractPayload(response);
-                String[] parts = payload.split("\\|", 3);
-                if (parts.length >= 2) {
-                    AppState.setSession(parts[0], username, parts[1], 0);
-                    loadMainWindow();
-                } else {
-                    loginButton.setDisable(false);
-                    showError("Unknown server response.");
-                }
-            } else {
-                loginButton.setDisable(false);
-                showError(ResponseBuilder.extractError(response));
-            }
-        });
-
-        task.setOnFailed(event -> {
-            loginButton.setDisable(false);
-            Throwable e = task.getException();
-            if (e instanceof java.io.FileNotFoundException) {
-                showError("Admin private key not found locally.");
-            } else {
-                showError("RSA Login Failed: " + (e != null ? e.getMessage() : "Unknown error"));
-                if (e != null) e.printStackTrace();
-            }
-        });
-
-        new Thread(task).start();
-    }
     @FXML
     private void handleRegister() {
         try {
@@ -313,38 +243,23 @@ public class LoginController {
 
     // ──────────────────────────────────────────────────────────────
     // Load main window after successful login
-    // Checks role: ADMIN → admin.fxml, USER → catalog.fxml
     // ──────────────────────────────────────────────────────────────
     private void loadMainWindow() {
         Platform.runLater(() -> {
             try {
-                if (AppState.isAdmin()) {
-                    // ── ADMIN → load admin dashboard ───────────────
-                    FXMLLoader loader = new FXMLLoader(
-                            getClass().getResource("/UI/admin.fxml"));
-                    Parent root = loader.load();
+                // ── USER → load product catalogue ──────────────
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/UI/catalog.fxml"));
+                Parent root = loader.load();
 
-                    AdminController adminController = loader.getController();
-                    adminController.setSocketClient(socketClient);
+                CatalogController catalogController = loader.getController();
+                catalogController.setSocketClient(socketClient);
+                catalogController.setPrimaryStage(primaryStage);
 
-                    primaryStage.setTitle("ChriOnline — Admin Panel");
-                    primaryStage.setScene(new Scene(root, 1100, 750));
-
-                } else {
-                    // ── USER → load product catalogue ──────────────
-                    FXMLLoader loader = new FXMLLoader(
-                            getClass().getResource("/UI/catalog.fxml"));
-                    Parent root = loader.load();
-
-                    CatalogController catalogController = loader.getController();
-                    catalogController.setSocketClient(socketClient);
-                    catalogController.setPrimaryStage(primaryStage);
-
-                    primaryStage.setTitle("ChriOnline — Welcome, "
-                            + AppState.getUsername());
-                    primaryStage.setScene(new Scene(root, 1100, 750));
-                }
-
+                primaryStage.setTitle("ChriOnline — Welcome, "
+                        + AppState.getUsername());
+                primaryStage.setScene(new Scene(root, 1100, 750));
+                
                 primaryStage.show();
 
             } catch (Exception e) {
@@ -354,18 +269,6 @@ public class LoginController {
         });
     }
 
-    private void sendMail(InternetAddress recepients, String subject, String body)
-            throws IOException, AddressException, MessagingException {
-        Properties properties = new Properties();
-        Session session = Session.getDefaultInstance(properties, null);
-
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
-        msg.addRecipient(Message.RecipientType.TO, recepients);
-        msg.setSubject(subject);
-        msg.setText(body);
-        Transport.send(msg);
-    }
 
     // ──────────────────────────────────────────────────────────────
     // UI helpers

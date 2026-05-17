@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Admin.Controllers.AdminLoginController"
+            stylesheets="@theme.css"
+            styleClass="root"
+            prefWidth="1100"
+            prefHeight="750">
+
+    <center>
+        <HBox>
+            <!-- Left Branding Pane -->
+            <VBox styleClass="auth-brand-sidebar" alignment="CENTER_LEFT" spacing="20" prefWidth="450" HBox.hgrow="SOMETIMES" style="-fx-background-color: linear-gradient(to bottom right, #1e3c72, #2a5298);">
+                <Label text="ChriOnline Admin" styleClass="auth-brand-title"/>
+                <Label text="Secure Administrator Portal. Requires RSA key pair authentication." styleClass="auth-brand-subtitle" wrapText="true"/>
+            </VBox>
+
+            <!-- Right Login Form Pane -->
+            <StackPane HBox.hgrow="ALWAYS" style="-fx-background-color: white;">
+                <VBox styleClass="content-section" spacing="20" maxWidth="450" style="-fx-effect: none; -fx-padding: 40;">
+                    
+                    <!-- Title -->
+                    <VBox spacing="6">
+                        <Label text="Admin Portal" styleClass="section-title" style="-fx-padding: 0; -fx-font-size: 28px;"/>
+                        <Label text="Authenticate with your RSA key" styleClass="login-welcome-subtitle" style="-fx-font-size: 15px;"/>
+                    </VBox>
+
+                    <!-- Username field -->
+                    <VBox spacing="8">
+                        <Label text="Admin Username" styleClass="login-field-label"/>
+                        <TextField fx:id="usernameField"
+                                   promptText="Enter your admin username"
+                                   styleClass="login-form-field"/>
+                    </VBox>
+
+                    <!-- Error label -->
+                    <Label fx:id="errorLabel"
+                           styleClass="login-error-label"
+                           visible="false"
+                           wrapText="true"/>
+
+                    <!-- Buttons -->
+                    <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                        <Button fx:id="loginButton"
+                                text="Secure Login"
+                                onAction="#handleAdminRSALogin"
+                                defaultButton="true"
+                                styleClass="btn-primary"
+                                style="-fx-padding: 10 24;"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+        </HBox>
+    </center>
+</BorderPane>

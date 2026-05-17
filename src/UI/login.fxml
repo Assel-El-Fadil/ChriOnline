@@ -77,10 +77,6 @@
 
                     <!-- Buttons -->
                     <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-                        <Button text="Admin RSA Login"
-                                onAction="#handleAdminRSALogin"
-                                styleClass="btn-secondary"
-                                style="-fx-text-fill: #e67e22;"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Button text="Register"
                                 onAction="#handleRegister"
