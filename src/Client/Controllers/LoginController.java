@@ -10,6 +10,7 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import Shared.Security.RSAKeyPairGenerator;
 import Shared.Security.Signer;
+import Client.util.AnimationUtils;
 import javafx.application.Platform;
 import java.security.PrivateKey;
 import java.util.Base64;
@@ -56,6 +57,16 @@ public class LoginController {
         passwordVisibleField.textProperty().addListener((obs, o, n) -> {
             if (!passwordField.getText().equals(n))
                 passwordField.setText(n);
+        });
+
+        // Add animations
+        Platform.runLater(() -> {
+            if (loginButton != null) {
+                AnimationUtils.makePulsingOnHover(loginButton);
+            }
+            if (usernameField != null && usernameField.getParent() != null) {
+                AnimationUtils.popIn(usernameField.getParent().getParent(), 100);
+            }
         });
     }
 
@@ -377,5 +388,81 @@ public class LoginController {
         errorLabel.setStyle("-fx-text-fill: green; -fx-font-size: 12px;");
         errorLabel.setText(message);
         errorLabel.setVisible(true);
+    }
+
+    public void handleForgotPassword() {
+        TextInputDialog emailDialog = new TextInputDialog();
+        emailDialog.setTitle("Forgot Password");
+        emailDialog.setHeaderText("Reset Your Password");
+        emailDialog.setContentText("Enter your email address:");
+
+        Optional<String> emailResult = emailDialog.showAndWait();
+        if (emailResult.isPresent() && !emailResult.get().trim().isEmpty()) {
+            String email = emailResult.get().trim();
+            loginButton.setDisable(true);
+            
+            Task<String> task = new Task<>() {
+                @Override
+                protected String call() {
+                    return socketClient.sendCommand("FORGOT_PASSWORD|" + email);
+                }
+            };
+
+            task.setOnSucceeded(event -> {
+                loginButton.setDisable(false);
+                String response = task.getValue();
+                if (ResponseBuilder.isOk(response)) {
+                    // OTP sent by server, now ask user for it
+                    TextInputDialog otpDialog = new TextInputDialog();
+                    otpDialog.setTitle("Vérification");
+                    otpDialog.setHeaderText("An OTP has been sent to your email.");
+                    otpDialog.setContentText("Enter OTP:");
+
+                    Optional<String> otpResult = otpDialog.showAndWait();
+                    otpResult.ifPresent(otp -> {
+                        if (!otp.trim().isEmpty()) {
+                            // Now ask for new password
+                            TextInputDialog passDialog = new TextInputDialog();
+                            passDialog.setTitle("New Password");
+                            passDialog.setHeaderText("Enter your new password:");
+                            passDialog.setContentText("New Password:");
+
+                            Optional<String> passResult = passDialog.showAndWait();
+                            passResult.ifPresent(newPass -> {
+                                if (newPass.length() >= 6) {
+                                    // Send reset command
+                                    Task<String> resetTask = new Task<>() {
+                                        @Override
+                                        protected String call() {
+                                            return socketClient.sendCommand("RESET_PASSWORD|" + email + "|" + otp.trim() + "|" + newPass);
+                                        }
+                                    };
+                                    resetTask.setOnSucceeded(e -> {
+                                        String res = resetTask.getValue();
+                                        if (ResponseBuilder.isOk(res)) {
+                                            showSuccessMessage("Password reset successfully. You can now login.");
+                                        } else {
+                                            showError(ResponseBuilder.extractError(res));
+                                        }
+                                    });
+                                    new Thread(resetTask).start();
+                                } else {
+                                    showError("Password must be at least 6 characters.");
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    showError(ResponseBuilder.extractError(response));
+                }
+            });
+
+            task.setOnFailed(event -> {
+                loginButton.setDisable(false);
+                showError("Connection failed.");
+            });
+
+            new Thread(task).start();
+        }
     }
 }

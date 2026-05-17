@@ -358,3 +358,806 @@ javafx.fxml.LoadException: Error resolving onAction='#handleTogglePassword', eit
 2026-04-23 22:54:06 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:64391 (10s handshake timeout)
 2026-04-23 22:54:06 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64391
 2026-04-23 23:45:48 INFO  Main - [Main] Application closing...
+2026-04-24 09:56:44 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 09:56:44 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 09:56:44 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 52911
+2026-04-24 09:56:44 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 09:56:44 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 09:57:08 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 09:57:08 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 09:57:08 INFO  Server.Server - [Server] Client connected: 127.0.0.1:64462  | Active sessions: 0
+2026-04-24 09:57:08 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 09:57:08 ERROR Main - [Main] Failed to load login screen: Error resolving onAction='#handleForgotPassword', either the event handler is not in the Namespace or there is an error in the script.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/login.fxml:73
+
+2026-04-24 09:57:08 ERROR Main - Exception occurred
+javafx.fxml.LoadException: Error resolving onAction='#handleForgotPassword', either the event handler is not in the Namespace or there is an error in the script.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/login.fxml:73
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.processEventHandlerAttributes(FXMLLoader.java:623) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader$ValueElement.processEndElement(FXMLLoader.java:783) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processEndElement(FXMLLoader.java:2969) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2654) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Main.start(Main.java:124) ~[classes/:?]
+	at javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:839) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:483) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:456) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:455) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 09:57:19 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:64462
+2026-04-24 09:57:19 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64462
+2026-04-24 09:57:30 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 09:57:30 INFO  Server.Server - [Server] Client connected: 127.0.0.1:64465  | Active sessions: 0
+2026-04-24 09:57:30 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 09:57:30 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 09:57:30 ERROR Main - [Main] Failed to load login screen: Error resolving onAction='#handleForgotPassword', either the event handler is not in the Namespace or there is an error in the script.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/login.fxml:73
+
+2026-04-24 09:57:30 ERROR Main - Exception occurred
+javafx.fxml.LoadException: Error resolving onAction='#handleForgotPassword', either the event handler is not in the Namespace or there is an error in the script.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/login.fxml:73
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader$Element.processEventHandlerAttributes(FXMLLoader.java:623) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader$ValueElement.processEndElement(FXMLLoader.java:783) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processEndElement(FXMLLoader.java:2969) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2654) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Main.start(Main.java:124) ~[classes/:?]
+	at javafx.graphics/com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$9(LauncherImpl.java:839) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:483) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:456) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:455) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 09:57:44 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:64465
+2026-04-24 09:57:44 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:64465
+2026-04-24 10:10:29 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 10:10:29 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 10:10:29 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 61665
+2026-04-24 10:10:29 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 10:10:29 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 10:11:33 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 10:11:33 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 10:11:33 INFO  Server.Server - [Server] Client connected: 127.0.0.1:49224  | Active sessions: 0
+2026-04-24 10:11:33 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 10:11:34 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 10:11:43 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-24 10:11:43 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-24 10:11:47 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 10:12:09 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-04-24 10:14:44 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 10:22:29 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user admin
+2026-04-24 10:22:29 INFO  Server.SessionManager - [SessionManager] Session removed — admin (alive 645s)  | Active sessions: 1
+2026-04-24 10:56:05 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user admin
+2026-04-24 10:56:05 INFO  Server.SessionManager - [SessionManager] Session removed — admin (alive 2636s)  | Active sessions: 0
+2026-04-24 10:59:20 INFO  Main - [Main] Application closing...
+2026-04-24 10:59:20 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:49224
+2026-04-24 10:59:20 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:49224
+2026-04-24 11:15:06 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 11:15:06 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 11:15:06 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 55084
+2026-04-24 11:15:06 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 11:15:06 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 11:15:28 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 11:15:29 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 11:15:29 INFO  Server.Server - [Server] Client connected: 127.0.0.1:55401  | Active sessions: 0
+2026-04-24 11:15:29 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 11:15:29 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 11:15:59 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:55401 (10s handshake timeout)
+2026-04-24 11:15:59 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:55401
+2026-04-24 11:16:18 INFO  Main - [Main] Application closing...
+2026-04-24 11:16:25 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 11:16:25 INFO  Server.Server - [Server] Client connected: 127.0.0.1:55416  | Active sessions: 0
+2026-04-24 11:16:25 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 11:16:25 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 11:16:26 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 11:16:29 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-24 11:16:30 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-24 11:16:39 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 11:16:48 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 11:16:48 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-04-24 11:16:48 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 11:19:23 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 11:19:24 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 3
+2026-04-24 11:19:24 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 11:20:12 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 11:21:07 INFO  Main - [Main] Application closing...
+2026-04-24 11:21:07 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:55416
+2026-04-24 11:21:07 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:55416
+2026-04-24 11:27:06 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user admin
+2026-04-24 11:27:06 INFO  Server.SessionManager - [SessionManager] Session removed — admin (alive 636s)  | Active sessions: 2
+2026-04-24 11:30:06 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user assel
+2026-04-24 11:30:06 INFO  Server.SessionManager - [SessionManager] Session removed — assel (alive 798s)  | Active sessions: 1
+2026-04-24 11:31:05 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 11:31:05 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 11:31:05 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 63018
+2026-04-24 11:31:05 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 11:31:05 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 11:31:19 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 11:31:19 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 11:31:19 INFO  Server.Server - [Server] Client connected: 127.0.0.1:49694  | Active sessions: 0
+2026-04-24 11:31:19 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 11:31:20 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 11:31:26 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-24 11:31:26 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-24 11:31:33 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 11:31:39 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 11:31:39 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-04-24 11:31:39 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 11:31:59 INFO  Main - [Main] Application closing...
+2026-04-24 11:31:59 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:49694
+2026-04-24 11:31:59 INFO  Server.SessionManager - [SessionManager] Session removed — assel (alive 20s)  | Active sessions: 1
+2026-04-24 11:31:59 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:49694
+2026-04-24 11:33:14 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 11:33:14 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 11:33:14 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 56293
+2026-04-24 11:33:14 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 11:33:14 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 11:33:20 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 11:33:20 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 11:33:20 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 56294
+2026-04-24 11:33:20 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 11:33:20 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 11:33:29 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 11:33:29 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 11:33:29 INFO  Server.Server - [Server] Client connected: 127.0.0.1:49727  | Active sessions: 0
+2026-04-24 11:33:29 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 11:33:30 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 11:33:59 WARN  Server.ClientHandler - [ClientHandler] Dropped incomplete connection from 127.0.0.1:49727 (10s handshake timeout)
+2026-04-24 11:33:59 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:49727
+2026-04-24 11:37:53 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 11:37:56 INFO  Main - [Main] Application closing...
+2026-04-24 11:38:05 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 11:38:05 INFO  Server.Server - [Server] Client connected: 127.0.0.1:51264  | Active sessions: 0
+2026-04-24 11:38:05 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 11:38:05 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 11:38:06 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 11:38:11 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 11:38:11 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-24 11:38:12 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-24 11:38:12 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 11:38:25 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 11:38:45 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 11:38:46 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-04-24 11:38:46 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 11:49:20 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user assel
+2026-04-24 11:49:20 INFO  Server.SessionManager - [SessionManager] Session removed — assel (alive 668s)  | Active sessions: 1
+2026-04-24 11:52:20 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user assel
+2026-04-24 11:52:20 INFO  Server.SessionManager - [SessionManager] Session removed — assel (alive 814s)  | Active sessions: 0
+2026-04-24 12:05:31 INFO  Main - [Main] Application closing...
+2026-04-24 12:05:31 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:51264
+2026-04-24 12:05:31 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:51264
+2026-04-24 12:06:14 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 12:06:14 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 12:06:14 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 63924
+2026-04-24 12:06:14 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 12:06:14 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 12:06:24 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 12:06:24 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 12:06:24 INFO  Server.Server - [Server] Client connected: 127.0.0.1:57655  | Active sessions: 0
+2026-04-24 12:06:24 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 12:06:25 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 12:06:39 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-24 12:06:39 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-24 12:07:02 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 12:07:06 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 12:07:07 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-04-24 12:07:07 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 12:09:01 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: FIFA 24
+2026-04-24 12:09:01 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$6(CatalogController.java:225) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8875) ~[javafx-graphics-21-win.jar:?]
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274) ~[javafx-controls-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3984) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:09:01 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:09:05 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Laptop ProBook 450
+2026-04-24 12:09:05 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$6(CatalogController.java:225) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8875) ~[javafx-graphics-21-win.jar:?]
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274) ~[javafx-controls-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3984) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:09:05 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:09:07 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Smartphone Galaxy X12
+2026-04-24 12:09:07 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$6(CatalogController.java:225) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8875) ~[javafx-graphics-21-win.jar:?]
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274) ~[javafx-controls-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3984) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:09:07 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:09:19 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Laptop ProBook 450
+2026-04-24 12:09:19 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$6(CatalogController.java:225) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8875) ~[javafx-graphics-21-win.jar:?]
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274) ~[javafx-controls-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3984) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:09:19 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:09:20 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Laptop ProBook 450
+2026-04-24 12:09:20 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$6(CatalogController.java:225) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8875) ~[javafx-graphics-21-win.jar:?]
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274) ~[javafx-controls-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3984) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:09:20 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:09:21 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: Laptop ProBook 450
+2026-04-24 12:09:21 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Laptop ProBook 450
+2026-04-24 12:09:21 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$5(CatalogController.java:219) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ClickGenerator.postProcess(Scene.java:3688) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3993) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:09:21 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:13:35 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: USB-C Hub 7-in-1
+2026-04-24 12:13:35 ERROR Client.Controllers.CatalogController - Exception occurred
+javafx.fxml.LoadException: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+	at javafx.fxml/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2718) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.createElement(FXMLLoader.java:2920) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.processStartElement(FXMLLoader.java:2850) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2649) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563) ~[javafx-fxml-21-win.jar:?]
+	at javafx.fxml/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531) ~[javafx-fxml-21-win.jar:?]
+	at Client.Controllers.CatalogController.openProductDetails(CatalogController.java:387) ~[classes/:?]
+	at Client.Controllers.CatalogController.lambda$createProductCard$6(CatalogController.java:225) ~[classes/:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Node.fireEvent(Node.java:8875) ~[javafx-graphics-21-win.jar:?]
+	at javafx.controls/javafx.scene.control.Button.fire(Button.java:203) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.behavior.ButtonBehavior.mouseReleased(ButtonBehavior.java:207) ~[javafx-controls-21-win.jar:?]
+	at javafx.controls/com.sun.javafx.scene.control.inputmap.InputMap.handle(InputMap.java:274) ~[javafx-controls-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74) ~[javafx-base-21-win.jar:?]
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54) ~[javafx-base-21-win.jar:?]
+	at javafx.base/javafx.event.Event.fireEvent(Event.java:198) ~[javafx-base-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Scene.java:3984) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Scene.java:1890) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400) ~[?:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(View.java:551) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(View.java:937) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method) ~[javafx-graphics-21-win.jar:?]
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185) ~[javafx-graphics-21-win.jar:?]
+	at java.base/java.lang.Thread.run(Thread.java:1575) [?:?]
+2026-04-24 12:13:35 INFO  Client.Controllers.CatalogController - [CatalogController Status] ERROR: Error opening details: Separator is not a valid type.
+/C:/Users/ASSIL/IdeaProjects/ChriOnline/target/classes/UI/productDetails.fxml:69
+
+2026-04-24 12:13:47 INFO  Client.Controllers.CatalogController - [CatalogController Status] INFO: Added! Cart total: 299.0 MAD
+2026-04-24 12:13:49 INFO  Client.Controllers.CatalogController - [CatalogController Status] INFO: Added! Cart total: 748.0 MAD
+2026-04-24 12:17:14 WARN  Server.SessionManager - [SessionManager] AFK Timeout: Removing idle session for user admin
+2026-04-24 12:17:14 INFO  Server.SessionManager - [SessionManager] Session removed — admin (alive 634s)  | Active sessions: 1
+2026-04-24 12:17:51 INFO  Main - [Main] Application closing...
+2026-04-24 12:17:51 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:57655
+2026-04-24 12:17:51 INFO  Server.SessionManager - [SessionManager] Session removed — assel (alive 644s)  | Active sessions: 0
+2026-04-24 12:17:51 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:57655
+2026-04-24 12:19:10 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-04-24 12:19:10 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-04-24 12:19:10 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 62629
+2026-04-24 12:19:10 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-04-24 12:19:10 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-04-24 12:19:20 INFO  Main - [Main] Loaded server host from config: localhost
+2026-04-24 12:19:20 INFO  Main - [Main] Connected to server localhost:8084
+2026-04-24 12:19:20 INFO  Server.Server - [Server] Client connected: 127.0.0.1:65304  | Active sessions: 0
+2026-04-24 12:19:20 INFO  Main - [Main] UDP listener started on port 8085
+2026-04-24 12:19:21 INFO  Main - [Main] Login screen loaded successfully
+2026-04-24 12:19:25 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-04-24 12:19:25 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-04-24 12:19:34 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 12:19:58 INFO  Client.Controllers.LoginController - handleLogin called
+2026-04-24 12:19:59 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-04-24 12:19:59 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-04-24 12:20:52 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: Running Sneakers V3
+2026-04-24 12:20:52 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Running Sneakers V3
+2026-04-24 12:20:52 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-04-24 12:20:57 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: Smartphone Galaxy X12
+2026-04-24 12:20:57 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Smartphone Galaxy X12
+2026-04-24 12:20:58 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-04-24 12:24:42 INFO  Client.Controllers.CatalogController - [CatalogController] Card clicked for: Protein Bar Box x12
+2026-04-24 12:24:42 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Protein Bar Box x12
+2026-04-24 12:24:43 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-04-24 12:24:56 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-04-24 12:25:17 INFO  Main - [Main] Application closing...
+2026-04-24 12:25:17 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:65304
+2026-04-24 12:25:17 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:65304
+2026-05-17 11:26:26 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-05-17 11:26:26 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 11:26:26 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 65362
+2026-05-17 11:26:26 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-05-17 11:26:26 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-05-17 11:28:14 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-05-17 11:28:14 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 11:28:14 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 52446
+2026-05-17 11:28:14 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-05-17 11:28:14 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-05-17 11:28:26 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 11:28:26 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 11:28:26 INFO  Server.Server - [Server] Client connected: 127.0.0.1:58879  | Active sessions: 0
+2026-05-17 11:28:26 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 11:28:27 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 11:28:34 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:58879
+2026-05-17 11:28:46 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 11:28:50 INFO  Main - [Main] Application closing...
+2026-05-17 11:29:44 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 11:29:44 INFO  Server.Server - [Server] Client connected: 127.0.0.1:58886  | Active sessions: 0
+2026-05-17 11:29:44 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 11:29:44 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 11:29:45 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 11:29:51 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:58886
+2026-05-17 11:30:12 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 11:30:16 INFO  Main - [Main] Application closing...
+2026-05-17 11:30:25 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 11:30:25 INFO  Server.Server - [Server] Client connected: 127.0.0.1:58890  | Active sessions: 0
+2026-05-17 11:30:25 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 11:30:25 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 11:30:26 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 11:30:30 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 11:30:30 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:58890
+2026-05-17 11:30:32 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 11:30:43 INFO  Main - [Main] Application closing...
+2026-05-17 11:31:11 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 11:31:11 INFO  Server.Server - [Server] Client connected: 127.0.0.1:60689  | Active sessions: 0
+2026-05-17 11:31:11 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 11:31:11 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 11:31:12 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 11:31:20 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:60689
+2026-05-17 11:31:22 INFO  Main - [Main] Application closing...
+2026-05-17 11:31:34 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 11:31:34 INFO  Server.Server - [Server] Client connected: 127.0.0.1:60696  | Active sessions: 0
+2026-05-17 11:31:34 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 11:31:34 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 11:31:35 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 11:31:40 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:60696
+2026-05-17 11:31:49 INFO  Main - [Main] Application closing...
+2026-05-17 11:32:07 INFO  Server.Server - [Server] Bound to TCP port 8084
+2026-05-17 11:32:07 INFO  Server.Server - [Server] Thread pool ready (20 threads)
+2026-05-17 11:32:07 INFO  Server.UDPServer - [UDPBroadcaster] Ready — source port: 58470
+2026-05-17 11:32:07 INFO  Server.Server - [Server] All dependencies wired — ready to accept connections.
+2026-05-17 11:32:07 INFO  Server.Server - [Server] Listening — waiting for client connections...
+
+2026-05-17 11:32:17 INFO  Main - [Main] Loaded server host from config: localhost
+2026-05-17 11:32:17 INFO  Main - [Main] Connected to server localhost:8084
+2026-05-17 11:32:17 INFO  Server.Server - [Server] Client connected: 127.0.0.1:60702  | Active sessions: 0
+2026-05-17 11:32:17 INFO  Main - [Main] UDP listener started on port 8085
+2026-05-17 11:32:18 INFO  Main - [Main] Login screen loaded successfully
+2026-05-17 11:32:21 INFO  Server.DAO.ConnectionPool - [ConnectionPool] Initialized — 5 connections ready.
+2026-05-17 11:32:22 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=1, username='admin', role='ADMIN', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 1
+2026-05-17 11:32:38 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-05-17 11:32:44 INFO  Client.Controllers.LoginController - handleLogin called
+2026-05-17 11:32:44 INFO  Server.SessionManager - [SessionManager] Session added — SessionData{userId=4, username='assel', role='USER', ip='127.0.0.1', udpPort=8085, age=0s}  | Active sessions: 2
+2026-05-17 11:32:44 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGIN success — user: assel | role: USER | clientIP: 127.0.0.1 | udpPort: 8085
+2026-05-17 11:33:02 INFO  Client.Controllers.CatalogController - [CatalogController] Attempting to open details for: Smartphone Galaxy X12
+2026-05-17 11:33:02 INFO  Client.Controllers.CatalogController - [CatalogController] Navigation successful.
+2026-05-17 11:33:13 INFO  Server.handlers.AuthHandler - [AuthHandler] LOGOUT — token removed: null
+2026-05-17 11:33:14 INFO  Main - [Main] Application closing...
+2026-05-17 11:33:14 INFO  Server.ClientHandler - [ClientHandler] Client disconnected cleanly: 127.0.0.1:60702
+2026-05-17 11:33:14 INFO  Server.ClientHandler - [ClientHandler] Resources released for: 127.0.0.1:60702

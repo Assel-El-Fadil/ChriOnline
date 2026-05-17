@@ -8,6 +8,7 @@ import Client.session.AppState;
 import Client.util.ProductImageHelper;
 import Shared.DTO.ProductDTO;
 import Shared.ResponseBuilder;
+import Client.util.AnimationUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -55,6 +56,16 @@ public class ProductDetailsController {
         if (cartStatusLabel != null) {
             cartStatusLabel.setVisible(false);
             cartStatusLabel.setText("");
+        }
+        
+        // Add 3D mouse parallax effect to the product image
+        if (imgProduct != null) {
+            AnimationUtils.makeMouseParallax(imgProduct);
+        }
+        
+        // Add pulsing to cart button
+        if (addToCartButton != null) {
+            AnimationUtils.makePulsingOnHover(addToCartButton);
         }
     }
 

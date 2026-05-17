@@ -8,6 +8,7 @@ import Client.session.AppState;
 import Client.util.ProductImageHelper;
 import Shared.DTO.ProductDTO;
 import Shared.ResponseBuilder;
+import Client.util.AnimationUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -154,14 +155,14 @@ public class CatalogController {
     private VBox createProductCard(ProductDTO p) {
         VBox card = new VBox(0);
         card.getStyleClass().add("catalog-product-card");
-        card.setMaxWidth(260);
-        card.setPrefWidth(260);
+        card.setMaxWidth(220);
+        card.setPrefWidth(220);
         card.setFillWidth(true);
 
         StackPane imageStack = new StackPane();
         imageStack.setPadding(new Insets(0));
-        imageStack.setMinHeight(172);
-        imageStack.setPrefHeight(172);
+        imageStack.setMinHeight(150);
+        imageStack.setPrefHeight(150);
         imageStack.getStyleClass().add("catalog-card-image-stack");
 
         Region imageBg = new Region();
@@ -169,8 +170,8 @@ public class CatalogController {
         imageBg.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(260);
-        imageView.setFitHeight(172);
+        imageView.setFitWidth(220);
+        imageView.setFitHeight(150);
         imageView.setPreserveRatio(false); // Fill the entire pane
         imageView.setSmooth(true);
         imageView.setImage(ProductImageHelper.loadLocalImage(p.imagePath));
@@ -181,12 +182,12 @@ public class CatalogController {
         Label subtitle = new Label(truncateDescription(p.description, 52));
         subtitle.getStyleClass().add("catalog-card-subtitle");
         subtitle.setWrapText(true);
-        subtitle.setMaxWidth(236);
+        subtitle.setMaxWidth(196);
 
         Label name = new Label(p.name);
         name.getStyleClass().add("catalog-card-name");
         name.setWrapText(true);
-        name.setMaxWidth(236);
+        name.setMaxWidth(196);
 
         Label price = new Label(String.format("%.2f MAD", p.price));
         price.getStyleClass().add("catalog-card-price");
@@ -196,6 +197,7 @@ public class CatalogController {
         addBtn.setMinSize(40, 40);
         addBtn.setPrefSize(40, 40);
         addBtn.setOnAction(ev -> promptAddToCart(p));
+        AnimationUtils.makePulsingOnHover(addBtn);
 
         Region grow = new Region();
         HBox.setHgrow(grow, Priority.ALWAYS);
@@ -222,6 +224,9 @@ public class CatalogController {
             ev.consume();
             openProductDetails(p);
         });
+
+        // Add pop-in animation
+        AnimationUtils.popIn(card, 100);
 
         return card;
     }
