@@ -56,6 +56,23 @@ public class OrderHandler {
     }
 
     public String handle(Command cmd, String[] params) {
+        if (cmd == Command.CHECKOUT || cmd == Command.CHECKOUT_INIT || cmd == Command.CHECKOUT_CONFIRM) {
+            javax.crypto.SecretKey key = Shared.Security.HMACUtil.currentKey.get();
+            if (key == null) {
+                return ResponseBuilder.error("Security context missing");
+            }
+            if (params.length < 1) {
+                return ResponseBuilder.error("Missing parameters");
+            }
+            String hmac = params[params.length - 1];
+            String[] originalParams = java.util.Arrays.copyOf(params, params.length - 1);
+            String baseMessage = cmd.name() + "|" + String.join("|", originalParams);
+            if (!Shared.Security.HMACUtil.verify(baseMessage, hmac, key)) {
+                return ResponseBuilder.error("Invalid message integrity");
+            }
+            params = originalParams;
+        }
+
         switch (cmd) {
             case CHECKOUT: return handleCheckout(params);
             case CHECKOUT_INIT: return handleCheckoutInit(params);

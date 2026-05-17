@@ -150,7 +150,14 @@ public class RegisterController {
         registerButton.setDisable(true);
         hideError();
 
-        String command = "REGISTER|" + firstName + "|" + lastName + "|" + username + "|" + password + "|" + email;
+        String baseCommand = "REGISTER|" + firstName + "|" + lastName + "|" + username + "|" + password + "|" + email;
+        String hmac = "";
+        try {
+            hmac = Shared.Security.HMACUtil.compute(baseCommand, socketClient.getAesKey());
+        } catch (Exception e) {
+            logger.error("Failed to compute registration HMAC", e);
+        }
+        String command = baseCommand + "|" + hmac;
 
         Task<String> task = new Task<>() {
             @Override

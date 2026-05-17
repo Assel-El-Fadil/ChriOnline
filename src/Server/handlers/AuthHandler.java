@@ -131,16 +131,26 @@ public class AuthHandler {
     // ──────────────────────────────────────────────────────────────
     private String handleRegister(String[] params) {
 
-        if (params.length < 5) {
+        if (params.length < 6) {
             logger.info("[AuthHandler]: Error occurred, Missing parameters");
             return ResponseBuilder.error("Missing parameters");
         }
 
-        String firstName = params[0].trim();
-        String lastName = params[1].trim();
-        String username = params[2].trim();
-        String password = params[3];
-        String email = params[4].trim();
+        javax.crypto.SecretKey key = Shared.Security.HMACUtil.currentKey.get();
+        if (key == null) {
+            return ResponseBuilder.error("Security context missing");
+        }
+        String[] registerParams = java.util.Arrays.copyOf(params, params.length - 1);
+        String baseMessage = "REGISTER|" + String.join("|", registerParams);
+        if (!Shared.Security.HMACUtil.verify(baseMessage, params[params.length - 1], key)) {
+            return ResponseBuilder.error("Invalid message integrity");
+        }
+
+        String firstName = registerParams[0].trim();
+        String lastName = registerParams[1].trim();
+        String username = registerParams[2].trim();
+        String password = registerParams[3];
+        String email = registerParams[4].trim();
 
         if (firstName.isEmpty()) {
             return ResponseBuilder.error("First name cannot be empty");

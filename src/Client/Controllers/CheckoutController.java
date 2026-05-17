@@ -138,11 +138,18 @@ public class CheckoutController {
 
         // Step 1: Initialize Checkout (Triggers 2FA code sending)
         // CHECKOUT_INIT|token|CARD|cardNum|holder|expiry|cvv
-        String initCommand = "CHECKOUT_INIT|" + AppState.getToken()
+        String baseInitCommand = "CHECKOUT_INIT|" + AppState.getToken()
                 + "|CARD|" + cardNum
                 + "|" + holder
                 + "|" + expiry
                 + "|" + cvv;
+        String hmacInit = "";
+        try {
+            hmacInit = Shared.Security.HMACUtil.compute(baseInitCommand, socketClient.getAesKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String initCommand = baseInitCommand + "|" + hmacInit;
 
         Task<String> initTask = new Task<>() {
             @Override
@@ -211,7 +218,14 @@ public class CheckoutController {
     private void confirmCheckout(String code, String transactionId) {
         // Step 3: Confirm Checkout with 2FA code AND transactionId
         // CHECKOUT_CONFIRM|token|code|transactionId
-        String confirmCommand = "CHECKOUT_CONFIRM|" + AppState.getToken() + "|" + code + "|" + transactionId;
+        String baseConfirmCommand = "CHECKOUT_CONFIRM|" + AppState.getToken() + "|" + code + "|" + transactionId;
+        String hmacConfirm = "";
+        try {
+            hmacConfirm = Shared.Security.HMACUtil.compute(baseConfirmCommand, socketClient.getAesKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String confirmCommand = baseConfirmCommand + "|" + hmacConfirm;
 
         Task<String> confirmTask = new Task<>() {
             @Override

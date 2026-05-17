@@ -109,7 +109,12 @@ public class ClientHandler implements Runnable {
                         socket.setSoTimeout(0);
                         firstCommandReceived = true;
                     }
-                    response = dispatch(req);
+                    Shared.Security.HMACUtil.currentKey.set(aesSessionKey);
+                    try {
+                        response = dispatch(req);
+                    } finally {
+                        Shared.Security.HMACUtil.currentKey.remove();
+                    }
 
                 } catch (RequestParser.InvalidRequestException e) {
                     response = ResponseBuilder.error("Unknown command");
