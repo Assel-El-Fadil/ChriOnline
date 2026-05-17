@@ -8,7 +8,7 @@ import javax.crypto.Cipher;
 
 public class RSAUtil {
 
-    private static final String TRANSFORMATION = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
+    private static final String TRANSFORMATION = CryptoConfig.RSA_TRANSFORMATION;
 
     public static KeyPair generateKeyPair() throws Exception {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");

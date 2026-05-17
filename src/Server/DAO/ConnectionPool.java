@@ -32,10 +32,10 @@ public class ConnectionPool {
             } catch (SQLException e) {
                 throw new RuntimeException(
                         "[ConnectionPool] FATAL: Could not open connection "
-                                + (i + 1) + "/" + POOL_SIZE + " — " + e.getMessage(), e);
+                                + (i + 1) + "/" + POOL_SIZE + " - " + e.getMessage(), e);
             }
         }
-        logger.info("[ConnectionPool] Initialized — " + POOL_SIZE + " connections ready.");
+        logger.info("[ConnectionPool] Initialized - " + POOL_SIZE + " connections ready.");
     }
 
     public static Connection getConnection() {
@@ -54,12 +54,12 @@ public class ConnectionPool {
 
             try {
                 if (conn == null || conn.isClosed() || !conn.isValid(2)) {
-                    logger.info("[ConnectionPool] Stale connection detected — replacing.");
+                    logger.info("[ConnectionPool] Stale connection detected - replacing.");
                     conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(
-                        "[ConnectionPool] Could not replace stale connection — " + e.getMessage(), e);
+                        "[ConnectionPool] Could not replace stale connection - " + e.getMessage(), e);
             }
 
             return conn;
@@ -76,7 +76,7 @@ public class ConnectionPool {
                 }
             } catch (SQLException e) {
                 logger.error(
-                        "[ConnectionPool] Could not reset auto-commit — discarding connection: "
+                        "[ConnectionPool] Could not reset auto-commit - discarding connection: "
                                 + e.getMessage());
                 try {
                     conn.close();

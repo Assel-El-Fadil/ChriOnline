@@ -40,7 +40,7 @@ public class Server {
     private static final int MAX_CONNECTIONS_PER_MINUTE = 10;
     private static final int HANDSHAKE_TIMEOUT_MS = 30_000;
 
-    // ── IP Rate limiter — records first-connection timestamp + count ──
+    // ── IP Rate limiter records first-connection timestamp + count ──
     private final ConcurrentHashMap<String, long[]> ipConnections = new ConcurrentHashMap<>();
 
     // ── Core server infrastructure ────────────────────────────────
@@ -130,7 +130,7 @@ public class Server {
         this.adminHandler = new AdminHandler(userService, productService, orderService, sessionManager);
         this.userHandler = new UserHandler(userService, sessionManager);
 
-        logger.info("[Server] All dependencies wired — ready to accept SSL connections.");
+        logger.info("[Server] All dependencies wired - ready to accept SSL connections.");
     }
 
     // ────────────────────────────────────────────────────────────
@@ -138,7 +138,7 @@ public class Server {
     // ────────────────────────────────────────────────────────────
 
     public void start() {
-        logger.info("[Server] Listening on SSL port " + TCP_PORT + " — waiting for client connections...\n");
+        logger.info("[Server] Listening on SSL port " + TCP_PORT + " - waiting for client connections...\n");
 
         while (!serverSocket.isClosed()) {
             try {
@@ -176,7 +176,7 @@ public class Server {
 
             } catch (SocketException e) {
                 if (serverSocket.isClosed()) {
-                    logger.info("[Server] Server socket closed — exiting accept loop.");
+                    logger.info("[Server] Server socket closed - exiting accept loop.");
                     break;
                 }
 
@@ -232,7 +232,7 @@ public class Server {
         try {
             boolean finished = pool.awaitTermination(10, TimeUnit.SECONDS);
             if (!finished) {
-                logger.info("[Server] Timeout — forcing pool shutdown.");
+                logger.info("[Server] Timeout - forcing pool shutdown.");
                 pool.shutdownNow();
             }
         } catch (InterruptedException e) {
@@ -258,7 +258,7 @@ public class Server {
             System.exit(1);
             return;
         } catch (Exception e) {
-            logger.error("[Server] FATAL: Could not start — " + e.getMessage());
+            logger.error("[Server] FATAL: Could not start - " + e.getMessage());
             System.exit(1);
             return;
         }

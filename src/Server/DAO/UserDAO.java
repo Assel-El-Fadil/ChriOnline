@@ -10,7 +10,7 @@ import java.util.Set;
 public class UserDAO {
 
     // ────────────────────────────────────────────────────────────
-    //  Inner class — carries password hash for AuthHandler only
+    //  Inner class carries password hash for AuthHandler only
     // ────────────────────────────────────────────────────────────
 
     public static class AuthUser {

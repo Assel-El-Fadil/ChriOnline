@@ -44,7 +44,7 @@ public class SessionManager {
     }
 
     // ────────────────────────────────────────────────────────────
-    //  Token hashing — SHA-256
+    //  Token hashing - SHA-256
     // ────────────────────────────────────────────────────────────
 
     /**
@@ -78,7 +78,7 @@ public class SessionManager {
         }
         String hashedKey = hashToken(token);
         sessions.put(hashedKey, data);
-        logger.info("[SessionManager] Session added — " + data
+        logger.info("[SessionManager] Session added - " + data
                 + "  | Active sessions: " + sessions.size());
     }
 
@@ -88,7 +88,7 @@ public class SessionManager {
         String hashedKey = hashToken(token);
         SessionData removed = sessions.remove(hashedKey);
         if (removed != null) {
-            logger.info("[SessionManager] Session removed — "
+            logger.info("[SessionManager] Session removed - "
                     + removed.getUsername()
                     + " (alive " + removed.getAgeSeconds() + "s)"
                     + "  | Active sessions: " + sessions.size());

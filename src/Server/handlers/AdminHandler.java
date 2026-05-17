@@ -156,7 +156,7 @@ public class AdminHandler {
             return ResponseBuilder.error(e.getMessage());
         } catch (ProductService.ProductInActiveCartException e) {
             return ResponseBuilder.error(
-                    "Cannot delete — this product is in one or more active carts");
+                    "Cannot delete - this product is in one or more active carts");
         } catch (SQLException e) {
             return ResponseBuilder.error(e.getMessage());
         }

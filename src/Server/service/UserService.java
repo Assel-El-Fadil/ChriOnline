@@ -22,13 +22,13 @@ public class UserService {
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
 
-    // Alphanumeric + underscore — no spaces
+    // Alphanumeric + underscore - no spaces
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
-    // Letters, spaces, hyphens, apostrophes — covers most real names
+    // Letters, spaces, hyphens, apostrophes - covers most real names
     private static final Pattern NAME_PATTERN = Pattern.compile("^[\\p{L} '\\-]+$");
 
-    // Basic email structure — something@something.something
+    // Basic email structure - something@something.something
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
@@ -275,7 +275,7 @@ public class UserService {
         }
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new ValidationException(
-                    "Email format is invalid — expected: user@domain.com");
+                    "Email format is invalid - expected: user@domain.com");
         }
     }
 
