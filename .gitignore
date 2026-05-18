@@ -5,3 +5,6 @@ target/
 target/classes/
 *.class
 server_config.properties
+app.log
+logs/
+*.log

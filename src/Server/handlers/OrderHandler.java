@@ -12,6 +12,7 @@ import Server.service.OrderService;
 import Server.service.PaymentResult;
 import Server.service.PaymentService;
 import Server.service.ProductService;
+import Server.service.UserService;
 import Shared.Command;
 import Shared.DTO.OrderDTO;
 import Shared.ResponseBuilder;
@@ -38,6 +39,7 @@ public class OrderHandler {
     private final UDPServer udpServer;
     private final ProductService productService;
     private final Server.DAO.TransactionDAO transactionDAO;
+    private final UserService userService;
 
     // ──────────────────────────────────────────────────────────────
     // Constructor
@@ -45,7 +47,7 @@ public class OrderHandler {
     public OrderHandler(OrderService orderService, CartService cartService,
                         PaymentService paymentService, SessionManager sessionManager,
                         UDPServer udpServer, ProductService productService,
-                        Server.DAO.TransactionDAO transactionDAO) {
+                        Server.DAO.TransactionDAO transactionDAO, UserService userService) {
         this.orderService = orderService;
         this.cartService = cartService;
         this.paymentService = paymentService;
@@ -53,6 +55,7 @@ public class OrderHandler {
         this.udpServer = udpServer;
         this.productService = productService;
         this.transactionDAO = transactionDAO;
+        this.userService = userService;
     }
 
     public String handle(Command cmd, String[] params) {
@@ -166,14 +169,30 @@ public class OrderHandler {
         // Store pending checkout in memory
         pendingCheckouts.put(token, new PendingCheckout(paymentMethod, cardNum, holder, expiry, cvv, code, transactionId));
 
-        // Simulate Email
-        System.out.println("==========================================");
-        System.out.println("SIMULATED EMAIL TO: (User ID " + session.getUserId() + ")");
-        System.out.println("Subject: Payment Verification Code");
-        System.out.println("Transaction ID: " + transactionId);
-        System.out.println("Your ChriOnline verification code is: " + code);
-        System.out.println("Horodatage: " + new java.util.Date(now));
-        System.out.println("==========================================");
+        // Retrieve the user's registered email address dynamically
+        String userEmail = "aymanelouazzani150@gmail.com"; // default fallback
+        try {
+            Shared.DTO.UserDTO user = userService.getProfile(session.getUserId());
+            if (user != null && user.email != null && !user.email.isBlank()) {
+                userEmail = user.email;
+            }
+        } catch (Exception e) {
+            logger.warn("[OrderHandler] Could not retrieve email for user ID " + session.getUserId() + ": " + e.getMessage());
+        }
+
+        // Send a highly secure real email via our centralized EmailService
+        String emailSubject = "ChriOnline Payment Verification Code - " + transactionId.substring(0, 8);
+        String emailBody = "Hello " + session.getUsername() + ",\n\n"
+                + "A payment verification is required to complete your ChriOnline checkout.\n"
+                + "Please use the following 6-digit confirmation code to authorize this transaction:\n\n"
+                + "   -->  " + code + "  <--\n\n"
+                + "Transaction ID: " + transactionId + "\n"
+                + "Horodatage: " + new java.util.Date(now) + "\n\n"
+                + "If you did not initiate this transaction, please change your password immediately.\n\n"
+                + "Best regards,\n"
+                + "The ChriOnline Security Engine";
+
+        Server.service.EmailService.getInstance().sendEmail(userEmail, emailSubject, emailBody);
 
         return ResponseBuilder.ok("2FA_REQUIRED|" + transactionId + "|" + now);
     }
