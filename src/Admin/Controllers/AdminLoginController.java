@@ -27,6 +27,7 @@ public class AdminLoginController {
     private static final Logger logger = LogManager.getLogger(AdminLoginController.class);
 
     @FXML private TextField usernameField;
+    @FXML private javafx.scene.control.PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
 
@@ -61,8 +62,13 @@ public class AdminLoginController {
     @FXML
     private void handleAdminRSALogin() {
         String username = usernameField.getText().trim();
+        String password = passwordField != null ? passwordField.getText() : "";
         if (username.isEmpty()) {
             showError("Please enter your admin username first.");
+            return;
+        }
+        if (password.isEmpty()) {
+            showError("Please enter your keystore password.");
             return;
         }
 
@@ -79,7 +85,15 @@ public class AdminLoginController {
                 String challenge = ResponseBuilder.extractPayload(challengeResp);
 
                 // 2. Sign Challenge locally
-                PrivateKey privKey = RSAKeyPairGenerator.loadPrivateKeyFromFile("admin_private.key");
+                java.security.KeyStore ks = java.security.KeyStore.getInstance("PKCS12");
+                try (java.io.FileInputStream fis = new java.io.FileInputStream("admin_keys.p12")) {
+                    ks.load(fis, password.toCharArray());
+                }
+                PrivateKey privKey = (PrivateKey) ks.getKey("admin", password.toCharArray());
+                if (privKey == null) {
+                    throw new Exception("Private key not found in keystore under alias 'admin'.");
+                }
+
                 byte[] signature = Signer.sign(challenge, privKey);
                 String signatureB64 = Base64.getEncoder().encodeToString(signature);
 
@@ -110,7 +124,11 @@ public class AdminLoginController {
             loginButton.setDisable(false);
             Throwable e = task.getException();
             if (e instanceof java.io.FileNotFoundException) {
-                showError("Admin private key not found locally.");
+                showError("Admin keystore (admin_keys.p12) not found locally.");
+            } else if (e instanceof java.io.IOException && e.getMessage() != null && e.getMessage().toLowerCase().contains("keystore password")) {
+                showError("Incorrect keystore password.");
+            } else if (e instanceof java.security.UnrecoverableKeyException) {
+                showError("Incorrect keystore password.");
             } else {
                 showError("RSA Login Failed: " + (e != null ? e.getMessage() : "Unknown error"));
                 if (e != null) e.printStackTrace();

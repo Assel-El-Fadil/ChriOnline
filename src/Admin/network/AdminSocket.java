@@ -26,8 +26,9 @@ public class AdminSocket {
     }
 
     public void connect() throws IOException {
-        System.setProperty("javax.net.ssl.trustStore", "truststore.jks");
+        System.setProperty("javax.net.ssl.trustStore", "truststore.p12");
         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+        System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
 
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");

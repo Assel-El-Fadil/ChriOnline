@@ -42,6 +42,14 @@
                                    styleClass="login-form-field"/>
                     </VBox>
 
+                    <!-- Password field -->
+                    <VBox spacing="8">
+                        <Label text="Keystore Password" styleClass="login-field-label"/>
+                        <javafx.scene.control.PasswordField fx:id="passwordField"
+                                   promptText="Enter your keystore password"
+                                   styleClass="login-form-field"/>
+                    </VBox>
+
                     <!-- Error label -->
                     <Label fx:id="errorLabel"
                            styleClass="login-error-label"

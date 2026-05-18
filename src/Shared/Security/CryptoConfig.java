@@ -22,16 +22,16 @@ public final class CryptoConfig {
     public static final int    RSA_KEY_SIZE    = 2048;  // bits
 
     // ── KeyStore / TrustStore ───────────────────────────────────────
-    public static final String KEYSTORE_PATH     = "keystore.jks";
+    public static final String KEYSTORE_PATH     = "keystore.p12";
     public static final String KEYSTORE_PASSWORD  = "123456";
     public static final String KEYSTORE_ALIAS     = "ecommerce";
 
-    public static final String TRUSTSTORE_PATH     = "truststore.jks";
+    public static final String TRUSTSTORE_PATH     = "truststore.p12";
     public static final String TRUSTSTORE_PASSWORD  = "123456";
 
     // ── TLS Configuration ───────────────────────────────────────────
     public static final int    SSL_PORT        = 8084;  // Same port, now SSL
-    public static final String KEYSTORE_TYPE   = "JKS";
+    public static final String KEYSTORE_TYPE   = "PKCS12";
 
     // ── Session Token Hashing ───────────────────────────────────────
     public static final String TOKEN_HASH_ALGORITHM = "SHA-256";

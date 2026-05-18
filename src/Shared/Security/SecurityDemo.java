@@ -4,12 +4,18 @@ import java.security.KeyPair;
 import java.util.Base64;
 
 public class SecurityDemo {
+    public static java.security.KeyPair generateKeyPair() throws Exception {
+        java.security.KeyPairGenerator generator = java.security.KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        return generator.generateKeyPair();
+    }
+
     public static void main(String[] args) {
         try {
             System.out.println("--- RSA Challenge-Response Demo ---");
 
             System.out.println("[Step 3] Generating Key Pair...");
-            KeyPair pair = RSAKeyPairGenerator.generateKeyPair();
+            KeyPair pair = generateKeyPair();
             System.out.println("Public Key: " + Base64.getEncoder().encodeToString(pair.getPublic().getEncoded()).substring(0, 50) + "...");
 
             System.out.println("[Step 5] Generating Challenge...");
