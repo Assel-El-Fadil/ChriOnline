@@ -311,7 +311,7 @@ Admin Client                                       Server
 ### How It Works
 1. **Challenge Request**: The admin client requests a challenge from the server (`ADMIN_CHALLENGE|<username>`).
 2. **Challenge Generation**: The server verifies that the username matches an administrator account with an active public key registered. It generates a cryptographically random 32-byte challenge using `SecureRandom` and returns it to the client.
-3. **Signature**: The admin unlocks their local PKCS12 keystore (`admin_keys.p12`) using their personal keystore password. It extracts the private key and signs the raw challenge using `SHA256withRSA`.
+3. **Signature**: The admin selects their local PKCS12 keystore (`.p12` file) via the UI file chooser and unlocks it using their personal keystore password. The system extracts the private key from the selected vault and signs the raw challenge using `SHA256withRSA`.
 4. **Verification**: The admin client sends the Base64 signature back to the server (`ADMIN_VERIFY|<username>|<signature>`).
 5. **Session Creation**: The server retrieves the administrator's registered public key from the database and verifies the signature using `Signature.getInstance("SHA256withRSA")`. If valid, the session is approved.
 

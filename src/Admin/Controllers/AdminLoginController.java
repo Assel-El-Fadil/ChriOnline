@@ -27,6 +27,7 @@ public class AdminLoginController {
     private static final Logger logger = LogManager.getLogger(AdminLoginController.class);
 
     @FXML private TextField usernameField;
+    @FXML private TextField keystorePathField;
     @FXML private javafx.scene.control.PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
@@ -34,6 +35,19 @@ public class AdminLoginController {
     private AdminSocket socketClient;
     private int udpPort;
     private Stage primaryStage;
+    private java.io.File selectedKeystoreFile;
+
+    @FXML
+    private void handleBrowseKeystore() {
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Select Admin Keystore");
+        fileChooser.getExtensionFilters().add(new javafx.stage.FileChooser.ExtensionFilter("PKCS12 Keystore (*.p12)", "*.p12"));
+        java.io.File file = fileChooser.showOpenDialog(primaryStage);
+        if (file != null) {
+            selectedKeystoreFile = file;
+            keystorePathField.setText(file.getAbsolutePath());
+        }
+    }
 
     @FXML
     private void initialize() {
@@ -71,6 +85,10 @@ public class AdminLoginController {
             showError("Please enter your keystore password.");
             return;
         }
+        if (selectedKeystoreFile == null || !selectedKeystoreFile.exists()) {
+            showError("Please select a valid admin keystore (.p12) file.");
+            return;
+        }
 
         loginButton.setDisable(true);
         hideError();
@@ -86,7 +104,7 @@ public class AdminLoginController {
 
                 // 2. Sign Challenge locally
                 java.security.KeyStore ks = java.security.KeyStore.getInstance("PKCS12");
-                try (java.io.FileInputStream fis = new java.io.FileInputStream("admin_keys.p12")) {
+                try (java.io.FileInputStream fis = new java.io.FileInputStream(selectedKeystoreFile)) {
                     ks.load(fis, password.toCharArray());
                 }
                 PrivateKey privKey = (PrivateKey) ks.getKey("admin", password.toCharArray());
