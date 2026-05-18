@@ -42,6 +42,23 @@
                                    styleClass="login-form-field"/>
                     </VBox>
 
+                    <!-- Keystore File Selection -->
+                    <VBox spacing="8">
+                        <Label text="Keystore File (.p12)" styleClass="login-field-label"/>
+                        <HBox spacing="10">
+                            <TextField fx:id="keystorePathField" editable="false" promptText="Select your .p12 file" styleClass="login-form-field" HBox.hgrow="ALWAYS"/>
+                            <Button text="Browse" onAction="#handleBrowseKeystore" styleClass="btn-secondary" style="-fx-padding: 8 15;"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Password field -->
+                    <VBox spacing="8">
+                        <Label text="Keystore Password" styleClass="login-field-label"/>
+                        <javafx.scene.control.PasswordField fx:id="passwordField"
+                                   promptText="Enter your keystore password"
+                                   styleClass="login-form-field"/>
+                    </VBox>
+
                     <!-- Error label -->
                     <Label fx:id="errorLabel"
                            styleClass="login-error-label"
