@@ -1,22 +1,20 @@
 package Server;
 
+import Shared.Security.AESUtil;
+import Shared.Security.HMACUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import Shared.*;
 import Server.handlers.*;
 import Server.security.SecureHandshake;
-import Shared.Security.CryptoConfig;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.SecureRandom;
-import java.util.Base64;
 
 public class ClientHandler implements Runnable {
     private static final Logger logger = LogManager.getLogger(ClientHandler.class);
@@ -34,7 +32,7 @@ public class ClientHandler implements Runnable {
     private final KeyPair serverKeyPair;
 
     private volatile String currentToken = null;
-    private volatile String pendingChallenge = null; // Used for RSA Login (Section 8)
+    private volatile String pendingChallenge = null;
 
     // ── AES session key (established via handshake) ──────────────
     private SecretKey aesSessionKey = null;
@@ -109,11 +107,11 @@ public class ClientHandler implements Runnable {
                         socket.setSoTimeout(0);
                         firstCommandReceived = true;
                     }
-                    Shared.Security.HMACUtil.currentKey.set(aesSessionKey);
+                    HMACUtil.currentKey.set(aesSessionKey);
                     try {
                         response = dispatch(req);
                     } finally {
-                        Shared.Security.HMACUtil.currentKey.remove();
+                        HMACUtil.currentKey.remove();
                     }
 
                 } catch (RequestParser.InvalidRequestException e) {
@@ -157,7 +155,7 @@ public class ClientHandler implements Runnable {
      */
     private String encryptMessage(String plaintext) {
         try {
-            return Shared.Security.AESUtil.encrypt(plaintext, aesSessionKey);
+            return AESUtil.encrypt(plaintext, aesSessionKey);
         } catch (Exception e) {
             logger.error("[ClientHandler] Encryption failed: " + e.getMessage(), e);
             return "ENCRYPTION_ERROR";
@@ -169,7 +167,7 @@ public class ClientHandler implements Runnable {
      */
     private String decryptMessage(String encryptedB64) {
         try {
-            return Shared.Security.AESUtil.decrypt(encryptedB64, aesSessionKey);
+            return AESUtil.decrypt(encryptedB64, aesSessionKey);
         } catch (Exception e) {
             logger.error("[ClientHandler] Decryption failed: " + e.getMessage(), e);
             throw new RuntimeException("Decryption failed", e);

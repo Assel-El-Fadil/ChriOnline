@@ -10,16 +10,16 @@ public final class CryptoConfig {
 
     // ── AES Configuration ───────────────────────────────────────────
     public static final String AES_ALGORITHM   = "AES/GCM/NoPadding";
-    public static final int    AES_KEY_SIZE    = 256;   // bits
-    public static final int    GCM_IV_LENGTH   = 12;    // bytes (96 bits, NIST recommended)
-    public static final int    GCM_TAG_LENGTH  = 128;   // bits
+    public static final int    AES_KEY_SIZE    = 256;
+    public static final int    GCM_IV_LENGTH   = 12;
+    public static final int    GCM_TAG_LENGTH  = 128;
     public static final String HMAC_ALGORITHM  = "HmacSHA256";
-    public static final String IV_SEPARATOR    = ":";    // delimiter between Base64(IV) and Base64(ciphertext)
+    public static final String IV_SEPARATOR    = ":";
 
     // ── RSA Configuration ───────────────────────────────────────────
     public static final String RSA_ALGORITHM         = "RSA";
     public static final String RSA_TRANSFORMATION    = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
-    public static final int    RSA_KEY_SIZE    = 2048;  // bits
+    public static final int    RSA_KEY_SIZE    = 2048;
 
     // ── KeyStore / TrustStore ───────────────────────────────────────
     public static final String KEYSTORE_PATH     = "keystore.p12";
@@ -30,7 +30,7 @@ public final class CryptoConfig {
     public static final String TRUSTSTORE_PASSWORD  = "123456";
 
     // ── TLS Configuration ───────────────────────────────────────────
-    public static final int    SSL_PORT        = 8084;  // Same port, now SSL
+    public static final int    SSL_PORT        = 8084;
     public static final String KEYSTORE_TYPE   = "PKCS12";
 
     // ── Session Token Hashing ───────────────────────────────────────

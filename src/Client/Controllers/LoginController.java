@@ -167,7 +167,7 @@ public class LoginController {
                     String role  = parts[1];
                     // userId not yet returned by LOGIN — default 0 until ORDER_HISTORY
                     AppState.setSession(token, username, role, 0);
-                    attempts = 5;
+                    attempts = 3;
 
                     loadMainWindow();
                 } else {

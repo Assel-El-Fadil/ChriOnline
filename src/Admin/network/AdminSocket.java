@@ -7,6 +7,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import Shared.Security.AESUtil;
+import Shared.Security.CryptoConfig;
 
 public class AdminSocket {
 
@@ -26,9 +27,9 @@ public class AdminSocket {
     }
 
     public void connect() throws IOException {
-        System.setProperty("javax.net.ssl.trustStore", "truststore.p12");
-        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
-        System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
+        System.setProperty("javax.net.ssl.trustStore", CryptoConfig.TRUSTSTORE_PATH);
+        System.setProperty("javax.net.ssl.trustStorePassword", CryptoConfig.TRUSTSTORE_PASSWORD);
+        System.setProperty("javax.net.ssl.trustStoreType", CryptoConfig.KEYSTORE_TYPE);
 
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");

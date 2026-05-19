@@ -1,5 +1,6 @@
 package Admin.network;
 
+import Shared.Security.CryptoConfig;
 import Shared.Security.RSAUtil;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -15,7 +16,7 @@ public class AdminSecureKeyExchange {
     public SecretKey performKeyExchange(BufferedReader reader, PrintWriter writer) throws Exception {
         // 1. Generate a random 256-bit AES key using KeyGenerator.getInstance("AES")
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(256);
+        keyGen.init(CryptoConfig.AES_KEY_SIZE);
         SecretKey aesKey = keyGen.generateKey();
 
         // 2. Receive the server's RSA public key (sent as Base64-encoded bytes over the socket)
@@ -27,7 +28,7 @@ public class AdminSecureKeyExchange {
         byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyB64);
         
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        KeyFactory keyFactory = KeyFactory.getInstance(CryptoConfig.RSA_ALGORITHM);
         PublicKey serverPublicKey = keyFactory.generatePublic(keySpec);
 
         // 3. Encrypt the AES key using RSAUtil.encrypt(aesKey.getEncoded(), serverPublicKey)
