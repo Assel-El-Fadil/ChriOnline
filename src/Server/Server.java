@@ -37,8 +37,8 @@ public class Server {
     // ── Network configuration ─────────────────────────────────────
     private static final int TCP_PORT = CryptoConfig.SSL_PORT;
     private static final int THREAD_POOL_SIZE = 20;
-    private static final int MAX_CONNECTIONS_PER_MINUTE = 10;
-    private static final int HANDSHAKE_TIMEOUT_MS = 30_000;
+    private static final int MAX_CONNECTIONS_PER_MINUTE = 50;
+    private static final int HANDSHAKE_TIMEOUT_MS = 60_000 * 2;
 
     // ── IP Rate limiter records first-connection timestamp + count ──
     private final ConcurrentHashMap<String, long[]> ipConnections = new ConcurrentHashMap<>();

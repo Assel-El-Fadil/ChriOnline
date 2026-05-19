@@ -1,5 +1,6 @@
 package Server.handlers;
 
+import jakarta.mail.MessagingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +19,7 @@ import Shared.DTO.OrderDTO;
 import Shared.ResponseBuilder;
 import Shared.SessionData;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,6 +27,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static Shared.Security.EmailUtil.sendMail;
 
 public class OrderHandler {
     private static final Logger logger = LogManager.getLogger(OrderHandler.class);
@@ -192,7 +196,13 @@ public class OrderHandler {
                 + "Best regards,\n"
                 + "The ChriOnline Security Engine";
 
-        Server.service.EmailService.getInstance().sendEmail(userEmail, emailSubject, emailBody);
+        try{
+            sendMail(userEmail, emailSubject, emailBody);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return ResponseBuilder.ok("2FA_REQUIRED|" + transactionId + "|" + now);
     }

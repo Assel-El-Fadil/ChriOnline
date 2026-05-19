@@ -1,5 +1,6 @@
 package Admin.Controllers;
 
+import javafx.scene.control.PasswordField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +21,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.UnrecoverableKeyException;
 import java.util.Base64;
 
 public class AdminLoginController {
@@ -28,7 +33,7 @@ public class AdminLoginController {
 
     @FXML private TextField usernameField;
     @FXML private TextField keystorePathField;
-    @FXML private javafx.scene.control.PasswordField passwordField;
+    @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
 
@@ -103,7 +108,7 @@ public class AdminLoginController {
                 String challenge = ResponseBuilder.extractPayload(challengeResp);
 
                 // 2. Sign Challenge locally
-                java.security.KeyStore ks = java.security.KeyStore.getInstance("PKCS12");
+                KeyStore ks = KeyStore.getInstance("PKCS12");
                 try (java.io.FileInputStream fis = new java.io.FileInputStream(selectedKeystoreFile)) {
                     ks.load(fis, password.toCharArray());
                 }
@@ -141,11 +146,11 @@ public class AdminLoginController {
         task.setOnFailed(event -> {
             loginButton.setDisable(false);
             Throwable e = task.getException();
-            if (e instanceof java.io.FileNotFoundException) {
+            if (e instanceof FileNotFoundException) {
                 showError("Admin keystore (admin_keys.p12) not found locally.");
-            } else if (e instanceof java.io.IOException && e.getMessage() != null && e.getMessage().toLowerCase().contains("keystore password")) {
+            } else if (e instanceof IOException && e.getMessage() != null && e.getMessage().toLowerCase().contains("keystore password")) {
                 showError("Incorrect keystore password.");
-            } else if (e instanceof java.security.UnrecoverableKeyException) {
+            } else if (e instanceof UnrecoverableKeyException) {
                 showError("Incorrect keystore password.");
             } else {
                 showError("RSA Login Failed: " + (e != null ? e.getMessage() : "Unknown error"));

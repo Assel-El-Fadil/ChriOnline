@@ -1,51 +1,51 @@
-# 🔒 ChriOnline Security Architecture & Implementation Report
+# 🔒 Rapport d'Architecture et d'Implémentation de Sécurité ChriOnline
 
-Welcome to the comprehensive technical security documentation of the **ChriOnline E-Commerce Platform**. This document details every single cryptographic, session, network, and application-layer security measure implemented across the codebase. It details **how each feature works**, **how it is implemented**, and provides **exact line-by-line code locations** to ensure auditability.
+Bienvenue dans la documentation technique exhaustive de la sécurité de la **Plateforme E-Commerce ChriOnline**. Ce document détaille chaque mesure de sécurité cryptographique, de session, réseau et applicative implémentée dans le code source. Il explique **comment fonctionne chaque fonctionnalité**, **comment elle est implémentée**, et fournit **les emplacements exacts du code ligne par ligne** pour garantir l'auditabilité.
 
 ---
 
-## 🛡️ 1. Layered Defense-in-Depth Architecture
+## 🛡️ 1. Architecture de Défense en Profondeur Multiniveau
 
-ChriOnline is designed using the **Defense-in-Depth** paradigm. Rather than relying on a single security mechanism, multiple independent barriers protect the system. If one security layer is compromised, subsequent layers prevent exploitation.
+ChriOnline est conçu selon le paradigme de **Défense en Profondeur**. Plutôt que de s'appuyer sur un seul mécanisme de sécurité, plusieurs barrières indépendantes protègent le système. Si une couche de sécurité est compromise, les couches suivantes empêchent l'exploitation.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│  LAYER 1: Transport Security  ── SSLSockets (TLS 1.3 / Port 8084)       │
+│  COUCHE 1: Sécurité de Transport ── SSLSockets (TLS 1.3 / Port 8084)   │
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 2: Network Protection  ── TCP & UDP Rate Limiting, Connection   │
-│                                  Handshake Timeouts (30s)              │
+│  COUCHE 2: Protection Réseau     ── Limitation de débit TCP & UDP,     │
+│                                     Délais d'attente de connexion (30s)│
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 3: Hybrid Cryptography ── RSA-2048 / AES-256 Hybrid Handshake   │
+│  COUCHE 3: Cryptographie Hybride ── Échange de clé RSA-2048 / AES-256  │
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 4: Message Channel     ── AES-256-GCM Encrypted Payloads        │
+│  COUCHE 4: Canal de Messages     ── Charges utiles chiffrées AES-256-GCM│
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 5: Integrity & Replay  ── GCM 128-bit Authentication Tags &     │
-│                                  Sliding-Window IV Verification        │
+│  COUCHE 5: Intégrité & Rejeu     ── Balises d'authentification GCM     │
+│                                     128 bits & Fenêtre glissante IV    │
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 6: Auth & Credentials  ── Salted jBCrypt Hashing, Passwordless  │
-│                                  RSA Challenge-Response Signatures     │
+│  COUCHE 6: Auth. & Identifiants  ── Hachage jBCrypt avec sel, Signatures│
+│                                     Challenge-Response RSA sans mot de passe│
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 7: Session Integrity   ── SHA-256 Token Memory Hashing, AFK     │
-│                                  Idle Timeouts, Token Rotation (30m)   │
+│  COUCHE 7: Intégrité de Session  ── Hachage mémoire de jeton SHA-256,  │
+│                                     Déconnexion pour inactivité, Rotation (30m)│
 ├────────────────────────────────────────────────────────────────────────┤
-│  LAYER 8: Data Privacy        ── AES-256-GCM Payment Encryption &      │
-│                                  Strict Binary Decoupling              │
+│  COUCHE 8: Confidentialité Données─ Chiffrement de paiement AES-256-GCM│
+│                                     & Découplage binaire strict        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🌐 2. Transport Layer Security & TLS Sockets
+## 🌐 2. Sécurité de la Couche Transport & Sockets TLS
 
-All raw TCP network communication is wrapped in a secure socket layer using standard TLS. This ensures confidentiality, authenticity, and server verification at the network boundary.
+Toute communication réseau TCP brute est enveloppée dans une couche de socket sécurisée utilisant le protocole standard TLS. Cela garantit la confidentialité, l'authenticité et la vérification du serveur aux limites du réseau.
 
-### How It Works
-* The server hosts its certificates in a secure `keystore.p12` using the modern PKCS12 format.
-* Clients trust only connection channels that match the signatures contained in their local truststore file (`truststore.p12`). This protects the connection from **Man-in-the-Middle (MitM)** attacks.
+### Comment ça marche
+* Le serveur héberge ses certificats dans un fichier sécurisé `keystore.p12` utilisant le format moderne PKCS12.
+* Les clients ne font confiance qu'aux canaux de connexion qui correspondent aux signatures contenues dans leur fichier truststore local (`truststore.p12`). Cela protège la connexion contre les attaques de l'**Homme du Milieu (MitM)**.
 
-### Code References
-* **Shared Centralized Configuration Constants**:  
-  Located in [`src/Shared/Security/CryptoConfig.java`](src/Shared/Security/CryptoConfig.java#L24-L34)
+### Références de Code
+* **Constantes de Configuration Centralisées Partagées** :  
+  Situé dans [`src/Shared/Security/CryptoConfig.java`](src/Shared/Security/CryptoConfig.java#L24-L34)
   ```java
   public static final String KEYSTORE_PATH     = "keystore.p12";
   public static final String KEYSTORE_PASSWORD  = "123456";
@@ -53,296 +53,298 @@ All raw TCP network communication is wrapped in a secure socket layer using stan
   public static final String TRUSTSTORE_PATH     = "truststore.p12";
   public static final String TRUSTSTORE_PASSWORD  = "123456";
   ```
-* **Client TrustStore Registration**:  
-  Located in [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java#L29-L30)
+* **Enregistrement du TrustStore Client** :  
+  Situé dans [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java#L29-L30)
   ```java
   System.setProperty("javax.net.ssl.trustStore", "truststore.p12");
   System.setProperty("javax.net.ssl.trustStorePassword", "123456");
   System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
   ```
-* **Admin TrustStore Registration**:  
-  Located in [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java#L29-L30)
+* **Enregistrement du TrustStore Admin** :  
+  Situé dans [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java#L29-L30)
   ```java
   System.setProperty("javax.net.ssl.trustStore", "truststore.p12");
   System.setProperty("javax.net.ssl.trustStorePassword", "123456");
   System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
   ```
-* **Server KeyStore Loading**:  
-  Located in [`src/Server/security/SecureHandshake.java`](src/Server/security/SecureHandshake.java#L85-L103) (`loadKeyPairFromKeyStore()`).
+* **Chargement du KeyStore Serveur** :  
+  Situé dans [`src/Server/security/SecureHandshake.java`](src/Server/security/SecureHandshake.java#L85-L103) (`loadKeyPairFromKeyStore()`).
 
 ---
 
-## 🔒 3. Inbound DoS, TCP flood & Incomplete Connection Timeout
+## 🔒 3. Déni de Service Entrant, Inondation TCP & Délai de Connexion Incomplète
 
-The server is hardened against **Denial of Service (DoS)**, **TCP Flooding**, and **Slowloris** attacks which attempt to exhaust server thread/connection limits.
+Le serveur est renforcé contre le **Déni de Service (DoS)**, l'**Inondation TCP (TCP Flood)**, et les attaques **Slowloris** qui tentent d'épuiser les limites de threads/connexions du serveur.
 
-### TCP Connection Rate Limiting
-* **How It Works**: The server records the timestamp and connection count of each IP address inside a 1-minute window. If an IP exceeds `MAX_CONNECTIONS_PER_MINUTE` (50), the socket is immediately closed.
-* **Code Reference**:  
-  Located in [`src/Server/Server.java`](src/Server/Server.java#L150-L154) and the `isRateLimited` helper at [`L195-L210`](src/Server/Server.java#L195-L210):
+### Limitation du Débit des Connexions TCP
+* **Comment ça marche** : Le serveur enregistre l'horodatage et le nombre de connexions de chaque adresse IP dans une fenêtre d'une minute. Si une IP dépasse `MAX_CONNECTIONS_PER_MINUTE` (50), le socket est immédiatement fermé.
+* **Référence de Code** :  
+  Situé dans [`src/Server/Server.java`](src/Server/Server.java#L150-L154) et l'aide `isRateLimited` à [`L195-L210`](src/Server/Server.java#L195-L210) :
   ```java
   if (isRateLimited(clientIP)) {
-      logger.warn("[Server] TCP Flood: Too many connections from " + clientIP + ". Dropping.");
+      logger.warn("[Server] TCP Flood: Trop de connexions depuis " + clientIP + ". Rejet.");
       clientSocket.close();
       continue;
   }
   ```
 
-### Incomplete Connection Timeout (Slowloris Protection)
-* **How It Works**: When a client connects, the server immediately sets a socket read timeout of 30 seconds (`setSoTimeout(30_000)`). If a client initiates a TCP handshake but fails to complete the Secure Handshake protocol (sending the encrypted AES key) within 30 seconds, a `SocketTimeoutException` triggers, and the connection is closed.
-* **Session Handover**: Once the handshake completes and the first valid, decrypted command is successfully received, the socket's read timeout is set to `0` (disabled) to allow normal long-running active socket states.
-* **Code References**:
-  * **Initial Socket Timeout Assignment**:  
-    Located in [`src/Server/Server.java`](src/Server/Server.java#L156):
+### Délai d'Attente de Connexion Incomplète (Protection Slowloris)
+* **Comment ça marche** : Lorsqu'un client se connecte, le serveur définit immédiatement un délai d'attente de lecture de socket de 30 secondes (`setSoTimeout(30_000)`). Si un client initie une poignée de main TCP mais échoue à compléter le protocole Secure Handshake (l'envoi de la clé AES chiffrée) dans les 30 secondes, une exception `SocketTimeoutException` se déclenche et la connexion est fermée.
+* **Passation de Session** : Une fois la poignée de main terminée et la première commande valide et déchiffrée reçue avec succès, le délai d'attente de lecture du socket est défini sur `0` (désactivé) pour permettre les états de socket actifs de longue durée normaux.
+* **Références de Code** :
+  * **Attribution Initiale du Délai d'Attente du Socket** :  
+    Situé dans [`src/Server/Server.java`](src/Server/Server.java#L156) :
     ```java
     clientSocket.setSoTimeout(HANDSHAKE_TIMEOUT_MS);
     ```
-  * **First Command Handling & Timeout Reset**:  
-    Located in [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L108-L111):
+  * **Traitement de la Première Commande & Réinitialisation du Délai d'Attente** :  
+    Situé dans [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L108-L111) :
     ```java
     if (!firstCommandReceived) {
         socket.setSoTimeout(0);
         firstCommandReceived = true;
     }
     ```
-  * **Slowloris Catch Block**:  
-    Located in [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L139-L141):
+  * **Bloc Catch Slowloris** :  
+    Situé dans [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L139-L141) :
     ```java
     } catch (java.net.SocketTimeoutException e) {
-        logger.warn("[ClientHandler] Dropped incomplete connection from "
-                + clientAddress + " (10s handshake timeout)");
+        logger.warn("[ClientHandler] Connexion incomplète abandonnée de "
+                + clientAddress + " (délai de poignée de main de 10s)");
     }
     ```
 
-### UDP Packet Flood Protection
-* **How It Works**: An in-memory rate-limiter prevents UDP flood attacks by tracking and throttling outgoing notifications per destination IP address.
-* **Code Reference**:  
-  Located in [`src/Server/UDPServer.java`](src/Server/UDPServer.java#L51-L54) and [`L76-L92`](src/Server/UDPServer.java#L76-L92) (`isUDPRateLimited()`).
+### Protection contre l'Inondation de Paquets UDP
+* **Comment ça marche** : Un limiteur de débit en mémoire prévient les attaques par inondation UDP en suivant et en limitant les notifications sortantes par adresse IP de destination.
+* **Référence de Code** :  
+  Situé dans [`src/Server/UDPServer.java`](src/Server/UDPServer.java#L51-L54) et [`L76-L92`](src/Server/UDPServer.java#L76-L92) (`isUDPRateLimited()`).
 
 ---
 
-## 🤝 4. Hybrid Cryptographic Handshake (RSA + AES)
+## 🤝 4. Poignée de Main Cryptographique Hybride (RSA + AES)
 
-To bridge the gap between asymmetry and speed, ChriOnline utilizes a custom application-layer **hybrid cryptographic handshake** on top of TLS.
+Afin de combler l'écart entre l'asymétrie et la vitesse, ChriOnline utilise une **poignée de main cryptographique hybride** personnalisée de la couche application par-dessus TLS.
 
 ```
-Client (Customer / Admin)                         Server
+Client (Client / Admin)                            Serveur
    │                                                 │
-   ├────────────── 1. Connect (TLS) ────────────────▶│
+   ├───────────── 1. Connexion (TLS) ────────────────▶│
    │                                                 │
-   │◀─── 2. Send RSA Public Key (Base64) ────────────┤ [SecureHandshake L40-44]
+   │◀── 2. Envoi de la Clé Publique RSA (Base64) ────┤ [SecureHandshake L40-44]
    │                                                 │
-   │  3. Generate secure AES-256 key                 │
-   │  4. Encrypt AES key using Server RSA Public     │
+   │  3. Génération d'une clé AES-256 sécurisée      │
+   │  4. Chiffrement de la clé AES avec la Clé       │
+   │     Publique RSA du Serveur                     │
    │                                                 │
-   ├────────── 5. Send Encrypted AES Key ───────────▶│ [SecureHandshake L46-55]
+   ├───────── 5. Envoi de la Clé AES Chiffrée ───────▶│ [SecureHandshake L46-55]
    │                                                 │
-   │                                                 │ 6. Decrypt AES Key using Private Key
-   │◀───────── 7. Handshake Confirmed ───────────────┤ [SecureHandshake L63-68]
+   │                                                 │ 6. Déchiffrement de la clé AES
+   │◀──────── 7. Poignée de Main Confirmée ──────────┤ [SecureHandshake L63-68]
    │                                                 │
-   ▼ ══ All traffic encrypted via AES-256-GCM ══════ ▼
+   ▼ ══ Tout le trafic est chiffré via AES-256-GCM ══ ▼
 ```
 
-### How It Works
-1. Upon connection, the Server loads its RSA keypair from the central keystore and sends its Public Key as a Base64-encoded string (`SERVER_PUBLIC_KEY:`).
-2. The Client generates a secure 256-bit AES symmetric key.
-3. The Client encrypts the AES key using the server's RSA Public Key and returns it (`AES_KEY:<ciphertext>`).
-4. The Server decrypts the symmetric key using its RSA Private Key. Both entities now share the same AES-256 session key.
+### Comment ça marche
+1. Lors de la connexion, le Serveur charge sa paire de clés RSA depuis le keystore central et envoie sa Clé Publique sous forme de chaîne encodée en Base64 (`SERVER_PUBLIC_KEY:`).
+2. Le Client génère une clé symétrique AES sécurisée de 256 bits.
+3. Le Client chiffre la clé AES en utilisant la Clé Publique RSA du serveur et la renvoie (`AES_KEY:<texte_chiffré>`).
+4. Le Serveur déchiffre la clé symétrique en utilisant sa Clé Privée RSA. Les deux entités partagent désormais la même clé de session AES-256.
 
-### Code References
-* **Crypto Constants**: [`src/Shared/Security/CryptoConfig.java`](src/Shared/Security/CryptoConfig.java#L20-L22)
-  * Mode: `RSA/ECB/OAEPWithSHA-256AndMGF1Padding` (OAEP padding is explicitly enforced to defend against padding oracle attacks).
-* **Server-side Handshake Routine**:  
-  Located in [`src/Server/security/SecureHandshake.java`](src/Server/security/SecureHandshake.java#L38-L77) (`perform()`).
-* **Client-side Handshake Routine**:  
-  Located in [`src/Client/network/SecureKeyExchange.java`](src/Client/network/SecureKeyExchange.java#L15-L47).
-* **Admin-side Handshake Routine**:  
-  Located in [`src/Admin/network/AdminSecureKeyExchange.java`](src/Admin/network/AdminSecureKeyExchange.java#L15-L48).
-
----
-
-## ✉️ 5. AES-256-GCM Message Encryption & Integrity
-
-Once the session key is established, all packet traffic is encrypted to prevent packet interception or modification.
-
-### How It Works
-* **Authenticated Encryption**: We use `AES/GCM/NoPadding` (Galois/Counter Mode). Unlike CBC, GCM provides **AEAD** (Authenticated Encryption with Associated Data), which generates a 128-bit authentication tag with every message. This mathematically proves the packet has not been altered in transit.
-* **Initialization Vector (IV)**: Each message uses a fresh, mathematically unique 12-byte (96-bit) IV generated via `SecureRandom` to prevent ciphertext patterns.
-* **Wire Format**: Encrypted packets are transmitted in the format `Base64(IV):Base64(Ciphertext)`.
-
-### Code References
-* **Cryptographic Core (AES GCM Utility)**:  
-  Located in [`src/Shared/Security/AESUtil.java`](src/Shared/Security/AESUtil.java)
-  * **Encryption**: [`L33-L45`](src/Shared/Security/AESUtil.java#L33-L45)
-  * **Decryption**: [`L51-L65`](src/Shared/Security/AESUtil.java#L51-L65)
-* **Server-side Interception**:  
-  Located in [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L104-L105) (`decryptMessage()`) and [`L131-L133`](src/Server/ClientHandler.java#L131-L133) (`encryptMessage()`).
-* **Client-side Encryption Integration**:  
-  Located in [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java#L56-L76).
-* **Admin-side Encryption Integration**:  
-  Located in [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java#L56-L76).
+### Références de Code
+* **Constantes Cryptographiques** : [`src/Shared/Security/CryptoConfig.java`](src/Shared/Security/CryptoConfig.java#L20-L22)
+  * Mode : `RSA/ECB/OAEPWithSHA-256AndMGF1Padding` (le rembourrage OAEP est explicitement imposé pour se défendre contre les attaques d'oracle de rembourrage).
+* **Routine de Poignée de Main Côté Serveur** :  
+  Situé dans [`src/Server/security/SecureHandshake.java`](src/Server/security/SecureHandshake.java#L38-L77) (`perform()`).
+* **Routine de Poignée de Main Côté Client** :  
+  Situé dans [`src/Client/network/SecureKeyExchange.java`](src/Client/network/SecureKeyExchange.java#L15-L47).
+* **Routine de Poignée de Main Côté Admin** :  
+  Situé dans [`src/Admin/network/AdminSecureKeyExchange.java`](src/Admin/network/AdminSecureKeyExchange.java#L15-L48).
 
 ---
 
-## 🔄 6. Replay Attack Protection (IV Sliding Window)
+## ✉️ 5. Chiffrement des Messages AES-256-GCM & Intégrité
 
-A replay attack involves capturing a valid encrypted payload (e.g., checkout transaction request) and submitting it again. Even if encrypted, repeating the payload would cause the server to execute the operation multiple times.
+Une fois la clé de session établie, tout le trafic de paquets est chiffré pour empêcher l'interception ou la modification des paquets.
 
-### How It Works
-* Since every encrypted message uses a unique, random IV, the server tracks seen IVs.
-* The server maintains a `ConcurrentHashMap` of registered IVs paired with their arrival timestamp.
-* If an incoming message contains an IV already processed within the **5-minute sliding window**, it is immediately blocked and logged as an attack.
-* Old IVs are automatically pruned from memory to ensure bounded memory usage.
+### Comment ça marche
+* **Chiffrement Authentifié** : Nous utilisons `AES/GCM/NoPadding` (Mode Galois/Counter). Contrairement à CBC, GCM fournit **AEAD** (Chiffrement Authentifié avec Données Associées), qui génère une balise d'authentification de 128 bits avec chaque message. Cela prouve mathématiquement que le paquet n'a pas été altéré en transit.
+* **Vecteur d'Initialisation (IV)** : Chaque message utilise un nouveau IV de 12 octets (96 bits) mathématiquement unique généré via `SecureRandom` pour éviter les modèles de texte chiffré.
+* **Format Réseau** : Les paquets chiffrés sont transmis au format `Base64(IV):Base64(Ciphertext)`.
 
-### Code References
-* **Replay Registry and Verification**:  
-  Located in [`src/Server/security/ReplayProtection.java`](src/Server/security/ReplayProtection.java)
-  * **Replay Verification**: [`L50-L62`](src/Server/security/ReplayProtection.java#L50-L62)
-  * **IV Registration**: [`L74-L83`](src/Server/security/ReplayProtection.java#L74-L83)
-  * **Automatic Memory Pruning**: [`L91-L94`](src/Server/security/ReplayProtection.java#L91-L94) (`cleanup()`).
-
----
-
-## 🔑 7. Session Token Management, Memory Protection & Rotation
-
-Session tokens are highly sensitive credentials. If compromised, they allow a malicious actor to impersonate users or administrators.
-
-### 7.1. Hashed Session Tokens in Memory
-* **How It Works**: To mitigate memory-dump attacks (where an attacker scans the RAM of the running server to extract plain-text session tokens), the server **hashes all session tokens** using SHA-256 before using them as keys in the session directory.
-* **Plaintext Never Stored**: The plaintext session UUID is compared or retrieved by hashing the input token first. The plaintext token is never cached or stored.
-* **Code References**:  
-  Located in [`src/Server/SessionManager.java`](src/Server/SessionManager.java)
-  * **Hashing Routine**: [`L54-L68`](src/Server/SessionManager.java#L54-L68)
-  * **Map Storage (Hashed Keys)**: [`L79-L80`](src/Server/SessionManager.java#L79-L80)
-  * **Hashed Session Lookup**: [`L126-L129`](src/Server/SessionManager.java#L126-L129)
-
-### 7.2. Transparent Token Rotation (Regeneration)
-* **How It Works**: To prevent session hijacking/fixation, session tokens are regenerated every **30 minutes**.
-* **Seamless Update**: During command dispatching, if a session's token is older than 1800 seconds (30 minutes), the server generates a new token, swaps the session metadata, and sends the response prefixed with `"RENEWED_TOKEN:<newSessionToken>|||"`.
-* **Client Handover**: Both Client and Admin network sockets transparently intercept this prefix, update their respective application states, and process the payload seamlessly.
-* **Code References**:
-  * **Server-side Session Token Regeneration**:  
-    Located in [`src/Server/SessionManager.java`](src/Server/SessionManager.java#L98-L120) (`regenerateToken()`).
-  * **Server Rotation Check & Header Construction**:  
-    Located in [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L190-L200) and [`L212-L214`](src/Server/ClientHandler.java#L212-L214).
-  * **Client Transparent Token Integration**:  
-    Located in [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java#L78-L87).
-  * **Admin Transparent Token Integration**:  
-    Located in [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java#L75-L84).
-
-### 7.3. Session Inactivity (AFK) Expiration Timeout
-* **How It Works**: Idle sessions are automatically deleted from server memory after **10 minutes** of inactivity to reduce memory usage and limit the exploit window of abandoned terminals.
-* **Code References**:  
-  Located in [`src/Server/SessionManager.java`](src/Server/SessionManager.java)
-  * Constants: [`L21`](src/Server/SessionManager.java#L21) (`MAX_IDLE_TIME_SECONDS = 600`)
-  * Scheduled Task: [`L30-L40`](src/Server/SessionManager.java#L30-L40) (`cleanupIdleSessions()`).
+### Références de Code
+* **Noyau Cryptographique (Utilitaire AES GCM)** :  
+  Situé dans [`src/Shared/Security/AESUtil.java`](src/Shared/Security/AESUtil.java)
+  * **Chiffrement** : [`L33-L45`](src/Shared/Security/AESUtil.java#L33-L45)
+  * **Déchiffrement** : [`L51-L65`](src/Shared/Security/AESUtil.java#L51-L65)
+* **Interception Côté Serveur** :  
+  Situé dans [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L104-L105) (`decryptMessage()`) et [`L131-L133`](src/Server/ClientHandler.java#L131-L133) (`encryptMessage()`).
+* **Intégration du Chiffrement Côté Client** :  
+  Situé dans [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java#L56-L76).
+* **Intégration du Chiffrement Côté Admin** :  
+  Situé dans [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java#L56-L76).
 
 ---
 
-## 👤 8. Strong Password Hashing (jBCrypt)
+## 🔄 6. Protection Contre les Attaques par Rejeu (Fenêtre Glissante IV)
 
-Stored credentials must be securely hashed to prevent exposure in the event of a database compromise.
+Une attaque par rejeu implique la capture d'une charge utile chiffrée valide (par exemple, une requête de transaction de caisse) et sa soumission à nouveau. Même si elle est chiffrée, répéter la charge utile amènerait le serveur à exécuter l'opération plusieurs fois.
 
-### How It Works
-* Client passwords are not stored using fast hashing algorithms like MD5 or SHA-1, which are vulnerable to hardware-accelerated brute-force attacks.
-* ChriOnline employs **jBCrypt** (a Blowfish-based adaptive hashing function) to hash credentials.
-* BCrypt implements an adaptive cost factor (work factor) and incorporates an explicit cryptographic salt, making rainbow tables and GPU brute-forcing computationally infeasible.
+### Comment ça marche
+* Puisque chaque message chiffré utilise un IV unique et aléatoire, le serveur suit les IV vus.
+* Le serveur maintient une `ConcurrentHashMap` des IV enregistrés associés à leur horodatage d'arrivée.
+* Si un message entrant contient un IV déjà traité dans la **fenêtre glissante de 5 minutes**, il est immédiatement bloqué et enregistré comme une attaque.
+* Les anciens IV sont automatiquement purgés de la mémoire pour garantir une utilisation limitée de la mémoire.
 
-### Code References
-* **Password Hashing and Salt Generation**:  
-  Located in [`src/Server/service/UserService.java`](src/Server/service/UserService.java#L201):
+### Références de Code
+* **Registre et Vérification des Rejeux** :  
+  Situé dans [`src/Server/security/ReplayProtection.java`](src/Server/security/ReplayProtection.java)
+  * **Vérification des Rejeux** : [`L50-L62`](src/Server/security/ReplayProtection.java#L50-L62)
+  * **Enregistrement des IV** : [`L74-L83`](src/Server/security/ReplayProtection.java#L74-L83)
+  * **Purge Automatique de la Mémoire** : [`L91-L94`](src/Server/security/ReplayProtection.java#L91-L94) (`cleanup()`).
+
+---
+
+## 🔑 7. Gestion des Jetons de Session, Protection Mémoire & Rotation
+
+Les jetons de session (session tokens) sont des informations d'identification hautement sensibles. S'ils sont compromis, ils permettent à un acteur malveillant d'usurper l'identité d'utilisateurs ou d'administrateurs.
+
+### 7.1. Jetons de Session Hachés en Mémoire
+* **Comment ça marche** : Pour atténuer les attaques par vidage de mémoire (où un attaquant scanne la RAM du serveur en cours d'exécution pour extraire les jetons de session en clair), le serveur **hache tous les jetons de session** à l'aide de SHA-256 avant de les utiliser comme clés dans le répertoire de session.
+* **Texte Clair Jamais Stocké** : Le UUID de session en texte clair est comparé ou récupéré en hachant d'abord le jeton d'entrée. Le jeton en texte clair n'est jamais mis en cache ni stocké.
+* **Références de Code** :  
+  Situé dans [`src/Server/SessionManager.java`](src/Server/SessionManager.java)
+  * **Routine de Hachage** : [`L54-L68`](src/Server/SessionManager.java#L54-L68)
+  * **Stockage Map (Clés Hachées)** : [`L79-L80`](src/Server/SessionManager.java#L79-L80)
+  * **Recherche de Session Hachée** : [`L126-L129`](src/Server/SessionManager.java#L126-L129)
+
+### 7.2. Rotation Transparente des Jetons (Régénération)
+* **Comment ça marche** : Pour éviter le piratage/fixation de session, les jetons de session sont régénérés toutes les **30 minutes**.
+* **Mise à Jour Transparente** : Lors de la distribution de commandes, si le jeton d'une session date de plus de 1800 secondes (30 minutes), le serveur génère un nouveau jeton, échange les métadonnées de la session et envoie la réponse préfixée par `"RENEWED_TOKEN:<newSessionToken>|||"`.
+* **Passation Client** : Les sockets réseau Client et Admin interceptent de manière transparente ce préfixe, mettent à jour leurs états d'application respectifs, et traitent la charge utile de manière transparente.
+* **Références de Code** :
+  * **Régénération du Jeton de Session Côté Serveur** :  
+    Situé dans [`src/Server/SessionManager.java`](src/Server/SessionManager.java#L98-L120) (`regenerateToken()`).
+  * **Vérification de Rotation du Serveur & Construction de l'En-tête** :  
+    Situé dans [`src/Server/ClientHandler.java`](src/Server/ClientHandler.java#L190-L200) et [`L212-L214`](src/Server/ClientHandler.java#L212-L214).
+  * **Intégration du Jeton Transparent Côté Client** :  
+    Situé dans [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java#L78-L87).
+  * **Intégration du Jeton Transparent Côté Admin** :  
+    Situé dans [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java#L75-L84).
+
+### 7.3. Délai d'Expiration d'Inactivité de Session (AFK)
+* **Comment ça marche** : Les sessions inactives sont automatiquement supprimées de la mémoire du serveur après **10 minutes** d'inactivité pour réduire l'utilisation de la mémoire et limiter la fenêtre d'exploitation des terminaux abandonnés.
+* **Références de Code** :  
+  Situé dans [`src/Server/SessionManager.java`](src/Server/SessionManager.java)
+  * Constantes : [`L21`](src/Server/SessionManager.java#L21) (`MAX_IDLE_TIME_SECONDS = 600`)
+  * Tâche Planifiée : [`L30-L40`](src/Server/SessionManager.java#L30-L40) (`cleanupIdleSessions()`).
+
+---
+
+## 👤 8. Hachage Fort des Mots de Passe (jBCrypt)
+
+Les identifiants stockés doivent être hachés de manière sécurisée pour éviter leur exposition en cas de compromission de la base de données.
+
+### Comment ça marche
+* Les mots de passe des clients ne sont pas stockés à l'aide d'algorithmes de hachage rapides comme MD5 ou SHA-1, qui sont vulnérables aux attaques par force brute accélérées par matériel.
+* ChriOnline utilise **jBCrypt** (une fonction de hachage adaptative basée sur Blowfish) pour hacher les identifiants.
+* BCrypt implémente un facteur de coût adaptatif (facteur de travail) et incorpore un sel cryptographique explicite, rendant les tables arc-en-ciel et la force brute par GPU informatiquement irréalisables.
+
+### Références de Code
+* **Hachage de Mot de Passe et Génération de Sel** :  
+  Situé dans [`src/Server/service/UserService.java`](src/Server/service/UserService.java#L201) :
   ```java
   return BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
   ```
-* **Password Verification**:  
-  Located in [`src/Server/service/UserService.java`](src/Server/service/UserService.java#L205):
+* **Vérification du Mot de Passe** :  
+  Situé dans [`src/Server/service/UserService.java`](src/Server/service/UserService.java#L205) :
   ```java
   return BCrypt.checkpw(plainTextPassword, hashedPassword);
   ```
 
 ---
 
-## 📧 9. Secure 2FA, OTP & SMTP Mail Communications
+## 📧 9. 2FA Sécurisé, OTP & Communications Mail SMTP
 
-A secure **Forgot Password** flow and login mechanism are implemented using secure email verification.
+Un flux de **Mot de passe oublié** et un mécanisme de connexion sécurisés sont mis en œuvre via une vérification par e-mail sécurisée.
 
-### 9.1. Secure SMTP Email Transmission
-* **How It Works**: Communication with the `smtp.gmail.com` mail servers is established using secure configurations over SSL/TLS (port 587) with explicitly declared SSL protocol properties (TLS 1.2).
-* **Credential Isolation**: SMTP mail credentials use an App Password, separating the mail dispatch flow from master account credentials.
-* **Code References**:  
-  Located in [`src/Shared/Security/EmailUtil.java`](src/Shared/Security/EmailUtil.java#L22-L48) (`sendMail()`).
+### 9.1. Transmission d'E-mail SMTP Sécurisée
+* **Comment ça marche** : La communication avec les serveurs de messagerie `smtp.gmail.com` est établie à l'aide de configurations sécurisées sur SSL/TLS (port 587) avec des propriétés de protocole SSL explicitement déclarées (TLS 1.2).
+* **Isolation des Identifiants** : Les identifiants de messagerie SMTP utilisent un Mot de passe d'Application, séparant le flux d'expédition des e-mails des identifiants du compte principal.
+* **Références de Code** :  
+  Situé dans [`src/Shared/Security/EmailUtil.java`](src/Shared/Security/EmailUtil.java#L22-L48) (`sendMail()`).
 
-### 9.2. Forgot Password 2FA / OTP Verification Flow
-* **Step 1: Code Generation**: When a password reset is requested, the server generates a cryptographically random 6-digit integer and saves the reference in `resetOTPs` mapping to the user's email.
-* **Step 2: Secure Delivery**: The server dispatches the code via `EmailUtil.sendMail()`.
-* **Step 3: Verification**: The user submits the code along with their new password. The server validates the submitted code against the cache. If correct, the new password is hashed using BCrypt and saved, and the OTP is revoked.
-* **Code References**:
-  * **OTP Generation & Sending**:  
-    Located in [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L273-L280) (`handleForgotPassword()`).
-  * **Verification & Password Reset Commit**:  
-    Located in [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L296-L318) (`handleResetPassword()`).
+### 9.2. Flux de Vérification Mot de Passe Oublié 2FA / OTP
+* **Étape 1 : Génération du Code** : Lorsqu'une réinitialisation de mot de passe est demandée, le serveur génère un entier à 6 chiffres cryptographiquement aléatoire et enregistre la référence dans `resetOTPs` en la liant à l'e-mail de l'utilisateur.
+* **Étape 2 : Livraison Sécurisée** : Le serveur envoie le code via `EmailUtil.sendMail()`.
+* **Étape 3 : Vérification** : L'utilisateur soumet le code avec son nouveau mot de passe. Le serveur valide le code soumis par rapport au cache. S'il est correct, le nouveau mot de passe est haché à l'aide de BCrypt et sauvegardé, et le OTP est révoqué.
+* **Références de Code** :
+  * **Générations & Envoi de l'OTP** :  
+    Situé dans [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L273-L280) (`handleForgotPassword()`).
+  * **Vérification & Validation de Réinitialisation du Mot de Passe** :  
+    Situé dans [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L296-L318) (`handleResetPassword()`).
 
 ---
 
-## 🛡️ 10. Administrator Key-Pair passwordless Auth
+## 🛡️ 10. Authentification Admin par Paire de Clés Sans Mot de Passe
 
-To secure the platform administration panel against credential leaks, administrators do not use traditional passwords. Instead, they authenticate using asymmetric **RSA Challenge-Response Signatures**.
+Pour sécuriser le panneau d'administration de la plateforme contre les fuites d'identifiants, les administrateurs n'utilisent pas de mots de passe traditionnels. Au lieu de cela, ils s'authentifient à l'aide de **Signatures Challenge-Response RSA** asymétriques.
 
 ```
-Admin Client                                       Server
+Client Admin                                       Serveur
    │                                                 │
-   ├───────── 1. ADMIN_CHALLENGE(username) ─────────▶│ [AuthHandler L69-81]
+   ├──────── 1. ADMIN_CHALLENGE(nom_utilisateur) ───▶│ [AuthHandler L69-81]
    │                                                 │
-   │◀──────── 2. Return Random Challenge (Base64) ───┤ [ChallengeGenerator L8-12]
+   │◀─────── 2. Retour Challenge Aléatoire (Base64) ─┤ [ChallengeGenerator L8-12]
    │                                                 │
-   │  3. Unlock PKCS12 admin_keys.p12 using pass     │
-   │  4. Sign Challenge using Private Key            │
+   │  3. Déverrouillage PKCS12 (.p12) via UI file    │
+   │     chooser et mot de passe de keystore         │
+   │  4. Signer Challenge avec la Clé Privée         │
    │     (SHA256withRSA)                             │
    │                                                 │
    ├───────── 5. ADMIN_VERIFY(Signature) ───────────▶│ [AuthHandler L83-120]
    │                                                 │
-   │                                                 │ 6. Fetch Admin Public Key from DB
+   │                                                 │ 6. Récup. Clé Publique Admin (DB)
    │                                                 │ 7. Verifier.verify(challenge, signature)
-   │◀──────── 8. Auth Approved (Session Token) ──────┤ [Verifier L7-12]
+   │◀──────── 8. Auth Approuvée (Jeton de Session) ──┤ [Verifier L7-12]
    │                                                 │
    ▼                                                 ▼
 ```
 
-### How It Works
-1. **Challenge Request**: The admin client requests a challenge from the server (`ADMIN_CHALLENGE|<username>`).
-2. **Challenge Generation**: The server verifies that the username matches an administrator account with an active public key registered. It generates a cryptographically random 32-byte challenge using `SecureRandom` and returns it to the client.
-3. **Signature**: The admin selects their local PKCS12 keystore (`.p12` file) via the UI file chooser and unlocks it using their personal keystore password. The system extracts the private key from the selected vault and signs the raw challenge using `SHA256withRSA`.
-4. **Verification**: The admin client sends the Base64 signature back to the server (`ADMIN_VERIFY|<username>|<signature>`).
-5. **Session Creation**: The server retrieves the administrator's registered public key from the database and verifies the signature using `Signature.getInstance("SHA256withRSA")`. If valid, the session is approved.
+### Comment ça marche
+1. **Demande de Challenge** : Le client admin demande un challenge au serveur (`ADMIN_CHALLENGE|<nom_utilisateur>`).
+2. **Génération du Challenge** : Le serveur vérifie que le nom d'utilisateur correspond à un compte administrateur avec une clé publique active enregistrée. Il génère un challenge cryptographiquement aléatoire de 32 octets à l'aide de `SecureRandom` et le renvoie au client.
+3. **Signature** : L'administrateur sélectionne son keystore local PKCS12 (fichier `.p12`) via le sélecteur de fichiers de l'interface utilisateur et le déverrouille en utilisant son mot de passe personnel de keystore. Le système extrait la clé privée du coffre sélectionné et signe le challenge brut à l'aide de `SHA256withRSA`.
+4. **Vérification** : Le client admin renvoie la signature en Base64 au serveur (`ADMIN_VERIFY|<nom_utilisateur>|<signature>`).
+5. **Création de Session** : Le serveur récupère la clé publique enregistrée de l'administrateur dans la base de données et vérifie la signature à l'aide de `Signature.getInstance("SHA256withRSA")`. Si elle est valide, la session est approuvée.
 
-### Code References
-* **Admin Client Signature Generation**:  
-  Located in [`src/Admin/Controllers/AdminLoginController.java`](src/Admin/Controllers/AdminLoginController.java#L70-L86).
-* **Challenge Processing**:  
-  Located in [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L69-L81) (`handleAdminChallenge()`).
-* **Verification Process**:  
-  Located in [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L83-L120) (`handleAdminVerify()`).
-* **Crypto Helper Utilities**:
-  * **Signing Class**: [`src/Shared/Security/Signer.java`](src/Shared/Security/Signer.java#L7-L12)
-  * **Challenge Generator Class**: [`src/Shared/Security/ChallengeGenerator.java`](src/Shared/Security/ChallengeGenerator.java#L8-L12)
-  * **Verification Class**: [`src/Shared/Security/Verifier.java`](src/Shared/Security/Verifier.java#L7-L12)
+### Références de Code
+* **Génération de Signature du Client Admin** :  
+  Situé dans [`src/Admin/Controllers/AdminLoginController.java`](src/Admin/Controllers/AdminLoginController.java#L70-L86).
+* **Traitement du Challenge** :  
+  Situé dans [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L69-L81) (`handleAdminChallenge()`).
+* **Processus de Vérification** :  
+  Situé dans [`src/Server/handlers/AuthHandler.java`](src/Server/handlers/AuthHandler.java#L83-L120) (`handleAdminVerify()`).
+* **Utilitaires Assistants Crypto** :
+  * **Classe de Signature** : [`src/Shared/Security/Signer.java`](src/Shared/Security/Signer.java#L7-L12)
+  * **Classe de Générateur de Challenge** : [`src/Shared/Security/ChallengeGenerator.java`](src/Shared/Security/ChallengeGenerator.java#L8-L12)
+  * **Classe de Vérification** : [`src/Shared/Security/Verifier.java`](src/Shared/Security/Verifier.java#L7-L12)
 
 ---
 
-## 💳 11. Payment Data Privacy & Application Masking
+## 💳 11. Confidentialité des Données de Paiement & Masquage de l'Application
 
-Credit card information is highly sensitive and requires strict security measures.
+Les informations de carte de crédit sont hautement sensibles et nécessitent des mesures de sécurité strictes.
 
-### Storing Encrypted Credentials
-* **How It Works**: Credit card numbers and CVV codes are **never stored in plaintext** in the database.
-* **AES-256-GCM Storage**: Before database insertion, card numbers and CVVs are encrypted using AES-256-GCM. The encrypted ciphertext is stored as `Base64(IV):Base64(Ciphertext)`.
-* **Code Reference**:  
-  Located in [`src/Server/service/PaymentEncryptionService.java`](src/Server/service/PaymentEncryptionService.java#L23-L41).
+### Stockage des Identifiants Chiffrés
+* **Comment ça marche** : Les numéros de carte de crédit et les codes CVV ne sont **jamais stockés en clair** dans la base de données.
+* **Stockage AES-256-GCM** : Avant l'insertion dans la base de données, les numéros de carte et les CVV sont chiffrés à l'aide d'AES-256-GCM. Le texte chiffré est stocké sous la forme `Base64(IV):Base64(Ciphertext)`.
+* **Référence de Code** :  
+  Situé dans [`src/Server/service/PaymentEncryptionService.java`](src/Server/service/PaymentEncryptionService.java#L23-L41).
 
-### Application-Layer Card Masking
-* **How It Works**: For display in UI list views, the system uses a masking routine that restricts visibility to the last 4 digits of the card (`****-****-****-XXXX`).
-* **Code Reference**:  
-  Located in [`src/Server/service/PaymentEncryptionService.java`](src/Server/service/PaymentEncryptionService.java#L58-L64) (`maskCard()`):
+### Masquage de Carte de Couche Application
+* **Comment ça marche** : Pour l'affichage dans les vues de liste de l'interface utilisateur, le système utilise une routine de masquage qui restreint la visibilité aux 4 derniers chiffres de la carte (`****-****-****-XXXX`).
+* **Référence de Code** :  
+  Situé dans [`src/Server/service/PaymentEncryptionService.java`](src/Server/service/PaymentEncryptionService.java#L58-L64) (`maskCard()`) :
   ```java
   public String maskCard(String cardNumber) {
       if (cardNumber == null || cardNumber.length() < 4) return "****";
@@ -353,49 +355,29 @@ Credit card information is highly sensitive and requires strict security measure
 
 ---
 
-## 🏢 12. Client & Admin Architectural Isolation
+## 🧪 12. Suite de Vérification de Sécurité
 
-To prevent session overlap or unauthorized access to administration assets within user sessions, the **Client** and **Admin** codebases are separated at the structural, network, and package levels.
+Les contrôles de sécurité sont vérifiés à l'aide d'une suite de tests de sécurité dédiée.
 
-### How It Works
-* **Isolated Networking Sockets**: The standard user application utilizes `Client.network.SocketClient` communicating on port `8085` (UDP notifications). The admin application uses an independent `Admin.network.AdminSocket` communicating on port `8086`. This ensures administration traffic does not interfere with standard user sessions.
-* **Binary Separation**: The Maven build configuration builds separate executables. `ChriOnline-Client.jar` excludes admin packages, and `ChriOnline-Admin.jar` excludes user packages, preventing binary exploration or reverse engineering of admin codebases from standard client builds.
-* **Separated Application State**: Admin state is tracked inside `Admin.session.AdminAppState`, isolating admin credentials, active profiles, and JWT tokens from standard user storage (`Client.session.AppState`).
-
-### Code References
-* **Admin State Isolation**: [`src/Admin/session/AdminAppState.java`](src/Admin/session/AdminAppState.java)
-* **Isolated Socket Classes**:
-  * Client Socket: [`src/Client/network/SocketClient.java`](src/Client/network/SocketClient.java)
-  * Admin Socket: [`src/Admin/network/AdminSocket.java`](src/Admin/network/AdminSocket.java)
-* **Separate Shaded Entry-points (Launchers)**:
-  * Client entry-point: `ClientLauncher` targeting `ClientMain.java`
-  * Admin entry-point: `AdminLauncher` targeting `AdminMain.java`
+* **Emplacement de la Suite de Tests** : [`src/Server/security/ReplayAttackTest.java`](src/Server/security/ReplayAttackTest.java)
+* **Exécution** : Exécutez la méthode `main()` dans `ReplayAttackTest.java` pour effectuer les vérifications suivantes :
+  1. **Test 1** : Vérifiez que `ReplayProtection` bloque les IV répétés dans la fenêtre glissante de 5 minutes.
+  2. **Test 2** : Vérifiez que `SecureRandom` ne génère pas de IV en double sur 1 000 itérations.
+  3. **Test 3** : Vérifiez les cycles complets de chiffrement et de déchiffrement AES-GCM.
 
 ---
 
-## 🧪 13. Security Verification Suite
-
-Security controls are verified using a dedicated security test suite.
-
-* **Test Suite Location**: [`src/Server/security/ReplayAttackTest.java`](src/Server/security/ReplayAttackTest.java)
-* **Execution**: Run the `main()` method in `ReplayAttackTest.java` to perform the following verification checks:
-  1. **Test 1**: Verify that `ReplayProtection` blocks repeated IVs within the 5-minute sliding window.
-  2. **Test 2**: Verify that `SecureRandom` does not generate duplicate IVs across 1,000 iterations.
-  3. **Test 3**: Verify complete AES-GCM encryption and decryption cycles.
-
----
-
-### Central Cryptographic Parameters
+### Paramètres Cryptographiques Centraux
 
 | Paramètre | Algorithme | Taille de clé | Usage | Classe de Configuration |
 | :--- | :--- | :--- | :--- | :--- |
 | **Transport** | SSL/TLS 1.3 | 256 bits (AES) | Protection réseau | `CryptoConfig.java` |
 | **Handshake** | RSA-OAEP-SHA256 | 2048 bits | Échange de clé session | `CryptoConfig.java` |
-| **Symmetric** | AES-GCM | 256 bits | Échanges applicatifs | `CryptoConfig.java` |
-| **Integrity** | GCM Auth Tag | 128 bits | Intégrité des messages | `CryptoConfig.java` |
-| **Credential** | jBCrypt Salted | Cost 10 | Stockage mot de passe | `UserService.java` |
+| **Symétrique** | AES-GCM | 256 bits | Échanges applicatifs | `CryptoConfig.java` |
+| **Intégrité** | GCM Auth Tag | 128 bits | Intégrité des messages | `CryptoConfig.java` |
+| **Identifiant** | jBCrypt Salted | Cost 10 | Stockage mot de passe | `UserService.java` |
 | **Admin Sign** | SHA256withRSA | 2048 bits | Authentification Admin | `AuthHandler.java` |
-| **Session** | SHA-256 Hashing | 256 bits | Stockage session RAM | `SessionManager.java` |
+| **Session** | Hachage SHA-256 | 256 bits | Stockage session RAM | `SessionManager.java` |
 
 ---
-*Report compiled by the ChriOnline Security Team — Document version 2.4.0.*
+*Rapport compilé par l'Équipe de Sécurité ChriOnline — Version du document 2.4.0.*

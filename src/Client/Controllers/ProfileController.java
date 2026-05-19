@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import static Shared.Security.EmailUtil.sendMail;
+
 public class ProfileController {
     private static final Logger logger = LogManager.getLogger(ProfileController.class);
 
@@ -222,7 +224,7 @@ public class ProfileController {
 
         if(changes.containsKey("email")){
             try{
-                sendMail(new InternetAddress(emailField.getText().trim()), "Code de vérification", String.valueOf(number));
+                sendMail(emailField.getText().trim(), "Code de vérification", String.valueOf(number));
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
@@ -308,18 +310,6 @@ public class ProfileController {
         if (!newValue.equals(original)) {
             changes.put(field, newValue);
         }
-    }
-
-    private void sendMail(InternetAddress recepients, String subject, String body) throws IOException, AddressException, MessagingException {
-        Properties properties = new Properties();
-        Session session = Session.getDefaultInstance(properties, null);
-
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("chrionline@example.com", "NoReply"));
-        msg.addRecipient(Message.RecipientType.TO, recepients);
-        msg.setSubject(subject);
-        msg.setText(body);
-        Transport.send(msg);
     }
 
     // ────────────────────────────────────────────────────────────

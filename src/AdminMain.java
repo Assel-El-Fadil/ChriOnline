@@ -27,8 +27,8 @@ public class AdminMain extends Application implements NotificationCallback {
 
 
     private static String SERVER_HOST = "127.0.0.1";
-    private static final int    SERVER_PORT  = 8084;    // TCP port
-    private static final int    UDP_PORT     = 8086;    // UDP listen port (8086 to avoid collision with client)
+    private static final int    SERVER_PORT  = 8084;
+    private static final int    UDP_PORT     = 8086;
     private static final String CONFIG_FILE = "server_config.properties";
 
     private AdminSocket socketClient;
